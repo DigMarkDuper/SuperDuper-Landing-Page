@@ -590,6 +590,7 @@ section { padding-block: clamp(4rem, 10vw, 8rem); }
 .program-card {
   display: flex;
   flex-direction: column;
+  padding: 2rem;
   background: var(--white);
   border: 1px solid var(--blue-soft);
   border-radius: var(--radius-feature);
@@ -601,22 +602,79 @@ section { padding-block: clamp(4rem, 10vw, 8rem); }
   transform: translateY(-4px);
   box-shadow: var(--sh-md);
 }
-.program-motif {
-  height: 180px;
-  background: var(--blue);
-  display: flex;
+
+/* Head row — the single structural element that replaces the 180px motif band
+   plus the standalone badge. Height-locked via min-height, so the row exists
+   and holds the space whether or not it carries a meta label. */
+.program-head {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
   align-items: center;
-  justify-content: center;
-  overflow: hidden;
+  gap: .75rem;
+  min-height: 3.5rem;              /* 56px — locked row height */
 }
-.program-motif img {
-  height: 140px;
-  width: auto;
-  object-fit: contain;
-  opacity: .92;
+
+/* Compact motif chip: 56px blue tile, brand glyph drawn in pure CSS so the two
+   cards get an identical anchor with zero asset dependency. Decorative only. */
+.program-chip {
+  position: relative;
+  width: 3.5rem;
+  height: 3.5rem;
+  background: var(--blue);
+  border-radius: 14px;
 }
-.program-card .badge {
-  align-self: flex-start;
+.program-chip::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
+}
+/* Legibility rule (@Neo spec F2): glyph bbox >= 50% of the 56px tile's smaller
+   dimension (>=28px) and its narrowest solid part >= 3px. Below that it is
+   texture, not a mark. */
+.program-chip[data-glyph="bolt"]::before {
+  width: 1.125rem;        /* 18px */
+  height: 1.75rem;        /* 28px */
+  background: var(--yellow);
+  clip-path: polygon(58% 0%, 18% 56%, 46% 56%, 34% 100%, 84% 42%, 52% 42%);
+}
+/* Quarter-ring (matches supergraphic Supergrafis-09: thick yellow arc, square
+   radial cut ends, bottom-right quadrant).
+
+   A mask-based version was tried first and rejected. mask-composite:intersect is
+   not honoured reliably here - it silently rendered a solid quarter DISC with no
+   hole at all, at every centre offset tried. Stroking a circle and clipping it to
+   one quadrant makes the hole real geometry instead of a composite result.
+
+   The clip polygon uses the exact centre point (50% 50%) as a vertex, so the
+   stroke is cut radially and the ends stay flat and square rather than tapered. */
+.program-chip[data-glyph="arc"]::before {
+  left: 50%;
+  top: 50%;
+  width: 2.5rem;            /* 40px border-box = outer r20 */
+  height: 2.5rem;
+  border: 9px solid var(--yellow);  /* inner r = (40 - 18)/2 = 11px -> 22px hole */
+  border-radius: 50%;
+  clip-path: polygon(50% 50%, 100% 50%, 100% 100%, 50% 100%);
+  /* Optical centring: the visible arc occupies the lower-right quadrant of this
+     box, so its centre of mass sits at box-centre +10px on both axes. Shifting
+     the box by -30px puts that centre of mass back on the tile centre. */
+  margin: -1.875rem 0 0 -1.875rem;
+}
+
+/* reserved: card-1 label pending @Ejak approval */
+.program-meta {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: .7rem;
+  text-transform: uppercase;
+  letter-spacing: .03em;
+  color: var(--ink-muted);
+}
+/* Card 2's badge, moved inside the head row. Styling unchanged; only the
+   flex-only properties (align-self / margin-top) were dropped. */
+.program-head .badge {
+  justify-self: start;
   background: var(--yellow-soft);
   color: var(--blue);
   border: 1px solid var(--yellow);
@@ -627,18 +685,19 @@ section { padding-block: clamp(4rem, 10vw, 8rem); }
   font-size: .7rem;
   text-transform: uppercase;
   letter-spacing: .03em;
-  margin-top: 1rem;
 }
 .program-title {
   font-weight: 700;
   text-transform: uppercase;
   font-size: clamp(1.25rem, 2vw, 1.6rem);
+  line-height: 1.2;
   letter-spacing: .01em;
   margin: .75rem 0 .75rem;
   color: var(--blue);
 }
 .program-body {
   margin: 0 0 1.25rem;
+  max-width: 46ch;
   color: var(--ink-muted);
   line-height: 1.65;
 }
@@ -656,16 +715,57 @@ section { padding-block: clamp(4rem, 10vw, 8rem); }
   content: "";
   position: absolute;
   left: 0;
-  top: .5em;
+  top: .55em;
   width: .7rem;
   height: 3px;
   background: var(--yellow);
   border-radius: 1px;
 }
+/* Flex-fallback path only: margin-top:auto pins the CTA inside the legacy
+   column layout. It is removed inside the subgrid block below. */
 .program-card .btn { align-self: flex-start; margin-top: auto; }
 
 @media (min-width: 720px) {
-  .program-grid { grid-template-columns: repeat(2, 1fr); }
+  .program-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* Subgrid path (Chrome >=117, Safari >=16). Wrapped in @supports deliberately:
+   browsers without it keep the flex-column rule set above, because dropping
+   just `grid-template-rows: subgrid` from an unconditional display:grid would
+   leave a broken single-column auto-row grid rather than a graceful fallback.
+   The 1fr on the body row absorbs slack, so the CTA stays bottom-pinned by the
+   grid itself and stays aligned even when the two cards' copy lengths differ. */
+@supports (grid-template-rows: subgrid) {
+  @media (min-width: 720px) {
+    .program-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-rows: auto auto auto 1fr auto;  /* head·title·body·features·cta */
+      gap: 2rem;
+    }
+    .program-card {
+      display: grid;
+      grid-row: span 5;
+      grid-template-rows: subgrid;
+      row-gap: 1rem;      /* per-row deltas below via padding, see comments */
+    }
+    .program-card > * { margin: 0; }
+    .program-card .btn { margin-top: 0; justify-self: start; }   /* grid owns bottom-pinning; compact pill, not stretched */
+    /* row rhythm: title 1.25 · body 1 · features 1.5 · cta 1.5.
+       The 1fr sits on the features row, so slack collects *below* the last li
+       (reads as breathing room) instead of punching a hole mid-paragraph. */
+    .program-title    { padding-top: .25rem; }
+    .program-features { padding-top: 1.25rem; padding-bottom: .5rem; }
+  }
+}
+
+@media (max-width: 719px) {
+  .program-grid { grid-template-columns: minmax(0, 1fr); row-gap: 1.5rem; }
+  .program-card {
+    display: flex;                 /* single column has no rows to share */
+    flex-direction: column;
+    padding: 1.5rem;
+    gap: 0;
+  }
 }
 
 /* ============================================================
@@ -875,7 +975,8 @@ section { padding-block: clamp(4rem, 10vw, 8rem); }
 }
 
 /* ============================================================
-   9. SOCIAL PROOF — fillable-ready placeholder slots
+   9. SOCIAL PROOF — real testimonial cards + disclosure
+   Replaces the dashed .testimonial-slot placeholders.
    ============================================================ */
 .social-proof {
   position: relative;
@@ -891,56 +992,211 @@ section { padding-block: clamp(4rem, 10vw, 8rem); }
   pointer-events: none;
 }
 .sp-container { position: relative; z-index: 1; }
-.testimonial-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1.5rem;
-  margin-top: 2rem;
+
+/* --- Section accent: one faint brand motif, never per-card --- */
+.sp-accent {
+  position: absolute;
+  top: -4%;
+  right: -7%;
+  width: min(30%, 340px);
+  opacity: .1;
+  pointer-events: none;
+  background-image: url('assets/supergraphic/Supergrafis-08.png');
+  background-size: contain;
+  background-repeat: no-repeat;
 }
-.testimonial-slot {
-  background: var(--blue-soft);
-  border: 2px dashed var(--blue);
-  border-radius: var(--radius-card);
-  padding: 2rem 1.5rem;
-  min-height: 15rem;
+
+/* --- Disclosure (option c): header pill + sub-line --- */
+.sp-disclosure {
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
   align-items: center;
-  gap: .6rem;
-  text-align: center;
-}
-.slot-avatar {
-  width: 4rem;
-  height: 4rem;
-  border-radius: 50%;
+  gap: .6rem 1rem;
+  margin: 0 0 2.25rem;
+  padding: .85rem 1.15rem;
   background: var(--yellow-soft);
-  border: 1px solid var(--gray);
-  color: var(--ink-muted);
-  font-size: .7rem;
-  display: grid;
-  place-items: center;
-  text-align: center;
+  border-left: 5px solid var(--yellow);
+  border-radius: var(--radius-card);
+  max-width: 62ch;
 }
-.slot-name {
+.sp-disclosure-label {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
   font-family: 'Poppins', sans-serif;
-  font-weight: 600;
-  font-size: 1rem;
-  color: var(--ink-muted);
+  font-weight: 700;
+  font-size: .78rem;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--blue-deep);
+  white-space: nowrap;
 }
-.slot-role { font-size: .85rem; color: var(--ink-muted); }
-.slot-quote {
-  font-family: 'Inter', sans-serif;
+.sp-disclosure-label::before {
+  content: '';
+  width: .55rem;
+  height: .55rem;
+  border-radius: 50%;
+  background: var(--yellow);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, .75);
+}
+.sp-disclosure-text {
   font-size: .9rem;
   line-height: 1.5;
-  color: var(--ink-muted);
-  font-style: italic;
-  margin-top: .5rem;
+  color: var(--ink);
+  margin: 0;
 }
-.js-placeholder {
-  text-align: center;
+
+/* --- Grid --- */
+.testimonial-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(288px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2.25rem;
+}
+
+/* --- Card --- */
+.testimonial-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: var(--white);
+  border: 1px solid var(--blue-soft);
+  border-radius: var(--radius-card);
+  padding: 1.75rem 1.75rem 1.5rem;
+  box-shadow: var(--sh-sm);
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+.testimonial-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--sh-md);
+}
+
+/* (a) In-card honesty marker — quiet, always visible, never competing */
+.card-flag {
+  position: absolute;
+  top: 1.1rem;
+  right: 1.1rem;
+  padding: .22rem .6rem;
+  background: var(--blue-soft);
+  border-radius: 999px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: .68rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--blue);
+}
+
+/* Outcome tag — scan anchor, with a dot so it is never color-only */
+.card-tag {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .4rem .9rem;
+  margin-bottom: 1.15rem;
+  background: var(--yellow-soft);
+  border-radius: 999px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: .72rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--blue-deep);
+  max-width: calc(100% - 4.5rem);
+}
+.card-tag::before {
+  content: '';
+  flex: 0 0 auto;
+  width: .5rem;
+  height: .5rem;
+  border-radius: 50%;
+  background: var(--yellow);
+  box-shadow: 0 0 0 2px var(--white);
+}
+
+/* Quote — the hero of the card */
+.card-quote-mark {
+  display: block;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 800;
+  font-size: 2.6rem;
+  line-height: .7;
+  color: var(--yellow);
+  margin-bottom: .6rem;
+}
+.card-quote {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 1.03rem;
+  line-height: 1.62;
+  color: var(--ink);
+}
+
+/* Quiet separator, same yellow-dash language as Section 5 */
+.card-dash {
+  width: 2rem;
+  height: 4px;
+  margin: 1.4rem 0 1.15rem;
+  background: var(--yellow);
+  border-radius: 2px;
+}
+
+/* Identity row — pushed to the card floor so baselines align */
+.card-person {
+  display: flex;
+  align-items: center;
+  gap: .9rem;
+  margin-top: auto;
+}
+.card-avatar {
+  flex: 0 0 auto;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--white);
+  box-shadow: 0 0 0 2px var(--blue-soft);
+  background: transparent;
+}
+.card-meta { min-width: 0; }
+.card-name {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  line-height: 1.3;
+  letter-spacing: .01em;
+  color: var(--blue);
+}
+.card-role {
+  margin: .15rem 0 0;
+  font-family: 'Inter', sans-serif;
+  font-size: .85rem;
+  line-height: 1.4;
   color: var(--ink-muted);
-  font-size: .9rem;
-  margin-top: 2rem;
+}
+
+/* --- Responsive --- */
+@media (min-width: 720px) and (max-width: 1019px) {
+  .testimonial-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 719px) {
+  .testimonial-grid {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+    margin-top: 1.75rem;
+  }
+  .testimonial-card { padding: 1.5rem 1.35rem 1.35rem; }
+  .sp-accent { width: 45%; top: -2%; right: -12%; opacity: .08; }
+  .sp-disclosure { padding: .8rem 1rem; }
+  .sp-disclosure-label { white-space: normal; }
+}
+@media (max-width: 479px) {
+  .card-tag { font-size: .68rem; padding: .35rem .75rem; }
+  .card-quote { font-size: 1rem; }
+  .card-avatar { width: 56px; height: 56px; }
 }
 
 /* ============================================================

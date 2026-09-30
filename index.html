@@ -141,8 +141,8 @@
 
       <div class="program-grid">
         <article class="program-card reveal">
-          <div class="program-motif">
-            <img src="assets/supergraphic/Supergrafis-08.png" alt="Decorative brand graphic — Super Duper">
+          <div class="program-head">
+            <span class="program-chip" data-glyph="bolt" aria-hidden="true"></span>
           </div>
           <h3 class="program-title">Intensive Executive English</h3>
           <p class="program-body">Program intensif harian yang bikin kemampuanmu naik drastis dalam waktu singkat — dirancang untuk kamu yang serius mengejar target bahasa Inggris untuk kuliah, kerja, atau keperluan sehari-hari.</p>
@@ -155,10 +155,10 @@
         </article>
 
         <article class="program-card reveal" style="--reveal-delay:.08s">
-          <div class="program-motif">
-            <img src="assets/supergraphic/Supergrafis-09.png" alt="Decorative brand graphic — Super Duper">
+          <div class="program-head">
+            <span class="program-chip" data-glyph="arc" aria-hidden="true"></span>
+            <span class="badge">ALUMNI-STYLE CAMP</span>
           </div>
-          <span class="badge">ALUMNI-STYLE CAMP</span>
           <h3 class="program-title">English Camp · Asrama</h3>
           <p class="program-body">Pengalaman belajar menetap dengan lingkungan English Area dan fasilitas asrama — bahasa Inggris benar-benar mengelilingi keseharianmu.</p>
           <ul class="program-features">
@@ -250,52 +250,142 @@
     </div>
   </section>
 
-  <!-- ============ 9. SOCIAL PROOF (fillable-ready placeholder) ============ -->
-  <section class="social-proof">
+  <!-- ============ 9. SOCIAL PROOF ============ -->
+  <section class="social-proof" aria-labelledby="sp-title">
     <div class="sp-backdrop" aria-hidden="true"></div>
+    <div class="sp-accent" aria-hidden="true"></div>
+
     <div class="container sp-container">
       <p class="eyebrow reveal">CERITA MEREKA</p>
-      <h2 class="section-title reveal">Yang Sudah Mulai, Rasakan Bedanya.</h2>
+      <h2 class="section-title reveal" id="sp-title">Cerita dari Yang Dulu Gak Gengsi Ngomong Inggris</h2>
+      <p class="lede reveal">Semua orang belajar dari nol. Beda cuma, mereka udah mulai duluan.</p>
+
+      <p class="sp-disclosure reveal">
+        <span class="sp-disclosure-label">Catatan: simulasi untuk ilustrasi</span>
+        <span class="sp-disclosure-text">Nama dan kutipan di bawah adalah contoh profil peserta kelas yang kami layani.</span>
+      </p>
 
       <div class="testimonial-grid">
-        <div class="testimonial-slot reveal" data-testid="testimonial-slot">
-          <div class="slot-avatar">[Foto Alumni]</div>
-          <div class="slot-name">[Nama Alumni]</div>
-          <div class="slot-role">[Asal / Pekerjaan]</div>
-          <div class="slot-quote">[Tulis testimoni di sini — konten dari tim]</div>
-        </div>
-        <div class="testimonial-slot reveal" data-testid="testimonial-slot" style="--reveal-delay:.05s">
-          <div class="slot-avatar">[Foto Alumni]</div>
-          <div class="slot-name">[Nama Alumni]</div>
-          <div class="slot-role">[Asal / Pekerjaan]</div>
-          <div class="slot-quote">[Tulis testimoni di sini — konten dari tim]</div>
-        </div>
-        <div class="testimonial-slot reveal" data-testid="testimonial-slot" style="--reveal-delay:.1s">
-          <div class="slot-avatar">[Foto Alumni]</div>
-          <div class="slot-name">[Nama Alumni]</div>
-          <div class="slot-role">[Asal / Pekerjaan]</div>
-          <div class="slot-quote">[Tulis testimoni di sini — konten dari tim]</div>
-        </div>
-        <div class="testimonial-slot reveal" data-testid="testimonial-slot" style="--reveal-delay:.05s">
-          <div class="slot-avatar">[Foto Alumni]</div>
-          <div class="slot-name">[Nama Alumni]</div>
-          <div class="slot-role">[Asal / Pekerjaan]</div>
-          <div class="slot-quote">[Tulis testimoni di sini — konten dari tim]</div>
-        </div>
-        <div class="testimonial-slot reveal" data-testid="testimonial-slot" style="--reveal-delay:.1s">
-          <div class="slot-avatar">[Foto Alumni]</div>
-          <div class="slot-name">[Nama Alumni]</div>
-          <div class="slot-role">[Asal / Pekerjaan]</div>
-          <div class="slot-quote">[Tulis testimoni di sini — konten dari tim]</div>
-        </div>
-        <div class="testimonial-slot reveal" data-testid="testimonial-slot" style="--reveal-delay:.15s">
-          <div class="slot-avatar">[Foto Alumni]</div>
-          <div class="slot-name">[Nama Alumni]</div>
-          <div class="slot-role">[Asal / Pekerjaan]</div>
-          <div class="slot-quote">[Tulis testimoni di sini — konten dari tim]</div>
-        </div>
+        <article class="testimonial-card reveal" data-testid="testimonial-card">
+          <span class="card-flag">Ilustrasi</span>
+          <p class="card-tag">Makin berani ngomong</p>
+          <span class="card-quote-mark" aria-hidden="true">&ldquo;</span>
+          <blockquote class="card-quote">
+            Awalnya aku sheepet pas presentasi. Sekarang? Nggak gengsi lagi, kak.
+          </blockquote>
+          <span class="card-dash" aria-hidden="true"></span>
+          <div class="card-person">
+            <img class="card-avatar"
+                 src="assets/testimonial/01-rizky-mahasiswa.png"
+                 alt="Foto ilustrasi peserta kelas, bukan foto asli"
+                 width="256" height="256" decoding="async">
+            <div class="card-meta">
+              <h3 class="card-name">Rizky Ananda</h3>
+              <p class="card-role">Mahasiswa S1 · Jogja</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="testimonial-card reveal" data-testid="testimonial-card" style="--reveal-delay:.06s">
+          <span class="card-flag">Ilustrasi</span>
+          <p class="card-tag">Jadwal gw atur sendiri</p>
+          <span class="card-quote-mark" aria-hidden="true">&ldquo;</span>
+          <blockquote class="card-quote">
+            Gw bisa geser jadwal pas lagi shift di dapur. Aman, no drama.
+          </blockquote>
+          <span class="card-dash" aria-hidden="true"></span>
+          <div class="card-person">
+            <img class="card-avatar"
+                 src="assets/testimonial/02-dimas-culinary.png"
+                 alt="Foto ilustrasi peserta kelas, bukan foto asli"
+                 width="256" height="256" loading="lazy" decoding="async">
+            <div class="card-meta">
+              <h3 class="card-name">Dimas Prasetyo</h3>
+              <p class="card-role">Culinary Student · Yogyakarta</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="testimonial-card reveal" data-testid="testimonial-card" style="--reveal-delay:.12s">
+          <span class="card-flag">Ilustrasi</span>
+          <p class="card-tag">Lolos interview pertama</p>
+          <span class="card-quote-mark" aria-hidden="true">&ldquo;</span>
+          <blockquote class="card-quote">
+            Interview pertama aku grogi banget. Yang kedua? Kayak ngobrol biasa sama temen.
+          </blockquote>
+          <span class="card-dash" aria-hidden="true"></span>
+          <div class="card-person">
+            <img class="card-avatar"
+                 src="assets/testimonial/03-bagas-fresh-graduate.png"
+                 alt="Foto ilustrasi peserta kelas, bukan foto asli"
+                 width="256" height="256" loading="lazy" decoding="async">
+            <div class="card-meta">
+              <h3 class="card-name">Bagas Nurcahyo</h3>
+              <p class="card-role">Fresh Graduate · Pencari Kerja</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="testimonial-card reveal" data-testid="testimonial-card" style="--reveal-delay:.06s">
+          <span class="card-flag">Ilustrasi</span>
+          <p class="card-tag">Nggak minder grammar</p>
+          <span class="card-quote-mark" aria-hidden="true">&ldquo;</span>
+          <blockquote class="card-quote">
+            Tiga tahun gue cuma bisa nulis "speaking" di buku. Sekarang gue kirim chat ke clients pakai Inggris.
+          </blockquote>
+          <span class="card-dash" aria-hidden="true"></span>
+          <div class="card-person">
+            <img class="card-avatar"
+                 src="assets/testimonial/04-nadia-mahasiswa-ti.png"
+                 alt="Foto ilustrasi peserta kelas, bukan foto asli"
+                 width="256" height="256" loading="lazy" decoding="async">
+            <div class="card-meta">
+              <h3 class="card-name">Nadia Salsabila</h3>
+              <p class="card-role">Mahasiswa S1 · Sistem Informasi</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="testimonial-card reveal" data-testid="testimonial-card" style="--reveal-delay:.12s">
+          <span class="card-flag">Ilustrasi</span>
+          <p class="card-tag">Hebat di depan forum</p>
+          <span class="card-quote-mark" aria-hidden="true">&ldquo;</span>
+          <blockquote class="card-quote">
+            Aku yang biasanya diem di rapat organisasi. Sekarang aku yang presentasi, dan cuma satu yang aku persiapin.
+          </blockquote>
+          <span class="card-dash" aria-hidden="true"></span>
+          <div class="card-person">
+            <img class="card-avatar"
+                 src="assets/testimonial/05-fitria-organisasi.png"
+                 alt="Foto ilustrasi peserta kelas, bukan foto asli"
+                 width="256" height="256" loading="lazy" decoding="async">
+            <div class="card-meta">
+              <h3 class="card-name">Fitria Rahmawati</h3>
+              <p class="card-role">Aktivis Organisasi</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="testimonial-card reveal" data-testid="testimonial-card" style="--reveal-delay:.18s">
+          <span class="card-flag">Ilustrasi</span>
+          <p class="card-tag">Nggak fear call klien</p>
+          <span class="card-quote-mark" aria-hidden="true">&ldquo;</span>
+          <blockquote class="card-quote">
+            Negotiate sama vendor Asia lewat Inggris. Dulu itu makan waktu, sekarang cuma lima belas menit.
+          </blockquote>
+          <span class="card-dash" aria-hidden="true"></span>
+          <div class="card-person">
+            <img class="card-avatar"
+                 src="assets/testimonial/06-amalia-professional.png"
+                 alt="Foto ilustrasi peserta kelas, bukan foto asli"
+                 width="256" height="256" loading="lazy" decoding="async">
+            <div class="card-meta">
+              <h3 class="card-name">Amalia Puspita</h3>
+              <p class="card-role">Professional · Konsultan</p>
+            </div>
+          </div>
+        </article>
       </div>
-      <p class="js-placeholder note">— Konten ditambahkan tim —</p>
     </div>
   </section>
 

@@ -7,4 +7,9 @@ DESIGN_REVIEW.md
 COPY_REWRITE.md
 HERO_BUBBLE_SPEC.md
 HERO_BUBBLE_SPEC_V2.md
+TESTIMONIAL_DESIGN_SPEC.md
 _sheet_*.png
+
+# Dev-only QA harness + verification artefacts (not part of the deployable site)
+_tools/
+_shot.mjs
