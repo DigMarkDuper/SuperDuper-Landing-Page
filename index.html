@@ -52,6 +52,23 @@
   <!-- ============ 1. HERO ============ -->
   <section class="hero" id="hero">
     <div class="hero-glow" aria-hidden="true"></div>
+    <!-- Goo filter: one instance, referenced by .hero-bubbles -->
+    <svg width="0" height="0" style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true" focusable="false">
+      <filter id="goo">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="16" result="blur"/>
+        <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -8" result="goo"/>
+        <feBlend in="SourceGraphic" in2="goo"/>
+      </filter>
+    </svg>
+
+    <!-- Bubble layer: decorative only -->
+    <div class="hero-bubbles" aria-hidden="true">
+      <span class="hero-bubble b1"></span>
+      <span class="hero-bubble b2"></span>
+      <span class="hero-bubble b3"></span>
+      <span class="hero-bubble b4"></span>
+      <span class="hero-bubble b5"></span>
+    </div>
     <div class="hero-float float-supergrafis reveal">
       <img src="assets/supergraphic/Supergrafis-01.png" alt="Decorative brand graphic — Super Duper" class="hero-visual">
     </div>
