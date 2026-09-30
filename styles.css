@@ -845,22 +845,18 @@ section { padding-block: clamp(4rem, 10vw, 8rem); }
   border-radius: var(--radius-card);
   overflow: hidden;
   box-shadow: var(--sh-sm);
+  aspect-ratio: 3 / 4;
 }
+.camp-lead { aspect-ratio: 4 / 3; }
+/* Unify fill: every image covers its tile edge-to-edge (no letterbox) so the
+   mosaic reads balanced — leading landscape tile fits its 4:3 box, portrait
+   cards fit 3:4, all consistent. */
 .camp-lead img, .camp-card img {
   width: 100%;
-  height: auto;
+  height: 100%;
   object-fit: cover;
   display: block;
 }
-/* NH-2: landscape camp mockups (gang-alumni, asrama) render whole via contain
-   on a brand-blue letterbox so group/photo subjects are never cropped. */
-.camp-lead img,
-.camp-card:nth-of-type(1) img {
-  height: 100%;
-  object-fit: contain;
-  background: #034E9E;
-}
-.camp-card { aspect-ratio: 3 / 4; }
 
 @media (min-width: 720px) {
   .camp-grid {
