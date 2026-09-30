@@ -1,0 +1,8 @@
+# Internal process docs & working files — not part of the deployable site
+task_plan.md
+progress.md
+findings/
+DESIGN_SPEC.md
+DESIGN_REVIEW.md
+COPY_REWRITE.md
+_sheet_*.png
