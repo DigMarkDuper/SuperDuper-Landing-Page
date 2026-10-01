@@ -68,28 +68,70 @@
   font-display: swap;
 }
 
-/* ---------- Design tokens ---------- */
+/* ---------- Design tokens ----------
+   Editorial restyle per EDITORIAL_RESTYLE_SPEC.md section 2 (type scale),
+   section 3 (colour roles), section 4 (edge system). */
 :root {
-  --blue: #034E9E;
-  --blue-deep: #012B5C;
-  --blue-soft: #E7F0FA;
-  --yellow: #F9D024;
-  --yellow-soft: #FFF3C4;
+  /* --- Colour roles (spec section 3). No hex outside this block. --- */
+  --blue: #034E9E;        /* primary brand field */
+  --blue-900: #061A3C;    /* deepest block: final CTA, FAQ */
+  --blue-800: #012B5C;    /* nav, hover fills, deep CTA label */
+  --blue-700: #0A2A5E;    /* body ink on white (13.95:1), focus ring on white */
+  --blue-600: #0E3E86;    /* links + eyebrows on white (10.23:1) */
+  --yellow: #F9D024;      /* energy accent, one per viewport */
   --yellow-hover: #FFDC3A;
   --white: #FFFFFF;
-  --gray: #D1D5DB;
-  --ink: #0A1F38;
-  --ink-muted: #4B5A6E;
+  --white-72: #B8C6D8;    /* muted text on blue (4.72:1) */
+  --gray: #D1D5DB;        /* hairlines and decor only — never text */
+  --ink: #0A2A5E;         /* body text on white */
+  --ink-muted: #4B5A6E;   /* secondary body on white (7.03:1); never on blue */
 
-  --sh-sm: 0 2px 8px rgba(1, 43, 92, .08);
-  --sh-md: 0 10px 30px rgba(1, 43, 92, .12);
-  --sh-lg: 0 24px 60px rgba(1, 43, 92, .18);
+  /* --- Type scale (spec section 2). All clamps floor at 320px. --- */
+  /* Display clamp max is 8rem, not the spec's 10.5rem: at 10.5rem the
+     line "Live the Experience." needs 1577px and cannot fit a 1440px viewport
+     unbroken, which breaks the two-tier two-line stack. 8rem keeps it whole
+     in a single line (1219px) on any viewport >= 1320px. FIX 1a also drops the
+     fluid slope 11.5vw -> 9vw so intermediate widths land on one line too. */
+  /* Hero portrait spec 3.1: the display size in use is hoisted out of the clamp
+     so the portrait geometry in calc() can read it. Slope 9vw -> 8.4vw and the
+     effective ceiling 8rem -> 7.6rem buys a constant ~5% measure headroom at
+     every width; the token's own 3.25rem/8rem bounds are untouched. */
+  --hero-fs: min(8.4vw, 7.6rem);
+  --type-display: clamp(3.25rem, var(--hero-fs), 8rem);
+  --type-split:   clamp(2.5rem, 8vw, 6.5rem);
+  --type-h2:      clamp(1.9rem, 4.4vw, 3.6rem);
+  --type-h3:      clamp(1.15rem, 1.6vw, 1.4rem);
+  --type-runner:  clamp(1.3rem, 2.9vw, 2.6rem);
+  --type-lede:    clamp(1.05rem, 1.5vw, 1.3rem);
+  --type-body:    1rem;
+  --type-small:   .875rem;
+  --type-eyebrow: .75rem;
+  --type-cta:     .875rem;
+  --type-num:     clamp(1.4rem, 2.2vw, 2rem);
 
-  --radius-card: 16px;
-  --radius-feature: 24px;
+  /* --- Edge system: 24px gutter, full-bleed sections --- */
+  --gutter: 24px;
+  --nav-h: 76px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 40px;
+  --space-2xl: 64px;
+  --space-3xl: 96px;
 
+  /* --- Sharp, not soft: every radius is 0 or 2px --- */
+  --radius: 0;
+  --radius-sm: 2px;
+
+  /* --- Motion (spec section 7) --- */
   --ease-out: cubic-bezier(.22, 1, .36, 1);
-  --transition: .55s var(--ease-out);
+  --dur-fast: 180ms;
+  --dur-reveal: 520ms;
+  --dur-panel: 240ms;
+}
+
+@media (max-width: 30rem) {
+  :root { --gutter: 16px; }
 }
 
 /* ---------- Base ---------- */
@@ -97,14 +139,17 @@
 
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 88px;
+  scroll-padding-top: var(--nav-h);
+  /* Never `hidden`: it breaks position:sticky and can trap keyboard focus. */
+  overflow-x: clip;
 }
 
 body {
   margin: 0;
+  overflow-x: clip;
   font-family: 'Inter', system-ui, sans-serif;
-  font-size: 1rem;
-  line-height: 1.65;
+  font-size: var(--type-body);
+  line-height: 1.5;            /* brand cap; never above 1.5 */
   color: var(--ink);
   background: var(--white);
   -webkit-font-smoothing: antialiased;
@@ -113,9 +158,10 @@ body {
 h1, h2, h3, h4,
 .eyebrow, .btn, .step-num {
   font-family: 'Poppins', system-ui, sans-serif;
+  font-style: normal;          /* no italic headings, ever */
 }
 
-::selection { background: var(--yellow-soft); }
+::selection { background: var(--yellow); color: var(--blue-800); }
 
 /* ---------- Accessibility: skip link + focus ---------- */
 .skip-link {
@@ -124,222 +170,251 @@ h1, h2, h3, h4,
   top: 0;
   z-index: 100;
   padding: .75rem 1.25rem;
-  background: var(--blue);
-  color: var(--white);
-  border-radius: 8px;
+  background: var(--yellow);
+  color: var(--blue-800);      /* 9.38:1 */
+  border-radius: var(--radius);
   font: 600 .95rem 'Poppins', sans-serif;
+  text-decoration: none;
 }
 .skip-link:focus {
   left: 16px;
   top: 8px;
 }
 
+/* Two-context ring (spec 9.2): blue on white (13.95:1), white on blue (8.12:1).
+   Yellow on white is 1.49:1 and is banned as a ring. Never animated. */
 :focus-visible {
-  outline: 3px solid var(--yellow);
-  outline-offset: 2px;
-  border-radius: 4px;
+  outline: 2px solid var(--blue-700);
+  outline-offset: 3px;
 }
-a:focus-visible {
-  outline: 3px solid var(--yellow);
-  outline-offset: 2px;
+.on-dark :focus-visible,
+.hero :focus-visible,
+.faq :focus-visible,
+.final-cta :focus-visible,
+.site-footer :focus-visible,
+.mobile-menu :focus-visible,
+.site-header :focus-visible {
+  outline-color: var(--white);
 }
 
 /* ---------- Layout ---------- */
 .container {
-  max-width: clamp(0px, 90vw, 1200px);
+  max-width: 1240px;
   margin-inline: auto;
-  padding-inline: clamp(1.25rem, 5vw, 2.5rem);
+  padding-inline: var(--gutter);
+  min-width: 0;
 }
 
-section { padding-block: clamp(4rem, 10vw, 8rem); }
+section { padding-block: var(--space-3xl); }
 
-/* ---------- Motion: reveal ----------
-   Hidden state is scoped to .js so content stays visible if script.js fails to load. */
+/* ---------- Motion: reveal (spec section 7) ----------
+   Hidden state is scoped to .js so content stays visible if script.js fails. */
 .reveal {
-  transition: opacity var(--transition), transform var(--transition), box-shadow var(--transition);
+  transition: opacity var(--dur-reveal) var(--ease-out),
+              transform var(--dur-reveal) var(--ease-out);
   transition-delay: var(--reveal-delay, 0s);
 }
-.js .reveal {
-  opacity: 0;
-  transform: translateY(24px);
-}
-.js .reveal.is-visible {
-  opacity: 1;
-  transform: translateY(0);
-}
+.js .reveal { opacity: 0; transform: translateY(12px); }
+.js .reveal.is-visible { opacity: 1; transform: none; }
 
 @media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-  .js .reveal {
-    opacity: 1;
-    transform: none;
-    transition: none;
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
   }
-  .float-supergrafis { animation: none; }
+  .js .reveal { opacity: 1 !important; transform: none !important; }
 }
 
-/* ---------- Eyebrow / titles ---------- */
+/* ---------- Eyebrow (spec 6.3) ---------- */
 .eyebrow {
+  font-family: 'Inter', sans-serif;
   font-weight: 600;
-  text-transform: uppercase;
+  font-size: var(--type-eyebrow);
   letter-spacing: .18em;
-  font-size: clamp(.78rem, 1.1vw, 1rem);
-  color: var(--ink-muted);
-  margin: 0 0 1.5rem;
+  text-transform: uppercase;
+  color: var(--blue-600);      /* 10.23:1 on white */
+  margin: 0 0 var(--space-md);
 }
 
 .section-title {
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: -.01em;
-  font-size: clamp(1.9rem, 4.2vw, 3.5rem);
-  line-height: 1.02;
-  margin: 0 0 1rem;
+  font-size: var(--type-h2);
+  line-height: .96;
+  letter-spacing: -.025em;
+  text-transform: none;        /* sentence case; display type, not shouting */
+  color: var(--ink);
+  margin: 0 0 var(--space-md);
 }
 
 .lede {
-  font-weight: 500;
-  font-size: clamp(1.05rem, 1.6vw, 1.35rem);
+  font-weight: 400;
+  font-size: var(--type-lede);
   line-height: 1.5;
-  color: var(--ink-muted);
-  margin: 0 0 2rem;
+  color: var(--ink-muted);     /* 7.03:1 on white only — never on blue */
+  margin: 0 0 var(--space-xl);
   max-width: 52ch;
 }
 
+/* Sentence-runner: one mixed-case sentence with 2-3 emphasised words.
+   Weight carries the emphasis, never italic. */
+.runner {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 400;
+  font-size: var(--type-runner);
+  line-height: 1.22;
+  letter-spacing: -.02em;
+  color: var(--ink);
+  margin: 0 0 var(--space-2xl);
+  max-width: 22ch;
+}
+.runner strong { font-weight: 800; }
+
 .hl-yellow { color: var(--yellow); }
 
-/* ---------- Buttons ---------- */
+/* ---------- Buttons (spec 6.1) — sharp, flat, no gradient, no shadow ---------- */
 .btn {
   display: inline-flex;
   align-items: center;
-  gap: .5rem;
-  padding: 1rem 1.9rem;
-  border-radius: 999px;
+  justify-content: center;
+  padding: 1rem 1.75rem;
+  border-radius: var(--radius);
   font-family: 'Poppins', sans-serif;
-  font-weight: 700;
+  font-weight: 600;
+  font-size: var(--type-cta);
+  letter-spacing: .12em;
   text-transform: uppercase;
-  letter-spacing: .08em;
-  font-size: .95rem;
-  text-decoration: none;
   line-height: 1;
-  border: 2px solid transparent;
+  text-decoration: none;
+  white-space: nowrap;         /* one line at 320px */
   cursor: pointer;
-  transition: transform var(--transition), box-shadow var(--transition), background-color .2s ease, color .2s ease, border-color .2s ease;
+  border: 1px solid transparent;
+  min-height: 48px;
+  transition: background-color var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out),
+              color var(--dur-fast) var(--ease-out);
 }
 .btn:active { transform: translateY(1px); }
+.btn[aria-disabled="true"],
+.btn:disabled { opacity: .4; pointer-events: none; }
 
 .btn-primary {
+  color: var(--blue-800);      /* #012B5C on #F9D024 = 9.38:1 */
   background: var(--yellow);
-  color: var(--blue-deep);
-  border: 2px solid transparent;
-  box-shadow: var(--sh-sm);
+  border-color: var(--yellow);
 }
 .btn-primary:hover {
   background: var(--yellow-hover);
-  transform: translateY(-3px);
-  box-shadow: var(--sh-md);
+  border-color: var(--yellow-hover);
 }
 
 .btn-ghost {
   background: transparent;
-  color: var(--blue);
-  border: 2px solid var(--blue);
+  color: var(--blue-700);
+  border-color: var(--blue-700);
 }
-.btn-ghost:hover {
-  background: var(--blue-soft);
-  transform: translateY(-3px);
-  box-shadow: var(--sh-md);
-}
+.btn-ghost:hover { background: rgba(10, 42, 94, .06); }
 
 .btn-ghost-invert {
   background: transparent;
   color: var(--white);
-  border: 2px solid var(--white);
+  border-color: var(--white);
 }
-.btn-ghost-invert:hover {
-  background: rgba(255, 255, 255, .12);
-  transform: translateY(-3px);
+.btn-ghost-invert:hover { background: rgba(255, 255, 255, .10); }
+
+.btn-lg { padding: 1.1rem 2.25rem; }
+
+/* Tracking is the first thing to give before size, per spec 6.1 */
+@media (max-width: 22.5rem) {
+  .btn { letter-spacing: .08em; padding-inline: 1.25rem; }
 }
 
-.btn-lg { padding: 1.1rem 2.4rem; box-shadow: var(--sh-md); }
-
-/* full-width on <480px mobile */
 @media (max-width: 479px) {
-  .btn { width: 100%; justify-content: center; }
+  .btn { width: 100%; }
 }
 
 /* ---------- NAV ---------- */
+/* N9 — edge-aligned minimal: wordmark hard-left, tracked links, one sharp
+   CTA hard-right, all on the 24px gutter. No centred container, no pill,
+   no blur, no shadow. Frosts to solid --blue-800 on scroll. */
 .site-header {
   position: sticky;
   top: 0;
   z-index: 50;
-  background: rgba(255, 255, 255, .85);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  background: var(--blue);
   border-bottom: 1px solid var(--gray);
+  transition: background-color var(--dur-fast) var(--ease-out);
 }
-.site-header.is-scrolled { box-shadow: var(--sh-md); }
+.site-header.is-scrolled { background: var(--blue-800); }
 
 .nav-wrap {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1.5rem;
-  max-width: clamp(0px, 90vw, 1200px);
-  margin-inline: auto;
-  padding-inline: clamp(1.25rem, 5vw, 2.5rem);
-  padding-block: .9rem;
+  gap: var(--space-lg);
+  min-height: var(--nav-h);
+  padding-inline: var(--gutter);
+  max-width: none;
 }
 
-.nav-brand { display: inline-flex; align-items: center; }
-.brand-mark { height: 40px; width: auto; display: block; }
+.nav-brand { display: inline-flex; align-items: center; min-height: 44px; }
+.brand-mark { height: 36px; width: auto; display: block; }
 
 .nav-links {
   display: flex;
-  gap: 1.25rem;
-  font-family: 'Poppins', sans-serif;
-  font-weight: 500;
-  font-size: .95rem;
+  gap: var(--space-lg);
+  margin-left: auto;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: var(--type-eyebrow);
+  letter-spacing: .18em;
+  text-transform: uppercase;
 }
 .nav-links a {
   position: relative;
   text-decoration: none;
-  color: var(--ink);
-  padding-block: .25rem;
+  color: var(--white);
+  padding-block: .6rem;
+  white-space: nowrap;
+  transition: color var(--dur-fast) var(--ease-out);
 }
 .nav-links a::after {
   content: "";
   position: absolute;
   left: 0;
   right: 0;
-  bottom: -2px;
+  bottom: 0;
   height: 2px;
   background: var(--yellow);
   width: 0;
-  transition: width .25s ease;
+  transition: width var(--dur-fast) var(--ease-out);
 }
 .nav-links a:hover::after,
 .nav-links a:focus-visible::after { width: 100%; }
-.nav-links a:hover { color: var(--blue); }
+.nav-links a:hover { color: var(--yellow); }
 
-.nav-ctas { display: flex; gap: .75rem; align-items: center; }
-.nav-ctas .btn { padding: .7rem 1.3rem; font-size: .85rem; }
+.nav-cta { padding: .7rem 1.25rem; min-height: 48px; }
 
 /* hamburger + mobile menu (hidden by default) */
 .hamburger {
   display: none;
   background: transparent;
-  border: 2px solid var(--blue);
-  border-radius: 8px;
-  padding: .4rem .55rem;
+  border: 1px solid var(--white);
+  border-radius: var(--radius);
+  padding: .55rem .6rem;
   cursor: pointer;
+  min-width: 44px;
+  min-height: 44px;
+  flex-direction: column;
+  justify-content: center;
 }
 .hamburger span {
   display: block;
   width: 22px;
   height: 2px;
-  background: var(--blue);
-  margin: 4px 0;
+  background: var(--white);
+  margin: 3px 0;
   border-radius: 1px;
 }
 .mobile-menu {
@@ -347,13 +422,15 @@ section { padding-block: clamp(4rem, 10vw, 8rem); }
   position: fixed;
   inset: 0;
   z-index: 60;
-  background: var(--blue);
+  background: var(--blue-900);
   color: var(--white);
-  padding: clamp(1.25rem, 5vw, 2.5rem);
+  padding: var(--gutter);
   flex-direction: column;
-  gap: 2rem;
+  gap: var(--space-xl);
+  overflow-y: auto;
 }
 .mobile-menu.open { display: flex; }
+.mobile-links { display: flex; flex-direction: column; }
 .mobile-menu a {
   color: var(--white);
   text-decoration: none;
@@ -361,1083 +438,1050 @@ section { padding-block: clamp(4rem, 10vw, 8rem); }
   font-weight: 600;
   font-size: 1.35rem;
   letter-spacing: .02em;
+  padding-block: .85rem;
+  border-bottom: 1px solid rgba(255, 255, 255, .18);
+  min-height: 44px;
+  display: flex;
+  align-items: center;
 }
-.mobile-ctas { display: flex; flex-direction: column; gap: 1rem; margin-top: 2rem; }
+.mobile-ctas { display: flex; flex-direction: column; gap: 1rem; margin-top: auto; }
 
 @media (max-width: 959px) {
-  .nav-links, .nav-ctas { display: none; }
-  .hamburger { display: inline-flex; }
+  .nav-links, .nav-cta { display: none; }
+  .hamburger { display: flex; }
 }
 
 /* ============================================================
-   1. HERO
+   1. HERO — edge-pinned composition (spec section 5)
    ============================================================ */
 .hero {
   position: relative;
-  background: linear-gradient(120deg, var(--blue), var(--blue-deep) 130%);
+  background-color: var(--blue);                    /* fallback + LCP paint */
+  background-image: url('assets/supergraphic/Supergrafis-03-1440.webp');
+  background-size: cover;
+  background-position: center;
   color: var(--white);
   overflow: hidden;
   display: grid;
-  grid-template-columns: 1fr;
-}
-.hero .eyebrow { color: rgba(255, 255, 255, .85); } /* MF-1: legible on hero blue */
-.hero-glow {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at 78% 38%, rgba(1, 43, 92, .55), rgba(3, 78, 158, 0) 70%);
-  pointer-events: none;
-}
-.hero-float {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: 46%;
-  height: 100%;
-  z-index: 2;
-  display: flex;
-  align-items: flex-end;
-  justify-content: flex-end;
-  overflow: hidden;
-  pointer-events: none;
-}
-.hero-visual {
-  max-width: 100%;
-  height: 100%;
-  object-fit: contain;
-  mix-blend-mode: normal;
-  animation: floaty 6s ease-in-out infinite;
-}
-@keyframes floaty {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-}
-.hero-accent {
-  position: absolute;
-  top: 10%;
-  left: 8%;
-  width: 90px;
-  opacity: .5;
-  object-fit: contain;
-  pointer-events: none;
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: var(--space-xl);                          /* FIX 1c: was --space-2xl */
+  align-content: space-between;
+  /* The nav is sticky AND in flow: it already consumes --nav-h above the
+     hero. Claiming a full 100svh on top of that pushes the hero's foot 77px
+     below the fold, so the badge strip can never be seen unscrolled. The
+     hero fills exactly the viewport that remains below the nav. */
+  min-height: calc(100svh - var(--nav-h) - 1px);      /* svh, not vh; -1px = header border */
+  /* FIX 1b: nav is sticky and in flow, so padding must not re-add --nav-h */
+  padding-block: var(--space-2xl) var(--gutter);
+  /* Breathing room on the left. Every other section is a centered .container
+     (max 1240px), but the hero was edge-pinned at a flat 24px -- so on a 2190px
+     screen the type clung to the viewport edge at x=24 while every section
+     below started at x=499. That 475px jump is what read as "no breathing
+     space". Mirror the container's own left edge exactly, so the hero's type
+     column and the badge label land on the same vertical line as every other
+     section. Below the container width this collapses to the plain gutter, so
+     mobile and tablet are unchanged. */
+  --hero-inset: max(0px, (100% - 1240px) / 2);
+  padding-inline: calc(var(--gutter) + var(--hero-inset)) var(--gutter);
+
+  /* --- Hero portrait geometry (spec 2.1). The portrait is absolutely
+     positioned, so it takes zero width from the type track and zero height
+     from the flow: the H1 keeps its full 1400px track and the fold arithmetic
+     is unchanged. --hero-type-bottom is the H1 line-box bottom plus 16px
+     clearance (64px pad + 34px eyebrow + 1.72 x --hero-fs + 16px). */
+  --hero-h: calc(100svh - var(--nav-h) - 1px);
+  --hero-type-bottom: calc(64px + 34px + 1.72 * var(--hero-fs) + 16px);
+
+  /* Elsya must never be cropped BY THE BOX. The box was 1.115 wide-against-tall
+     while the cutout is 0.824, so object-fit:cover silently discarded 26% of
+     her body at every width — that missing torso is what read as "sinking".
+     Lock the box to the photo's own aspect and switch to object-fit:contain.
+
+     The band deliberately runs 96px PAST the hero foot. That is not the old
+     bug: the hero's overflow:hidden clips her below the waist, which is a
+     normal editorial crop, whereas the box crop was amputating her torso.
+     Capping her inside the band instead left her 0.217 of the hero width at
+     1366px — too small, cornered, and lost in dead blue. */
+  --portrait-band: calc(var(--hero-h) - var(--hero-type-bottom) + 96px);
+  --portrait-aspect: 0.8246;                        /* 1086 / 1317 exactly */
+  --portrait-w: min(46vw, 660px, calc(var(--portrait-band) * var(--portrait-aspect)));
+  --portrait-h: calc(var(--portrait-w) / var(--portrait-aspect));
 }
 
-.hero-content {
+/* z2 portrait — Elsya, absolute, bottom-right, bleeding off the bottom edge
+   and cropped by the hero's own overflow: hidden. The box aspect 1.115 makes
+   object-fit: cover read only the top 74% of the cutout, which excludes the
+   name badge and the chest logo. */
+.hero-portrait {
+  position: absolute;
+  top: var(--hero-type-bottom);
+  right: calc(-1 * var(--space-md));               /* bleeds off the right too */
+  width: var(--portrait-w);
+  height: var(--portrait-h);
+  margin: 0;
+  z-index: 2;
+  pointer-events: none;                             /* never a click/scroll trap */
+}
+.hero-portrait picture { display: block; width: 100%; height: 100%; }
+.hero-portrait__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;                              /* NEVER crop her body */
+  object-position: 50% 50%;
+}
+.hero-portrait__label {
+  position: absolute;
+  /* The portrait box bleeds ~148px below the hero and the hero clips at
+     overflow:hidden, so anchoring the caption to the box's own bottom buried
+     it 132px past the hero edge where it never rendered at all. Anchor it to
+     the box's TOP instead — beside her head, clear of the H1, the lede and
+     the NEXT BATCH strip at every viewport. */
+  top: 0;
+  right: var(--space-md);
+  margin: 0;
+  font: 400 var(--type-small)/1.45 'Inter', sans-serif;
+  letter-spacing: .04em;
+  color: var(--white);                             /* 8.12:1 on the field */
+}
+
+/* spec 2.3: >=1600px the hero is tall enough to grow a true 14% bleed without
+   crowding the type, so the vw cap and the 620px ceiling both come off.
+   The width still resolves against --portrait-band first, so the figure can
+   never exceed the space between the type and the hero foot. */
+@media (min-width: 100rem) {
+  .hero { --portrait-w: min(calc(var(--portrait-band) * var(--portrait-aspect)), 700px); }
+  .hero .lede { max-width: min(56ch, 760px); }     /* pays for the extra line */
+}
+
+/* ---- Noise Blob (melon-ui port) ----------------------------------------
+   Vanilla port of melon-ui registry/components/noise-blob.tsx: four circles
+   drifting on a loop, merged by an SVG gooey filter (feGaussianBlur +
+   feColorMatrix alpha threshold + feBlend).
+
+   Brand mapping and softening — this sits UNDER white text at 8.12:1, so:
+   - palette is brand tints only: light blue #1A5BC2, yellow #F9D024 at low
+     alpha, pale blue #5B8FD6, deep tint #0E3E86. No off-brand hues.
+   - the whole layer is capped at low opacity; it reads as depth, not pattern.
+   - the cluster is pushed right and down, clear of the H1 which fills its
+     1400px track, so blobs never drift under the headline.
+   - z-index 0: above the Supergrafis-03 field image, below the ghost glyph (1),
+     Elsya (2), copy (3) and the badge strip (4).
+   --blob: the upstream blobSize prop, scaled for a 1400px hero and made fluid.
+   --blob-dur: upstream (14 / speed) * sizeMult, at speed 0.62 = calmer.
+   --------------------------------------------------------------------- */
+.hero-blobs {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  --blob: clamp(150px, 18vw, 330px);
+  opacity: .46;                        /* bolder — .30 still read as too thin */
+}
+.hero-blobs__goo {
+  position: absolute;
+  inset: 0;
+  /* The upstream SVG gooey filter was measured at 3 FPS on this hero versus
+     120 FPS without it — feGaussianBlur over a 160%x160% filter region
+     re-rasterises the whole hero every frame. Pausing the animations restored
+     122 FPS WITH the filter still applied, proving the cost is the per-frame
+     filter pass, not the transform. At 19% layer opacity the metaball
+     merging is invisible anyway, so softness now comes from a radial-gradient
+     falloff: visually the same wash, transform-only animation, compositor
+     cheap. Do NOT reintroduce an SVG filter here without re-measuring FPS. */
+}
+.hero-blobs__svg { display: none; }
+.hero-blob {
+  position: absolute;
+  border-radius: 50%;
+  will-change: transform;
+}
+/* `left` positions the blob's EDGE, not its centre, and each blob is ~8-9% of
+   hero width, so these values put the centres at roughly 12/28/42/56/69/81/94%
+   — an even left-to-right spread reaching every column, not one cluster. */
+.hero-blob--1 { background: radial-gradient(circle, rgba(26,91,194,.80) 0%, rgba(26,91,194,.50) 40%, rgba(26,91,194,0) 78%); width: calc(var(--blob) * 1.1); height: calc(var(--blob) * 1.1);
+  left: 3%; top: 30%; animation: sd-blob-a 31s ease-in-out infinite; }
+.hero-blob--2 { background: radial-gradient(circle, rgba(249,208,36,.35) 0%, rgba(249,208,36,.22) 40%, rgba(249,208,36,0) 78%); width: calc(var(--blob) * .95); height: calc(var(--blob) * .95);
+  left: 20%; top: 72%; animation: sd-blob-b 27s ease-in-out infinite 1.5s; }
+.hero-blob--3 { background: radial-gradient(circle, rgba(91,143,214,.45) 0%, rgba(91,143,214,.28) 40%, rgba(91,143,214,0) 78%); width: calc(var(--blob) * .85); height: calc(var(--blob) * .85);
+  left: 34%; top: 24%; animation: sd-blob-c 24s ease-in-out infinite 3s; }
+.hero-blob--4 { background: radial-gradient(circle, rgba(14,62,134,.90) 0%, rgba(14,62,134,.56) 40%, rgba(14,62,134,0) 78%); width: calc(var(--blob) * 1.05); height: calc(var(--blob) * 1.05);
+  left: 47%; top: 62%; animation: sd-blob-d 30s ease-in-out infinite 4.5s; }
+.hero-blob--5 { background: radial-gradient(circle, rgba(26,91,194,.60) 0%, rgba(26,91,194,.38) 40%, rgba(26,91,194,0) 78%); width: calc(var(--blob) * 1.2); height: calc(var(--blob) * 1.2);
+  left: 60%; top: 82%; animation: sd-blob-e 34s ease-in-out infinite 2s; }
+.hero-blob--6 { background: radial-gradient(circle, rgba(91,143,214,.38) 0%, rgba(91,143,214,.24) 40%, rgba(91,143,214,0) 78%); width: calc(var(--blob) * .9); height: calc(var(--blob) * .9);
+  left: 73%; top: 14%; animation: sd-blob-f 28s ease-in-out infinite 5.5s; }
+.hero-blob--7 { background: radial-gradient(circle, rgba(249,208,36,.25) 0%, rgba(249,208,36,.16) 40%, rgba(249,208,36,0) 78%); width: calc(var(--blob) * 1); height: calc(var(--blob) * 1);
+  left: 86%; top: 66%; animation: sd-blob-g 33s ease-in-out infinite 7s; }
+
+/* Travel paths transcribed from the upstream x/y keyframe arrays, with wider
+   amplitudes so the wash moves across the field instead of pulsing in place. */
+@keyframes sd-blob-a { 0%,100% { transform: translate(0,0); }      33% { transform: translate(140px,-90px); } 66% { transform: translate(-110px,100px); } }
+@keyframes sd-blob-b { 0%,100% { transform: translate(0,0); }      33% { transform: translate(-120px,105px); } 66% { transform: translate(135px,-70px); } }
+@keyframes sd-blob-c { 0%,100% { transform: translate(0,0); }      33% { transform: translate(90px,125px); }  66% { transform: translate(-75px,-105px); } }
+@keyframes sd-blob-d { 0%,100% { transform: translate(0,0); }      33% { transform: translate(-150px,-70px); } 66% { transform: translate(85px,90px); } }
+@keyframes sd-blob-e { 0%,100% { transform: translate(0,0); }      33% { transform: translate(120px,60px); }  66% { transform: translate(-95px,-115px); } }
+@keyframes sd-blob-f { 0%,100% { transform: translate(0,0); }      33% { transform: translate(-80px,-125px); } 66% { transform: translate(105px,80px); } }
+@keyframes sd-blob-g { 0%,100% { transform: translate(0,0); }      33% { transform: translate(95px,-105px); }  66% { transform: translate(-130px,70px); } }
+
+/* Reduced motion: hold a still, soft frame. Never a blank field. */
+@media (prefers-reduced-motion: reduce) {
+  .hero-blob { animation: none; }
+}
+
+/* Mobile: the portrait is hidden below 768px, so the cluster recentres and
+   stays clear of the CTA row rather than hiding entirely. */
+@media (max-width: 47.99rem) {
+  .hero-blobs { --blob: clamp(130px, 44vw, 210px); opacity: .36; }
+  .hero-blob--1 { left: 8%;  top: 16%; }
+  .hero-blob--2 { left: 38%; top: 44%; }
+  .hero-blob--3 { left: 66%; top: 22%; }
+  .hero-blob--4 { left: 78%; top: 58%; }
+  .hero-blob--5 { left: 20%; top: 68%; }
+  .hero-blob--6 { left: 50%; top: 12%; }
+  .hero-blob--7 { left: 60%; top: 78%; }
+}
+
+/* z1 ghost glyph — hairline outline only, never a filled mass (FIX 2) */
+.hero-ghost-glyph {
+  position: absolute;
+  top: -.10em;                                       /* FIX 2 */
+  left: -.04em;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 800;
+  font-size: clamp(14rem, 30vw, 26rem);             /* spec 5: 605px -> 432px at 1440 */
+  line-height: .8;
+  color: transparent;                                /* the stroke carries it */
+  -webkit-text-stroke: 2px rgba(255, 255, 255, .09);   /* ~1.5:1 — present, self-subordinate */
+  opacity: 1;
+  pointer-events: none;
+  user-select: none;
+  z-index: 1;
+  /* The only mask in the build: the glyph terminates as tone, not as a
+     letterform, so it can never read as a competing second subject. */
+  -webkit-mask-image: linear-gradient(90deg, #000 52%, transparent 94%);
+          mask-image: linear-gradient(90deg, #000 52%, transparent 94%);
+}
+
+.hero .eyebrow { color: var(--white-72); }
+
+.hero-copy {
   position: relative;
   z-index: 3;
-  padding-block: clamp(4rem, 10vw, 7rem);
-  max-width: clamp(0px, 90vw, 1200px);
-  margin-inline: auto;
-  padding-inline: clamp(1.25rem, 5vw, 2.5rem);
-}
-.hero-title {
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: -.02em;
-  line-height: .95;
-  font-size: clamp(2.9rem, 8.5vw, 7rem);
-  margin: 0 0 1.5rem;
-}
-.hero-title .line-1,
-.hero-title .line-2 { display: block; }
-.hero-ctas { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 2rem; }
-.micro-trust {
-  font-family: 'Poppins', sans-serif;
-  font-weight: 600;
-  font-size: .9rem;
-  letter-spacing: .04em;
-  color: rgba(255, 255, 255, .85);
-  margin-top: 2rem;
+  box-sizing: border-box;
+  /* Measure control at display size. Must be viewport-relative, not ch-based:
+     12ch at a 166px display size collapses to a one-character column.
+     The inset is subtracted so the type track never pushes past the viewport
+     edge once --hero-inset is added to the hero's left padding. */
+  max-width: min(calc(100vw - var(--gutter) * 2 - var(--hero-inset)), 1400px);
 }
 
-@media (max-width: 959px) {
+/* H1 — two-weight stack. Copy unchanged; only weight structure is new. */
+.hero-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: var(--type-display);
+  font-weight: 500;             /* line 1, the light tier */
+  line-height: .86;
+  letter-spacing: -.035em;
+  text-transform: none;
+  margin: 0 0 var(--space-lg);
+  overflow-wrap: anywhere;
+}
+.hero-title__l1,
+.hero-title__l2 { display: block; }
+.hero-title__l2 { font-weight: 800; }   /* line 2, the heavy tier */
+.hero-title strong { font-weight: 800; color: var(--yellow); }  /* 5.44:1 */
+
+/* Lede promoted to the sentence-runner. Contrast fix: white, not #4B5A6E
+   (1.15:1 -> 8.12:1). Copy unchanged. */
+.hero .lede {
+  color: var(--white);
+  font-family: 'Poppins', sans-serif;
+  font-size: clamp(1.25rem, 2.4vw, 2.25rem);         /* FIX 1a */
+  font-weight: 400;
+  line-height: 1.22;
+  letter-spacing: -.02em;
+  /* 34ch was the measure for the old 2.6rem runner. At the capped 2.25rem it
+     forces a 4-line lede that alone adds 120px to the hero. Re-measured so the
+     copy sets 3 lines in the same content track. */
+  max-width: 56ch;
+  margin-bottom: var(--space-lg);                    /* was --space-xl (40px) */
+}
+.hero .lede strong { font-weight: 800; color: var(--white); }
+
+.hero-ctas { display: flex; gap: 1rem; flex-wrap: wrap; }
+.micro-trust {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: var(--type-small);
+  letter-spacing: .04em;
+  color: var(--white-72);
+  margin: var(--space-lg) 0 0;
+}
+
+/* ---- NEXT BATCH badge (spec 5.7) ---- */
+/* Badge sits as a grid row pinned to the bottom-left of the hero. Grid
+   placement rather than absolute positioning is deliberate: it reserves its own
+   space, so it can never overlap the CTA row or the micro-trust line at any
+   viewport height, while still reading as edge-pinned bottom-left. */
+.batch-badge {
+  position: relative;                               /* NEW */
+  align-self: end;
+  justify-self: stretch;                             /* FIX 1c: full-width strip */
+  width: auto;
+  /* Pull back out of the hero's --hero-inset: the strip is edge-pinned to the
+     hero foot by design, so it must keep the same left edge as the field while
+     the type column sits inset. Without this the badge label drifts right of
+     the ghost glyph and off the section's optical edge. */
+  margin-left: calc(-1 * var(--hero-inset));
+  padding: .85rem 0 0;
+  border: 0;
+  border-top: 1px solid rgba(255, 255, 255, .32);
+  border-radius: 0;
+  /* spec 6: field-coloured plate. Invisible against the field; over the
+     portrait it guarantees the strip stays 8.12:1 white / 5.44:1 yellow
+     without trusting where the yellow placket lands at each viewport. */
+  background: var(--blue);
+  margin-inline: calc(-1 * var(--gutter));          /* plate goes full-bleed… */
+  padding-inline: var(--gutter);                    /* …content stays on the gutter */
+  display: grid;
+  align-items: baseline;
+  column-gap: var(--space-2xl);
+  grid-template-columns: max-content repeat(3, minmax(0, 1fr));
+  color: var(--white);
+  z-index: 4;
+
+  /* Client fix: the strip ran full-bleed across Elsya's chest, which read as
+     a waterline (her body continued below it) and pushed the Status column
+     behind her at z-index 2. The strip now stops where the portrait begins,
+     derived from --portrait-w so it stays correct at every viewport width
+     rather than only the one it was measured at. */
+  margin-right: 0;
+  padding-right: calc(var(--portrait-w) + var(--space-md));
+  column-gap: var(--space-xl);
+}
+.batch-badge__label {
+  font-family: 'Inter', sans-serif;
+  font-size: var(--type-eyebrow);
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--yellow);                 /* 5.44:1 */
+  margin: 0;                            /* baseline-aligned in the strip */
+}
+.batch-badge__glyph, .batch-badge__emblem { display: none; }  /* FIX 1c, spec 5.7 */
+.batch-badge__meta { display: contents; margin: 0; font-size: var(--type-small); }
+.batch-badge__row {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: .5rem;
+  padding-block: 0;
+  border-top: 0;
+}
+.batch-badge__row dt { color: rgba(255, 255, 255, .72); }   /* 4.72:1 */
+.batch-badge__row dd { margin: 0; font-weight: 500; overflow-wrap: anywhere; }
+/* Status is never colour-alone: the dot always ships with its text label. */
+.batch-badge__dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background: var(--yellow);
+  margin-right: .45rem;
+  vertical-align: middle;
+}
+.batch-badge__emblem {
+  margin: .8rem 0 0;
+  font-size: .625rem;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, .6);
+}
+
+/* ---- Mobile behaviour (spec 5.9) ---- */
+@media (max-width: 47.99rem) {
+  /* spec 4.3/7: the portrait is not in the mobile build. At 375px it would
+     resolve to 150px — a postage stamp behind the CTA row — and there is no
+     negative space to place it. Mobile therefore stays byte-identical. */
+  .hero-portrait { display: none; }
+  .batch-badge {
+    width: auto;
+    margin-top: var(--space-xl);
+    /* portrait is display:none below this tier, so the strip goes full-bleed
+       again — the desktop clearance would otherwise reserve dead space. */
+    margin-right: calc(-1 * var(--gutter));
+    padding-right: var(--gutter);
+    grid-template-columns: minmax(0, 1fr);   /* strip stacks only on mobile */
+    row-gap: .7rem;
+    column-gap: 0;
+  }
+  .batch-badge__meta { display: grid; gap: .45rem; }   /* undo display:contents */
+  .batch-badge__row { grid-template-columns: max-content minmax(0, 1fr); }
+  .hero-ghost-glyph { opacity: 1; }
   .hero {
-    grid-template-columns: 1fr;
+    min-height: auto;
+    padding-block: var(--space-2xl);
+    padding-inline: var(--gutter);
   }
-  .hero-float {
-    position: relative;
-    width: 100%;
-    height: auto;
-    padding-block: 2rem 0;
-    order: 2;
-  }
-  .hero-visual {
-    width: 100%;
-    height: auto;
-    object-fit: contain;
-    max-height: 34rem;
-    margin: 0 auto;
-  }
-  .hero-accent { display: none; }
+  .hero-copy, .hero-title, .hero .lede { max-width: none; }
+}
+@media (max-width: 30rem) {
+  .batch-badge { padding-top: .75rem; }
 }
 
 /* ============================================================
-   2. VALUE PROPOSITION
+   2. METHOD — sentence-runner + 4-row hairline index (spec 4 row 2)
    ============================================================ */
 .value-prop { background: var(--white); }
-.value-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 3rem;
-  align-items: stretch;
-}
-.value-copy { min-width: 0; }
 
-.pillars {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1.25rem;
-  margin-top: 2rem;
-}
-.pillar-card {
-  background: var(--white);
-  border: 1px solid var(--blue-soft);
-  border-radius: var(--radius-card);
-  padding: 1.5rem;
-  box-shadow: var(--sh-sm);
-  transition: transform var(--transition), box-shadow var(--transition);
-}
-.pillar-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--sh-md);
-}
-.pillar-title {
-  font-weight: 700;
-  text-transform: uppercase;
-  font-size: clamp(1rem, 1.6vw, 1.2rem);
-  letter-spacing: .01em;
-  margin: 0 0 .75rem;
-  color: var(--blue);
-}
-.pillar-card p {
+.index-list {
+  list-style: none;
   margin: 0;
-  font-size: .95rem;
-  line-height: 1.65;
+  padding: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+/* Index row (spec 6.4). Hairline, never a box. minmax(0,1fr) on the content
+   track: a bare 1fr lets a long word push the row past the viewport. */
+.index-row {
+  display: grid;
+  grid-template-columns: 3.5rem minmax(0, 1fr);
+  gap: var(--space-md);
+  padding-block: var(--space-lg);
+  border-top: 1px solid var(--gray);
+  min-width: 0;
+}
+.index-row:last-child { border-bottom: 1px solid var(--gray); }
+.index-row__num {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  font-size: var(--type-num);
+  font-variant-numeric: tabular-nums;
+  color: var(--blue);                  /* 8.12:1 on white */
+  line-height: 1;
+}
+.index-row__title {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: var(--type-h3);
+  line-height: 1.15;
+  letter-spacing: -.015em;
+  margin: 0 0 .3rem;
+  overflow-wrap: anywhere;
+}
+.index-row__body {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-size: var(--type-body);
+  line-height: 1.5;
   color: var(--ink-muted);
-}
-
-.value-visual {
-  overflow: hidden;
-  border-radius: var(--radius-feature);
-  display: flex;
-  justify-content: center;
-}
-.value-visual img {
-  width: 100%;
-  height: auto;
-  object-fit: contain;
-  max-height: 42rem;
-}
-
-@media (min-width: 960px) {
-  .value-grid { grid-template-columns: 7fr 5fr; }
-}
-@media (max-width: 719px) {
-  .pillars { grid-template-columns: 1fr; }
+  margin: 0;
+  max-width: 46ch;
 }
 
 /* ============================================================
-   3. EXPERIENCE BAND
+   3. EXPERIENCE BAND — full-bleed statement (spec 4 row 3)
    ============================================================ */
 .experience-band {
-  background: var(--blue);
+  background-color: var(--blue);
+  background-image: url('assets/supergraphic/Supergrafis-03-1440.webp');
+  background-size: cover;
+  background-position: center;
   color: var(--white);
   position: relative;
   overflow: hidden;
+  display: flex;
+  align-items: center;
 }
-.exp-pattern {
-  position: absolute;
-  inset: 0;
-  background-image: url('assets/supergraphic/Supergrafis-03.png');
-  background-size: 460px;
-  background-repeat: repeat;
-  opacity: .05;
-  pointer-events: none;
-}
-.exp-content {
-  position: relative;
-  z-index: 1;
-  text-align: center;
-}
-.experience-band .eyebrow { color: rgba(255, 255, 255, .8); }
+.exp-content { min-height: 60vh; }
+.experience-band .eyebrow { color: var(--yellow); }  /* 5.44:1 */
 .exp-title {
+  font-family: 'Poppins', sans-serif;
   font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: -.02em;
-  line-height: .95;
-  font-size: clamp(2.6rem, 7vw, 6rem);
-  text-align: center;
-  margin: 0 0 1.5rem;
+  font-size: var(--type-split);
+  line-height: .88;
+  letter-spacing: -.03em;
+  margin: 0;
+  max-width: 12ch;
 }
 .exp-title span { display: block; }
+
+/* Contrast fix 2 of 3 (spec 9.1): this lede sits on blue, so #4B5A6E
+   (1.15:1) is unusable. White scores 8.12:1. Copy unchanged. */
 .experience-band .lede {
-  text-align: center;
-  max-width: 60ch;
-  margin-inline: auto;
-  color: rgba(255, 255, 255, .9);
+  color: var(--white);
+  max-width: 34ch;
+  margin: var(--space-xl) 0 0;
 }
 
 /* ============================================================
-   4. PROGRAMS
+   4. PROGRAMS — two unequal full-bleed blocks (spec 4 row 4)
    ============================================================ */
-.programs { background: var(--white); }
-.program-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 2rem;
-  margin-top: 2rem;
-}
-.program-card {
+.programs { background: var(--white); padding-block: 0; }
+.programs-intro { padding-block: var(--space-3xl) var(--space-xl); }
+
+.program-block {
   display: flex;
-  flex-direction: column;
-  padding: 2rem;
-  background: var(--white);
-  border: 1px solid var(--blue-soft);
-  border-radius: var(--radius-feature);
-  box-shadow: var(--sh-sm);
-  overflow: hidden;
-  transition: transform var(--transition), box-shadow var(--transition);
-}
-.program-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--sh-md);
-}
-
-/* Head row — the single structural element that replaces the 180px motif band
-   plus the standalone badge. Height-locked via min-height, so the row exists
-   and holds the space whether or not it carries a meta label. */
-.program-head {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
   align-items: center;
-  gap: .75rem;
-  min-height: 3.5rem;              /* 56px — locked row height */
+  color: var(--white);
 }
-
-/* Compact motif chip: 56px blue tile, brand glyph drawn in pure CSS so the two
-   cards get an identical anchor with zero asset dependency. Decorative only. */
-.program-chip {
-  position: relative;
-  width: 3.5rem;
-  height: 3.5rem;
+/* Deliberately unequal: A is the loud one, B is the quieter counterpart. */
+.program-block--a {
   background: var(--blue);
-  border-radius: 14px;
+  min-height: 60vh;
+  border-top: 1px solid var(--gray);
 }
-.program-chip::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  margin: auto;
+.program-block--b {
+  background: var(--blue-900);
+  min-height: 44vh;
+  border-top: 1px solid var(--yellow);   /* the one yellow hairline */
 }
-/* Legibility rule (@Neo spec F2): glyph bbox >= 50% of the 56px tile's smaller
-   dimension (>=28px) and its narrowest solid part >= 3px. Below that it is
-   texture, not a mark. */
-.program-chip[data-glyph="bolt"]::before {
-  width: 1.125rem;        /* 18px */
-  height: 1.75rem;        /* 28px */
-  background: var(--yellow);
-  clip-path: polygon(58% 0%, 18% 56%, 46% 56%, 34% 100%, 84% 42%, 52% 42%);
-}
-/* Quarter-ring (matches supergraphic Supergrafis-09: thick yellow arc, square
-   radial cut ends, bottom-right quadrant).
+.program-block__inner { padding-block: var(--space-3xl); max-width: 56ch; }
 
-   A mask-based version was tried first and rejected. mask-composite:intersect is
-   not honoured reliably here - it silently rendered a solid quarter DISC with no
-   hole at all, at every centre offset tried. Stroking a circle and clipping it to
-   one quadrant makes the hole real geometry instead of a composite result.
-
-   The clip polygon uses the exact centre point (50% 50%) as a vertex, so the
-   stroke is cut radially and the ends stay flat and square rather than tapered. */
-.program-chip[data-glyph="arc"]::before {
-  left: 50%;
-  top: 50%;
-  width: 2.5rem;            /* 40px border-box = outer r20 */
-  height: 2.5rem;
-  border: 9px solid var(--yellow);  /* inner r = (40 - 18)/2 = 11px -> 22px hole */
-  border-radius: 50%;
-  clip-path: polygon(50% 50%, 100% 50%, 100% 100%, 50% 100%);
-  /* Optical centring: the visible arc occupies the lower-right quadrant of this
-     box, so its centre of mass sits at box-centre +10px on both axes. Shifting
-     the box by -30px puts that centre of mass back on the tile centre. */
-  margin: -1.875rem 0 0 -1.875rem;
-}
-
-/* reserved: card-1 label pending @Ejak approval */
-.program-meta {
-  font-family: 'Poppins', sans-serif;
-  font-weight: 600;
-  font-size: .7rem;
-  text-transform: uppercase;
-  letter-spacing: .03em;
-  color: var(--ink-muted);
-}
-/* Card 2's badge, moved inside the head row. Styling unchanged; only the
-   flex-only properties (align-self / margin-top) were dropped. */
-.program-head .badge {
-  justify-self: start;
-  background: var(--yellow-soft);
-  color: var(--blue);
-  border: 1px solid var(--yellow);
-  border-radius: 999px;
-  padding: .2rem .8rem;
-  font-family: 'Poppins', sans-serif;
-  font-weight: 600;
-  font-size: .7rem;
-  text-transform: uppercase;
-  letter-spacing: .03em;
-}
+.program-block--a .eyebrow { color: var(--yellow); }
+.program-block--b .eyebrow { color: var(--yellow); }
 .program-title {
+  font-family: 'Poppins', sans-serif;
   font-weight: 700;
-  text-transform: uppercase;
-  font-size: clamp(1.25rem, 2vw, 1.6rem);
-  line-height: 1.2;
-  letter-spacing: .01em;
-  margin: .75rem 0 .75rem;
-  color: var(--blue);
+  font-size: var(--type-split);
+  line-height: .96;
+  letter-spacing: -.03em;
+  margin: 0 0 var(--space-md);
+  max-width: 14ch;
+  overflow-wrap: anywhere;
 }
 .program-body {
-  margin: 0 0 1.25rem;
+  font-family: 'Inter', sans-serif;
+  font-size: var(--type-lede);
+  line-height: 1.5;
+  color: var(--white);
+  margin: 0 0 var(--space-lg);
   max-width: 46ch;
-  color: var(--ink-muted);
-  line-height: 1.65;
 }
 .program-features {
-  margin: 0 0 1.5rem;
-  padding-left: 0;
   list-style: none;
+  margin: 0 0 var(--space-xl);
+  padding: 0;
+  max-width: 40ch;
 }
 .program-features li {
-  padding-left: 1.6rem;
+  padding: .7rem 0 .7rem 1.6rem;
   position: relative;
-  margin-bottom: .5rem;
+  border-top: 1px solid rgba(255, 255, 255, .22);
+  font-size: var(--type-body);
 }
+.program-features li:last-child { border-bottom: 1px solid rgba(255, 255, 255, .22); }
 .program-features li::before {
   content: "";
   position: absolute;
   left: 0;
-  top: .55em;
+  top: 1.1rem;
   width: .7rem;
   height: 3px;
   background: var(--yellow);
-  border-radius: 1px;
-}
-/* Flex-fallback path only: margin-top:auto pins the CTA inside the legacy
-   column layout. It is removed inside the subgrid block below. */
-.program-card .btn { align-self: flex-start; margin-top: auto; }
-
-@media (min-width: 720px) {
-  .program-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-}
-
-/* Subgrid path (Chrome >=117, Safari >=16). Wrapped in @supports deliberately:
-   browsers without it keep the flex-column rule set above, because dropping
-   just `grid-template-rows: subgrid` from an unconditional display:grid would
-   leave a broken single-column auto-row grid rather than a graceful fallback.
-   The 1fr on the body row absorbs slack, so the CTA stays bottom-pinned by the
-   grid itself and stays aligned even when the two cards' copy lengths differ. */
-@supports (grid-template-rows: subgrid) {
-  @media (min-width: 720px) {
-    .program-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      grid-template-rows: auto auto auto 1fr auto;  /* head·title·body·features·cta */
-      gap: 2rem;
-    }
-    .program-card {
-      display: grid;
-      grid-row: span 5;
-      grid-template-rows: subgrid;
-      row-gap: 1rem;      /* per-row deltas below via padding, see comments */
-    }
-    .program-card > * { margin: 0; }
-    .program-card .btn { margin-top: 0; justify-self: start; }   /* grid owns bottom-pinning; compact pill, not stretched */
-    /* row rhythm: title 1.25 · body 1 · features 1.5 · cta 1.5.
-       The 1fr sits on the features row, so slack collects *below* the last li
-       (reads as breathing room) instead of punching a hole mid-paragraph. */
-    .program-title    { padding-top: .25rem; }
-    .program-features { padding-top: 1.25rem; padding-bottom: .5rem; }
-  }
-}
-
-@media (max-width: 719px) {
-  .program-grid { grid-template-columns: minmax(0, 1fr); row-gap: 1.5rem; }
-  .program-card {
-    display: flex;                 /* single column has no rows to share */
-    flex-direction: column;
-    padding: 1.5rem;
-    gap: 0;
-  }
+  border-radius: var(--radius-sm);
 }
 
 /* ============================================================
-   5. WHY SUPER DUPER
+   5. WHY — 3x2 tabular spec sheet (spec 4 row 5)
    ============================================================ */
-.why { background: var(--yellow-soft); }
+.why { background: var(--white); }
 .why-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.5rem;
-  margin-top: 2rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
-.why-card {
-  background: var(--white);
-  border: 1px solid var(--blue-soft);
-  border-radius: var(--radius-card);
-  padding: 1.75rem;
-  box-shadow: var(--sh-sm);
-  transition: transform var(--transition), box-shadow var(--transition);
+.why-cell {
+  padding: var(--space-lg) var(--space-lg) var(--space-lg) 0;
+  border-top: 1px solid var(--gray);
+  min-width: 0;
 }
-.why-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--sh-md);
+.why-cell__num {
+  display: block;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: var(--type-eyebrow);
+  letter-spacing: .18em;
+  color: var(--blue-600);
+  margin-bottom: .5rem;
 }
-.why-dash {
-  width: 2rem;
-  height: 4px;
-  background: var(--yellow);
-  border-radius: 2px;
-  margin-bottom: .9rem;
-}
-.why-card h3 {
-  font-weight: 700;
-  text-transform: uppercase;
-  font-size: 1.15rem;
-  letter-spacing: .03em;
-  margin: 0 0 .6rem;
+.why-cell__word {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: var(--type-h3);
+  line-height: 1.15;
+  letter-spacing: -.015em;
+  margin: 0 0 .4rem;
   color: var(--blue);
+  overflow-wrap: anywhere;
 }
-.why-card p { margin: 0; color: var(--ink-muted); line-height: 1.6; }
+.why-cell p {
+  margin: 0;
+  color: var(--ink-muted);
+  font-size: var(--type-body);
+  line-height: 1.5;
+  max-width: 34ch;
+}
 
-@media (min-width: 720px) {
-  .why-grid { grid-template-columns: repeat(2, 1fr); }
+@media (max-width: 59.99rem) {
+  .why-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
-@media (min-width: 960px) {
-  .why-grid { grid-template-columns: repeat(3, 1fr); }
+@media (max-width: 40rem) {
+  .why-grid { grid-template-columns: minmax(0, 1fr); }
 }
 
 /* ============================================================
-   6. CURRICULUM · SKILL JOURNEY
+   6. CURRICULUM — 10-row hairline index, 2 columns (spec 4 row 6)
    ============================================================ */
 .curriculum { background: var(--white); }
 .journey {
+  list-style: none;
+  margin: 0;
+  padding: 0;
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.25rem;
-  margin-top: 2rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: var(--space-2xl);
 }
 .step {
-  display: flex;
-  align-items: flex-start;
-  gap: 1.25rem;
-  background: var(--white);
-  border: 1px solid var(--blue-soft);
-  border-radius: var(--radius-card);
-  padding: 1.25rem 1.5rem;
-  transition: transform var(--transition), box-shadow var(--transition);
-}
-.step:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--sh-md);
+  display: grid;
+  grid-template-columns: 3.5rem minmax(0, 1fr);
+  gap: var(--space-md);
+  padding-block: var(--space-lg);
+  border-top: 1px solid var(--gray);
+  min-width: 0;
 }
 .step-num {
-  flex: 0 0 auto;
-  width: 2.6rem;
-  height: 2.6rem;
-  display: grid;
-  place-items: center;
-  background: var(--yellow);
-  color: var(--blue-deep);
-  border-radius: 50%;
+  font-family: 'Poppins', sans-serif;
   font-weight: 700;
-  font-size: 1.15rem;
-}
-.step div h3 {
-  font-weight: 700;
-  text-transform: uppercase;
-  font-size: 1.05rem;
-  letter-spacing: .02em;
-  margin: 0 0 .4rem;
+  font-size: var(--type-num);
+  font-variant-numeric: tabular-nums;
   color: var(--blue);
+  line-height: 1;
 }
-.step div p { margin: 0; color: var(--ink-muted); line-height: 1.6; }
+.step h3 {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: var(--type-h3);
+  line-height: 1.15;
+  letter-spacing: -.015em;
+  margin: 0 0 .3rem;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+.step p {
+  margin: 0;
+  color: var(--ink-muted);
+  font-size: var(--type-body);
+  line-height: 1.5;
+  max-width: 40ch;
+}
 
-@media (min-width: 720px) {
-  .journey {
-    grid-template-columns: repeat(2, 1fr);
-  }
+@media (max-width: 47.99rem) {
+  .journey { grid-template-columns: minmax(0, 1fr); }
 }
 
 /* ============================================================
-   7. FORMAT
+   7. FORMAT — two-column tabular spec sheet (spec 4 row 7)
    ============================================================ */
-.format {
-  background: var(--blue);
-  color: var(--white);
-  position: relative;
-  overflow: hidden;
-}
-.format-accent {
-  position: absolute;
-  right: -6%;
-  bottom: -8%;
-  width: 40%;
-  opacity: .16;
-  pointer-events: none;
-  background-image: url('assets/supergraphic/Supergrafis-10.png');
-  background-size: contain;
-  background-repeat: no-repeat;
-}
-.format .eyebrow { color: rgba(255, 255, 255, .8); }
-.format-grid {
+/* FIX 3: spec 4 row 7 defines #format as a LIGHT tabular spec sheet. It was
+   painted blue, which interrupted the three consecutive white index sections
+   (#program head -> #why -> #kurikulum) and made the page read striped. Light
+   field restores the run; 3 dark fields remain across 12 sections. */
+.format { background: var(--white); color: var(--ink); }
+.format .eyebrow { color: var(--blue-600); }
+.format .section-title,
+.format .spec-value,
+.format .format-note { color: var(--ink); }
+.format .spec-label { color: var(--ink-muted); }   /* 7.03:1 on white */
+
+.format-sheet {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 1rem;
-  margin-top: 2rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: var(--space-2xl);
+  margin: 0 0 var(--space-xl);
 }
-.spec-card {
-  background: rgba(255, 255, 255, .06);
-  border: 1px solid rgba(255, 255, 255, .18);
-  border-radius: var(--radius-card);
-  padding: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  min-height: 9rem;
+.spec-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--space-md);
+  align-items: baseline;
+  padding-block: var(--space-md);
+  border-top: 1px solid var(--gray);        /* FIX 3: was rgba(255,255,255,.28) */
+  min-width: 0;
 }
 .spec-label {
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-weight: 600;
+  font-size: var(--type-eyebrow);
+  letter-spacing: .18em;
   text-transform: uppercase;
-  letter-spacing: .05em;
-  font-size: .8rem;
-  color: rgba(255, 255, 255, .8);
+  color: var(--white-72);
+  margin: 0;
 }
 .spec-value {
   font-family: 'Poppins', sans-serif;
-  font-weight: 700;
-  font-size: clamp(1.2rem, 2vw, 1.6rem);
+  font-weight: 600;
+  font-size: var(--type-h3);
+  letter-spacing: -.015em;
   color: var(--white);
-  margin-top: 1rem;
+  margin: 0;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
 }
 .format-note {
-  font-style: italic;
-  color: rgba(255, 255, 255, .85);
-  margin-top: 2rem;
-  text-align: center;
+  font-size: var(--type-small);
+  color: var(--white);
+  margin: 0;
 }
+.format-note a, .format-note { text-decoration: none; }
 
-@media (min-width: 720px) {
-  .format-grid { grid-template-columns: repeat(3, 1fr); }
-}
-@media (max-width: 479px) {
-  .format-grid { grid-template-columns: repeat(2, 1fr); }
+@media (max-width: 47.99rem) {
+  .format-sheet { grid-template-columns: minmax(0, 1fr); }
 }
 
 /* ============================================================
-   8. CAMP & COMMUNITY
+   8. CAMP — editorial image index (spec 4 row 8)
    ============================================================ */
 .camp { background: var(--white); }
 .camp-grid {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.25rem;
-  margin-top: 2rem;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-lg);
+  margin-top: var(--space-2xl);
 }
-.camp-lead, .camp-card {
+/* Lead photo full-bleed across the grid, bleeding off the bottom edge. */
+.camp-lead {
+  grid-column: 1 / -1;
   margin: 0;
-  border-radius: var(--radius-card);
-  overflow: hidden;
-  box-shadow: var(--sh-sm);
-  aspect-ratio: 3 / 4;
+  position: relative;
 }
-.camp-lead { aspect-ratio: 4 / 3; }
-/* Unify fill: every image covers its tile edge-to-edge (no letterbox) so the
-   mosaic reads balanced — leading landscape tile fits its 4:3 box, portrait
-   cards fit 3:4, all consistent. */
-.camp-lead img, .camp-card img {
+.camp-lead img {
   width: 100%;
-  height: 100%;
+  aspect-ratio: 16 / 9;
   object-fit: cover;
   display: block;
+  border-radius: var(--radius);
+}
+.camp-card {
+  margin: 0;
+  border-top: 1px solid var(--gray);
+  padding-top: var(--space-md);
+}
+.camp-card img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  display: block;
+  border-radius: var(--radius);
+}
+/* Tracked uppercase captions — the contact-sheet device. */
+.camp-caption {
+  margin-top: .7rem;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: var(--type-eyebrow);
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
 }
 
-@media (min-width: 720px) {
-  .camp-grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-  .camp-lead { grid-column: span 2; grid-row: span 2; }
-  .camp-card:nth-of-type(1), .camp-card:nth-of-type(2) { grid-column: span 1; grid-row: span 1; }
-  .camp-card:nth-of-type(3) { grid-column: span 2; }
-}
-.camp-caption {
-  text-align: center;
-  color: var(--ink-muted);
-  font-size: .9rem;
-  margin-top: 1.5rem;
+@media (min-width: 48rem) {
+  .camp-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .camp-lead { grid-column: 1 / -1; }
 }
 
 /* ============================================================
-   9. SOCIAL PROOF — real testimonial cards + disclosure
-   Replaces the dashed .testimonial-slot placeholders.
+   9. SOCIAL PROOF — hairline-ruled 2-column index (spec 4 row 9, 6.5)
    ============================================================ */
-.social-proof {
-  position: relative;
-  background: var(--white);
-  overflow: hidden;
-}
-.sp-backdrop {
-  position: absolute;
-  inset: 0;
-  background-image: url('assets/camp/fo-wall.webp');
-  background-size: cover;
-  opacity: .06;
-  pointer-events: none;
-}
-.sp-container { position: relative; z-index: 1; }
+.social-proof { background: var(--white); }
 
-/* --- Section accent: one faint brand motif, never per-card --- */
-.sp-accent {
-  position: absolute;
-  top: -4%;
-  right: -7%;
-  width: min(30%, 340px);
-  opacity: .1;
-  pointer-events: none;
-  background-image: url('assets/supergraphic/Supergrafis-08.png');
-  background-size: contain;
-  background-repeat: no-repeat;
-}
-
-/* --- Disclosure (option c): header pill + sub-line --- */
+/* Disclosure promoted per spec 9.6: above the grid, yellow left border,
+   never dismissible. */
 .sp-disclosure {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: .6rem 1rem;
-  margin: 0 0 2.25rem;
-  padding: .85rem 1.15rem;
-  background: var(--yellow-soft);
-  border-left: 5px solid var(--yellow);
-  border-radius: var(--radius-card);
+  border-left: 2px solid var(--yellow);
+  padding-left: var(--space-md);
+  margin: 0 0 var(--space-2xl);
   max-width: 62ch;
 }
 .sp-disclosure-label {
-  display: inline-flex;
-  align-items: center;
-  gap: .5rem;
-  font-family: 'Poppins', sans-serif;
-  font-weight: 700;
-  font-size: .78rem;
+  display: block;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: var(--type-eyebrow);
+  letter-spacing: .18em;
   text-transform: uppercase;
-  letter-spacing: .1em;
-  color: var(--blue-deep);
-  white-space: nowrap;
-}
-.sp-disclosure-label::before {
-  content: '';
-  width: .55rem;
-  height: .55rem;
-  border-radius: 50%;
-  background: var(--yellow);
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, .75);
+  color: var(--blue-800);
+  margin-bottom: .3rem;
 }
 .sp-disclosure-text {
-  font-size: .9rem;
-  line-height: 1.5;
-  color: var(--ink);
-  margin: 0;
-}
-
-/* --- Grid --- */
-.testimonial-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(288px, 1fr));
-  gap: 1.5rem;
-  margin-top: 2.25rem;
-}
-
-/* --- Card --- */
-.testimonial-card {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  background: var(--white);
-  border: 1px solid var(--blue-soft);
-  border-radius: var(--radius-card);
-  padding: 1.75rem 1.75rem 1.5rem;
-  box-shadow: var(--sh-sm);
-  transition: transform var(--transition), box-shadow var(--transition);
-}
-.testimonial-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--sh-md);
-}
-
-/* (a) In-card honesty marker — quiet, always visible, never competing */
-.card-flag {
-  position: absolute;
-  top: 1.1rem;
-  right: 1.1rem;
-  padding: .22rem .6rem;
-  background: var(--blue-soft);
-  border-radius: 999px;
-  font-family: 'Poppins', sans-serif;
-  font-weight: 600;
-  font-size: .68rem;
-  letter-spacing: .06em;
-  text-transform: uppercase;
-  color: var(--blue);
-}
-
-/* Outcome tag — scan anchor, with a dot so it is never color-only */
-.card-tag {
-  align-self: flex-start;
-  display: inline-flex;
-  align-items: center;
-  gap: .5rem;
-  padding: .4rem .9rem;
-  margin-bottom: 1.15rem;
-  background: var(--yellow-soft);
-  border-radius: 999px;
-  font-family: 'Poppins', sans-serif;
-  font-weight: 600;
-  font-size: .72rem;
-  letter-spacing: .06em;
-  text-transform: uppercase;
-  color: var(--blue-deep);
-  max-width: calc(100% - 4.5rem);
-}
-.card-tag::before {
-  content: '';
-  flex: 0 0 auto;
-  width: .5rem;
-  height: .5rem;
-  border-radius: 50%;
-  background: var(--yellow);
-  box-shadow: 0 0 0 2px var(--white);
-}
-
-/* Quote — the hero of the card */
-.card-quote-mark {
   display: block;
-  font-family: 'Poppins', sans-serif;
-  font-weight: 800;
-  font-size: 2.6rem;
-  line-height: .7;
-  color: var(--yellow);
-  margin-bottom: .6rem;
-}
-.card-quote {
-  margin: 0;
   font-family: 'Inter', sans-serif;
-  font-weight: 500;
-  font-size: 1.03rem;
-  line-height: 1.62;
-  color: var(--ink);
-}
-
-/* Quiet separator, same yellow-dash language as Section 5 */
-.card-dash {
-  width: 2rem;
-  height: 4px;
-  margin: 1.4rem 0 1.15rem;
-  background: var(--yellow);
-  border-radius: 2px;
-}
-
-/* Identity row — pushed to the card floor so baselines align */
-.card-person {
-  display: flex;
-  align-items: center;
-  gap: .9rem;
-  margin-top: auto;
-}
-.card-avatar {
-  flex: 0 0 auto;
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid var(--white);
-  box-shadow: 0 0 0 2px var(--blue-soft);
-  background: transparent;
-}
-.card-meta { min-width: 0; }
-.card-name {
-  margin: 0;
-  font-family: 'Poppins', sans-serif;
-  font-weight: 700;
-  font-size: 1rem;
-  line-height: 1.3;
-  letter-spacing: .01em;
-  color: var(--blue);
-}
-.card-role {
-  margin: .15rem 0 0;
-  font-family: 'Inter', sans-serif;
-  font-size: .85rem;
-  line-height: 1.4;
+  font-size: var(--type-small);
+  line-height: 1.45;
   color: var(--ink-muted);
 }
 
-/* --- Responsive --- */
-@media (min-width: 720px) and (max-width: 1019px) {
-  .testimonial-grid { grid-template-columns: repeat(2, 1fr); }
+.testimonial-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 var(--space-2xl);
 }
-@media (max-width: 719px) {
-  .testimonial-grid {
-    grid-template-columns: 1fr;
-    gap: 1.25rem;
-    margin-top: 1.75rem;
-  }
-  .testimonial-card { padding: 1.5rem 1.35rem 1.35rem; }
-  .sp-accent { width: 45%; top: -2%; right: -12%; opacity: .08; }
-  .sp-disclosure { padding: .8rem 1rem; }
-  .sp-disclosure-label { white-space: normal; }
+.testimonial-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-md);
+  padding-block: var(--space-xl);
+  border-top: 1px solid var(--gray);
+  min-width: 0;
 }
-@media (max-width: 479px) {
-  .card-tag { font-size: .68rem; padding: .35rem .75rem; }
-  .card-quote { font-size: 1rem; }
-  .card-avatar { width: 56px; height: 56px; }
+.testimonial-row__tag {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: var(--type-eyebrow);
+  line-height: 1.2;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--blue-600);
+  margin: 0;
+}
+/* The Ilustrasi flag is text, not a colour chip — never colour alone. */
+.testimonial-row__quote {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-size: var(--type-h3);
+  line-height: 1.35;
+  color: var(--ink);
+  margin: 0;
+  max-width: 40ch;
+}
+.testimonial-row__person {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  min-width: 0;
+}
+.testimonial-row__avatar {
+  flex: 0 0 auto;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;         /* the only permitted 50% */
+  object-fit: cover;
+}
+.testimonial-row__name {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: .9rem;
+  line-height: 1.2;
+  margin: 0;
+  color: var(--ink);
+}
+.testimonial-row__role {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-size: var(--type-small);
+  line-height: 1.2;
+  color: var(--ink-muted);
+  margin: 0;
+}
+
+@media (max-width: 47.99rem) {
+  .testimonial-grid { grid-template-columns: minmax(0, 1fr); }
 }
 
 /* ============================================================
-   10. FAQ
+   10. FAQ — blue-900 programme block (spec 4 row 10)
    ============================================================ */
-.faq { background: var(--blue-soft); }
-.acc { margin-top: 2rem; }
-.acc-item { border-bottom: 1px solid var(--gray); }
-.acc-item:first-of-type { border-top: 1px solid var(--gray); }
+.faq {
+  background: var(--blue-900);
+  color: var(--white);
+}
+.faq-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-2xl);
+  align-items: start;
+}
+.faq .eyebrow { color: var(--yellow); }   /* 11.53:1 */
+.faq .section-title { color: var(--white); }
+.faq-intro { position: sticky; top: calc(var(--nav-h) + var(--space-lg)); }
+
+.acc { margin: 0; }
+.acc-item { border-bottom: 1px solid rgba(255, 255, 255, .28); }
+.acc-item:first-of-type { border-top: 1px solid rgba(255, 255, 255, .28); }
 .acc-head {
   width: 100%;
   border: none;
   background: transparent;
   text-align: left;
-  padding: 1.4rem 1rem;
+  padding: var(--space-lg) 0;
+  min-height: 48px;
   font-family: 'Poppins', sans-serif;
   font-weight: 600;
-  font-size: 1.05rem;
-  color: var(--ink);
+  font-size: var(--type-h3);
+  letter-spacing: -.015em;
+  color: var(--white);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  transition: background-color .2s ease;
+  gap: var(--space-md);
+  transition: color var(--dur-fast) var(--ease-out);
 }
-.acc-head:hover { background: var(--yellow-soft); }
+.acc-head:hover { color: var(--yellow); }
 .acc-plus {
   flex: 0 0 auto;
-  width: 1.9rem;
-  height: 1.9rem;
+  width: 1.75rem;
+  height: 1.75rem;
   display: grid;
   place-items: center;
-  border-radius: 50%;
-  border: 2px solid var(--blue);
-  color: var(--blue);
-  font-size: 1.2rem;
+  border: 1px solid currentColor;
+  border-radius: var(--radius);
+  color: var(--yellow);
+  font-size: 1.1rem;
   font-weight: 700;
-  transition: transform .3s ease;
+  line-height: 1;
+  transition: transform var(--dur-panel) var(--ease-out),
+              background-color var(--dur-panel) var(--ease-out),
+              color var(--dur-panel) var(--ease-out);
 }
+/* + rotates to x */
 .acc-head[aria-expanded="true"] .acc-plus {
   transform: rotate(45deg);
-  background: var(--blue);
-  color: var(--white);
+  background: var(--yellow);
+  color: var(--blue-900);
 }
 .acc-panel {
   overflow: hidden;
-  padding: .25rem 1rem 1.4rem;
-  color: var(--ink-muted);
-  line-height: 1.65;
+  padding: 0 0 var(--space-lg);
+  color: var(--white-72);       /* 4.72:1 on blue */
+  line-height: 1.5;
+  max-width: 56ch;
+  transition: max-height var(--dur-panel) var(--ease-out),
+              opacity var(--dur-panel) var(--ease-out);
 }
 .acc-panel[hidden] { display: none; }
+.acc-panel p { margin: 0; }
 .faq-cta {
-  font-family: 'Inter', sans-serif;
-  font-size: 1rem;
-  margin-top: 2.5rem;
-  text-align: center;
+  font-size: var(--type-body);
+  color: var(--white);
+  margin: var(--space-xl) 0 0;
 }
-.faq-cta a { color: var(--blue); font-weight: 600; }
+.faq-cta a {
+  color: var(--yellow);
+  font-weight: 600;
+  text-underline-offset: 3px;
+}
+
+@media (max-width: 59.99rem) {
+  .faq-grid { grid-template-columns: minmax(0, 1fr); }
+  .faq-intro { position: static; }
+}
 
 /* ============================================================
-   11. FINAL CTA
+   11. FINAL CTA — closing statement (spec 4 row 11)
    ============================================================ */
 .final-cta {
-  background: linear-gradient(140deg, var(--blue), var(--blue-deep) 130%);
+  background-color: var(--blue-900);
+  background-image: url('assets/supergraphic/Supergrafis-03-1440.webp');
+  background-size: cover;
+  background-position: center;
   color: var(--white);
   position: relative;
   overflow: hidden;
-  text-align: center;
 }
-.final-supergrafis {
-  position: absolute;
-  left: -8%;
-  bottom: -6%;
-  width: 42%;
-  opacity: .2;
-  pointer-events: none;
-  display: flex;
-  align-items: flex-end;
-}
-.final-supergrafis img {
-  width: 100%;
-  object-fit: contain;
-}
+.final-cta .eyebrow { color: var(--yellow); }   /* 11.53:1 */
 .final-content {
   position: relative;
   z-index: 1;
-  text-align: center;
-  padding-block: clamp(4rem, 10vw, 7rem);
-}
-.final-cta .eyebrow { color: rgba(255, 255, 255, .85); justify-content: center; }
-.final-title {
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: -.02em;
-  line-height: .98;
-  font-size: clamp(2.2rem, 6vw, 5rem);
-  margin: 0 0 1.5rem;
-}
-.final-cta .lede {
-  text-align: center;
-  color: rgba(255, 255, 255, .9);
-  max-width: 48ch;
+  padding-block: var(--space-3xl);
+  max-width: 1100px;
   margin-inline: auto;
 }
-.final-cta .btn-lg { margin: 1.5rem auto; }
+.final-title {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 800;
+  font-size: var(--type-split);
+  line-height: .96;
+  letter-spacing: -.03em;
+  margin: 0 0 var(--space-lg);
+  max-width: 16ch;
+  overflow-wrap: anywhere;
+}
+/* Contrast fix 3 of 3 (spec 9.1): white, not #4B5A6E (1.15:1). */
+.final-cta .lede {
+  color: var(--white);
+  max-width: 44ch;
+  margin-bottom: var(--space-xl);
+}
 
 /* ============================================================
-   FOOTER
+   FOOTER — Ft1 mast-headed (spec 4 row 12). Ft3 index-columns banned.
    ============================================================ */
 .site-footer {
-  background: var(--blue-deep);
+  background: var(--blue-900);
   color: var(--white);
-  padding-block: clamp(3rem, 8vw, 5rem);
+  padding-block: var(--space-2xl) 0;
 }
-.footer-grid {
+.footer-mast {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 2rem;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--space-xl);
+  align-items: end;
+  padding-bottom: var(--space-xl);
 }
-.footer-brand .footer-mark { height: 56px; width: auto; margin-bottom: 1rem; }
-.footer-brand p { color: rgba(255, 255, 255, .85); line-height: 1.6; }
-.footer-col h4 {
-  font-family: 'Poppins', sans-serif;
-  font-weight: 600;
-  text-transform: uppercase;
-  font-size: .85rem;
-  letter-spacing: .05em;
-  margin: 0 0 1rem;
-  color: var(--yellow);
+.footer-mark { height: 48px; width: auto; margin-bottom: var(--space-md); }
+.footer-brand p {
+  margin: 0;
+  color: var(--white-72);
+  font-size: var(--type-small);
+  line-height: 1.45;
+  max-width: 46ch;
 }
-.footer-col a {
-  display: block;
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-lg);
+}
+.footer-links a {
   color: var(--white);
   text-decoration: none;
-  margin-bottom: .5rem;
-  font-size: .95rem;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: var(--type-eyebrow);
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  padding-block: .6rem;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  transition: color var(--dur-fast) var(--ease-out);
 }
-.footer-col a:hover { color: var(--yellow); }
-.footer-col address { color: rgba(255, 255, 255, .85); font-size: .9rem; margin-bottom: .5rem; }
-.footer-col p {
-  color: rgba(255, 255, 255, .85);
-  font-size: .9rem;
-  margin: .35rem 0;
+.footer-links a:hover { color: var(--yellow); }
+
+.footer-contact {
+  border-top: 1px solid rgba(255, 255, 255, .22);
+  padding-block: var(--space-lg);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm) var(--space-xl);
+  color: var(--white-72);
+  font-size: var(--type-small);
 }
+.footer-contact address { font-style: normal; }
+.footer-contact p { margin: 0; }
+
 .footer-bottom {
-  border-top: 1px solid rgba(255, 255, 255, .15);
-  padding-top: 1.5rem;
-  margin-top: 2rem;
-  color: rgba(255, 255, 255, .7);
-  font-size: .9rem;
+  border-top: 1px solid rgba(255, 255, 255, .22);
+  padding-block: var(--space-lg);
+  color: var(--white-72);
+  font-size: var(--type-small);
 }
+.footer-bottom p { margin: 0; }
 
-@media (min-width: 720px) {
-  .footer-grid { grid-template-columns: repeat(4, 1fr); }
-}
-/* ============================================================
-   HERO BUBBLE BACKGROUND (per HERO_BUBBLE_SPEC.md 8b)
-   ============================================================ */
-/* ---- Bubble background layer (additive, decorative) ---- */
-.hero-bubbles {
-  position: absolute;
-  inset: 0;
-  z-index: 1;                 /* above .hero-glow, below artwork + content */
-  filter: url(#goo);          /* single composite pass - gooey merge */
-  pointer-events: none;
-}
-.hero-bubbles {
-  --blue:         3, 78, 158;    /* #034E9E  - signature brand blue */
-  --blue-depth:  20, 98, 186;    /* #1462BA  - soft blue lift */
-  --yellow:     249, 208, 36;    /* #F9D024  - signature warmth */
-  --yellow-light:255, 220, 58;   /* #FFDC3A  - gold center */
-}
-
-.hero-bubble {
-  position: absolute;
-  border-radius: 50%;
-  mix-blend-mode: screen;
-  pointer-events: none;
-  will-change: transform;
-}
-
-/* b1 - soft blue anchor behind the title, slow vertical drift */
-.b1 {
-  left: 6%;  top: 20%;
-  width: 26rem; height: 26rem;
-  background: radial-gradient(circle at center, rgba(var(--blue), .30) 0%, rgba(var(--blue), 0) 50%);
-  animation: bubbleY 30s ease-in-out infinite;
-}
-/* b2 - lighter blue warmth, gentler orbit */
-.b2 {
-  left: 22%; top: 55%;
-  width: 22rem; height: 22rem;
-  background: radial-gradient(circle at center, rgba(var(--blue-depth), .26) 0%, rgba(var(--blue-depth), 0) 50%);
-  animation: bubbleSpin 20s linear infinite;
-  transform-origin: calc(50% - 400px) 50%;
-}
-/* b3 - blue->yellow transition "sun in the ocean", slow orbit (bottom-left) */
-.b3 {
-  left: -8%; bottom: -6%;
-  width: 34rem; height: 34rem;
-  background: radial-gradient(circle at center, rgba(var(--blue), .20) 0%, rgba(var(--blue-depth), .12) 45%, rgba(var(--yellow), .10) 70%, rgba(var(--yellow), 0) 100%);
-  animation: bubbleSpin40 40s linear infinite;
-  transform-origin: calc(50% + 300px) 30%;
-}
-/* b4 - gold pop behind the eyebrow, horizontal drift */
-.b4 {
-  left: 40%; top: 8%;
-  width: 20rem; height: 20rem;
-  background: radial-gradient(circle at center, rgba(var(--yellow), .38) 0%, rgba(var(--yellow), 0) 50%);
-  animation: bubbleX 40s ease-in-out infinite;
-}
-/* b5 - warm center glow, orbit (lower-left) */
-.b5 {
-  left: 12%; top: 70%;
-  width: 28rem; height: 28rem;
-  background: radial-gradient(circle at center, rgba(var(--yellow-light), .34) 0%, rgba(var(--yellow-light), 0) 50%);
-  animation: bubbleSpin 20s linear infinite;
-  transform-origin: calc(50% - 200px) 70%;
-}
-
-@keyframes bubbleY {
-  0%, 100% { transform: translateY(-50px); }
-  50%      { transform: translateY(50px); }
-}
-@keyframes bubbleX {
-  0%, 100% { transform: translateX(-50px); }
-  50%      { transform: translateX(50px); }
-}
-@keyframes bubbleSpin  { from { transform: rotate(0deg); }    to { transform: rotate(360deg); } }
-@keyframes bubbleSpin40{ from { transform: rotate(0deg); }    to { transform: rotate(360deg); } }
-
-/* ---- Reduced motion: bubbles freeze but stay visible & composed ---- */
-@media (prefers-reduced-motion: reduce) {
-  .hero-bubble { animation: none; }
-}
-
-/* ---- Mobile: stack is single-column; trim to 3 orbs, soften ---- */
-@media (max-width: 959px) {
-  .hero-bubbles { opacity: .65; }
-  .b2, .b5 { display: none; }                 /* drop orbit pair, keep 3 orbs */
-  .b1 { left: 2%; top: 18%; width: 16rem; height: 16rem; }
-  .b3 { left: -12%; bottom: 4%; width: 20rem; height: 20rem; }
-  .b4 { left: 30%; top: 4%; width: 14rem; height: 14rem; }
+@media (max-width: 47.99rem) {
+  .footer-mast { grid-template-columns: minmax(0, 1fr); align-items: start; }
+  .footer-links { gap: var(--space-md); }
 }
