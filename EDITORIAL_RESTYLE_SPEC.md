@@ -149,7 +149,7 @@ The brief asks for the contour layer built from the supergraphics at 3–6% opac
 **What works instead — and it is better.** `Supergrafis-03` is a **100%-opaque** file (measured: 0% transparent pixels) containing the D/P monogram and bolt pattern in two close blues: `#034E9E` base with `#02499C` pattern.
 
 - Its internal tonal delta is **1.062:1** — it is *already* self-subordinate by design.
-- White text on the darker pattern tone: **8.62:1** ✓
+- White text on the field: **8.12:1** ✓ (measured #034E9E vs #FFFFFF; the 8.62:1 figure previously cited here was wrong — see correction note below)
 - Yellow text on the darker pattern tone: **5.78:1** ✓
 - It requires no opacity, no blend mode, and no colour that is not already brand blue.
 
@@ -656,7 +656,9 @@ The brief §5 and §7 instruct building the contour layer from the supergraphics
 
 **Why it cannot work:** the only line-art assets, `Supergrafis-10` and `-12`, are pinstripes in `#034E9E`. The hero field is `#034E9E`. Measured contrast **1.0:1** — the same colour. They are invisible at any opacity, with or without a blend mode. `Supergrafis-04`, the other candidate, is a yellow field that composites to **muddy green (`#728867`, hue 99°) at 45%**. `Supergrafis-02` reads as scattered confetti, which §6 of the brief explicitly kills.
 
-**What I did instead:** `Supergrafis-03` at **100% opacity, no blend mode**, as the field itself. It is an opaque, brand-blue-only, D/P monogram pattern whose internal contrast is 1.062:1 — already self-subordinate by design, and it keeps white text at 8.62:1. This delivers the brief's stated *intent* (a low-contrast organic line layer that never competes) more faithfully than the prescribed method, using a real brand asset.
+**What I did instead:** `Supergrafis-03` at **100% opacity, no blend mode**, as the field itself. It is an opaque, brand-blue-only, D/P monogram pattern whose internal contrast is 1.062:1 — already self-subordinate by design, and it keeps white text at 8.12:1. This delivers the brief's stated *intent* (a low-contrast organic line layer that never competes) more faithfully than the prescribed method, using a real brand asset.
+
+> **Correction (Ejak, verified 2026-10-01).** This paragraph originally claimed white text sits at 8.62:1 on the field. Independently re-measured: `#034E9E` vs `#FFFFFF` = **8.12:1**. The figure above and in §5.2 are corrected to 8.12:1 throughout. Both values clear AA and AAA respectively, so no design decision changes; only the number was wrong.
 
 **A caution on the contact sheet:** `Supergrafis-03` renders as flat blue in a thumbnail. The asset that actually carries the pattern is invisible at contact-sheet scale. Do not let anyone re-derive this asset choice from the sheet.
 
@@ -675,3 +677,25 @@ The brief's §7 decision to reject the reference's white field and keep blue is 
 ---
 
 **Pre-emit critique:** P5 · H5 · E4 · S5 · R5 · V4 — the two recovered assets (D1, D3) and the four `[FILL]` placeholders are the honest limits of what the available data supports.
+
+---
+
+## 13. Build report (REX, 2026-10-01)
+
+Built on branch `editorial-restyle` in the section 10 order. Commits:
+
+| Commit | Steps |
+|---|---|
+| `9cff2c8` | Step 1 — kill list |
+| `11f7693` | Steps 2–3 tokens, steps 4–19 markup |
+| `368cb5f` | Steps 4–21 component CSS, motion, accessibility |
+
+**Deviations from this spec, each with the reason:**
+
+1. **`--type-display` clamp max is 8.75rem, not 10.5rem.** Measured: at the spec's 10.5rem the H1 line `Live the Experience.` needs **1577px**, which cannot fit a 1440px viewport unbroken — the two-tier two-line stack the spec requires in §5.4 breaks. 8.75rem keeps it whole at every width.
+2. **The `NEXT BATCH` badge uses grid placement, not `position: absolute`.** Spec §5.7 pins it bottom-left with absolute positioning. Measured result: it overlapped the CTA row and the `.micro-trust` line at 1440×900, 1440×1080, 1280×800 and 768×1024. As a grid row pinned with `align-self: end; justify-self: start` it reserves its own space, still reads as edge-pinned bottom-left, and measures zero overlap at every viewport tested.
+3. **`.hero-copy` measure control is viewport-relative, not `ch`-based.** Spec §5.8/§5.4 use `max-width: 15ch` / `12ch`. At a 140px display size 12ch collapses the H1 to one character per line — caught by screenshot, not by the token audit.
+4. **Two eyebrow labels added** (`PROGRAM INTENSIF`, `PROGRAM CAMP`). The two-block program split in §4 row 4 needs per-block labels; the section's original `PROGRAM` eyebrow and H2 are retained above the blocks. No other copy was added, reworded, or removed.
+5. **Optional §D3 FAQ texture not applied.** `Supergrafis-10` on `--blue-900` was left out; the spec calls it entirely optional and the FAQ block reads cleanly without it.
+
+**Verified:** slop gate 20/20 pass. 320 / 375 / 414 / 768 / 960 / 1440px — zero horizontal scroll, zero clipped text, zero two-line CTA or nav link, zero badge/CTA overlap. All three §9.1 lede fixes are white (8.12:1) and no `#4B5A6E` text remains on any blue section.
