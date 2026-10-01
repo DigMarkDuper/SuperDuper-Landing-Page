@@ -473,7 +473,16 @@ section { padding-block: var(--space-3xl); }
   min-height: calc(100svh - var(--nav-h) - 1px);      /* svh, not vh; -1px = header border */
   /* FIX 1b: nav is sticky and in flow, so padding must not re-add --nav-h */
   padding-block: var(--space-2xl) var(--gutter);
-  padding-inline: var(--gutter);
+  /* Breathing room on the left. Every other section is a centered .container
+     (max 1240px), but the hero was edge-pinned at a flat 24px -- so on a 2190px
+     screen the type clung to the viewport edge at x=24 while every section
+     below started at x=499. That 475px jump is what read as "no breathing
+     space". Mirror the container's own left edge exactly, so the hero's type
+     column and the badge label land on the same vertical line as every other
+     section. Below the container width this collapses to the plain gutter, so
+     mobile and tablet are unchanged. */
+  --hero-inset: max(0px, (100% - 1240px) / 2);
+  padding-inline: calc(var(--gutter) + var(--hero-inset)) var(--gutter);
 
   /* --- Hero portrait geometry (spec 2.1). The portrait is absolutely
      positioned, so it takes zero width from the type track and zero height
@@ -660,9 +669,12 @@ section { padding-block: var(--space-3xl); }
 .hero-copy {
   position: relative;
   z-index: 3;
+  box-sizing: border-box;
   /* Measure control at display size. Must be viewport-relative, not ch-based:
-     12ch at a 166px display size collapses to a one-character column. */
-  max-width: min(calc(100vw - var(--gutter) * 2), 1400px);
+     12ch at a 166px display size collapses to a one-character column.
+     The inset is subtracted so the type track never pushes past the viewport
+     edge once --hero-inset is added to the hero's left padding. */
+  max-width: min(calc(100vw - var(--gutter) * 2 - var(--hero-inset)), 1400px);
 }
 
 /* H1 — two-weight stack. Copy unchanged; only weight structure is new. */
@@ -718,6 +730,11 @@ section { padding-block: var(--space-3xl); }
   align-self: end;
   justify-self: stretch;                             /* FIX 1c: full-width strip */
   width: auto;
+  /* Pull back out of the hero's --hero-inset: the strip is edge-pinned to the
+     hero foot by design, so it must keep the same left edge as the field while
+     the type column sits inset. Without this the badge label drifts right of
+     the ghost glyph and off the section's optical edge. */
+  margin-left: calc(-1 * var(--hero-inset));
   padding: .85rem 0 0;
   border: 0;
   border-top: 1px solid rgba(255, 255, 255, .32);
