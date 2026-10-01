@@ -18,3 +18,10 @@ node_modules/
 package.json
 package-lock.json
 shot-*.png
+
+# Elsya master + matte source (4.1MB). The site loads only the two optimised
+# WebPs (assets/hero/student-elsya-720.webp / -1240.webp); these originals are
+# never referenced by any HTML/CSS/JS. Kept locally outside the repo at
+# ../_local-source-assets/hero/ so the matte can be re-cut if needed.
+assets/hero/student-elsya.png
+assets/hero/student-elsya-cutout.png
