@@ -13,3 +13,8 @@ _sheet_*.png
 # Dev-only QA harness + verification artefacts (not part of the deployable site)
 _tools/
 _shot.mjs
+# REX Playwright install + capture artefacts
+node_modules/
+package.json
+package-lock.json
+shot-*.png

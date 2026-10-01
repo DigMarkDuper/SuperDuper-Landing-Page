@@ -92,7 +92,12 @@
      unbroken, which breaks the two-tier two-line stack. 8rem keeps it whole
      in a single line (1219px) on any viewport >= 1320px. FIX 1a also drops the
      fluid slope 11.5vw -> 9vw so intermediate widths land on one line too. */
-  --type-display: clamp(3.25rem, 9vw, 8rem);       /* FIX 1a: 8rem ceiling kept — structural fix, not typographic */
+  /* Hero portrait spec 3.1: the display size in use is hoisted out of the clamp
+     so the portrait geometry in calc() can read it. Slope 9vw -> 8.4vw and the
+     effective ceiling 8rem -> 7.6rem buys a constant ~5% measure headroom at
+     every width; the token's own 3.25rem/8rem bounds are untouched. */
+  --hero-fs: min(8.4vw, 7.6rem);
+  --type-display: clamp(3.25rem, var(--hero-fs), 8rem);
   --type-split:   clamp(2.5rem, 8vw, 6.5rem);
   --type-h2:      clamp(1.9rem, 4.4vw, 3.6rem);
   --type-h3:      clamp(1.15rem, 1.6vw, 1.4rem);
@@ -469,6 +474,75 @@ section { padding-block: var(--space-3xl); }
   /* FIX 1b: nav is sticky and in flow, so padding must not re-add --nav-h */
   padding-block: var(--space-2xl) var(--gutter);
   padding-inline: var(--gutter);
+
+  /* --- Hero portrait geometry (spec 2.1). The portrait is absolutely
+     positioned, so it takes zero width from the type track and zero height
+     from the flow: the H1 keeps its full 1400px track and the fold arithmetic
+     is unchanged. --hero-type-bottom is the H1 line-box bottom plus 16px
+     clearance (64px pad + 34px eyebrow + 1.72 x --hero-fs + 16px). */
+  --hero-h: calc(100svh - var(--nav-h) - 1px);
+  --hero-type-bottom: calc(64px + 34px + 1.72 * var(--hero-fs) + 16px);
+
+  /* Elsya must never be cropped BY THE BOX. The box was 1.115 wide-against-tall
+     while the cutout is 0.824, so object-fit:cover silently discarded 26% of
+     her body at every width — that missing torso is what read as "sinking".
+     Lock the box to the photo's own aspect and switch to object-fit:contain.
+
+     The band deliberately runs 96px PAST the hero foot. That is not the old
+     bug: the hero's overflow:hidden clips her below the waist, which is a
+     normal editorial crop, whereas the box crop was amputating her torso.
+     Capping her inside the band instead left her 0.217 of the hero width at
+     1366px — too small, cornered, and lost in dead blue. */
+  --portrait-band: calc(var(--hero-h) - var(--hero-type-bottom) + 96px);
+  --portrait-aspect: 0.8246;                        /* 1086 / 1317 exactly */
+  --portrait-w: min(46vw, 660px, calc(var(--portrait-band) * var(--portrait-aspect)));
+  --portrait-h: calc(var(--portrait-w) / var(--portrait-aspect));
+}
+
+/* z2 portrait — Elsya, absolute, bottom-right, bleeding off the bottom edge
+   and cropped by the hero's own overflow: hidden. The box aspect 1.115 makes
+   object-fit: cover read only the top 74% of the cutout, which excludes the
+   name badge and the chest logo. */
+.hero-portrait {
+  position: absolute;
+  top: var(--hero-type-bottom);
+  right: calc(-1 * var(--space-md));               /* bleeds off the right too */
+  width: var(--portrait-w);
+  height: var(--portrait-h);
+  margin: 0;
+  z-index: 2;
+  pointer-events: none;                             /* never a click/scroll trap */
+}
+.hero-portrait picture { display: block; width: 100%; height: 100%; }
+.hero-portrait__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;                              /* NEVER crop her body */
+  object-position: 50% 50%;
+}
+.hero-portrait__label {
+  position: absolute;
+  /* The portrait box bleeds ~148px below the hero and the hero clips at
+     overflow:hidden, so anchoring the caption to the box's own bottom buried
+     it 132px past the hero edge where it never rendered at all. Anchor it to
+     the box's TOP instead — beside her head, clear of the H1, the lede and
+     the NEXT BATCH strip at every viewport. */
+  top: 0;
+  right: var(--space-md);
+  margin: 0;
+  font: 400 var(--type-small)/1.45 'Inter', sans-serif;
+  letter-spacing: .04em;
+  color: var(--white);                             /* 8.12:1 on the field */
+}
+
+/* spec 2.3: >=1600px the hero is tall enough to grow a true 14% bleed without
+   crowding the type, so the vw cap and the 620px ceiling both come off.
+   The width still resolves against --portrait-band first, so the figure can
+   never exceed the space between the type and the hero foot. */
+@media (min-width: 100rem) {
+  .hero { --portrait-w: min(calc(var(--portrait-band) * var(--portrait-aspect)), 700px); }
+  .hero .lede { max-width: min(56ch, 760px); }     /* pays for the extra line */
 }
 
 /* z1 ghost glyph — hairline outline only, never a filled mass (FIX 2) */
@@ -478,7 +552,7 @@ section { padding-block: var(--space-3xl); }
   left: -.04em;
   font-family: 'Poppins', sans-serif;
   font-weight: 800;
-  font-size: clamp(18rem, 42vw, 38rem);
+  font-size: clamp(14rem, 30vw, 26rem);             /* spec 5: 605px -> 432px at 1440 */
   line-height: .8;
   color: transparent;                                /* the stroke carries it */
   -webkit-text-stroke: 2px rgba(255, 255, 255, .09);   /* ~1.5:1 — present, self-subordinate */
@@ -486,6 +560,10 @@ section { padding-block: var(--space-3xl); }
   pointer-events: none;
   user-select: none;
   z-index: 1;
+  /* The only mask in the build: the glyph terminates as tone, not as a
+     letterform, so it can never read as a competing second subject. */
+  -webkit-mask-image: linear-gradient(90deg, #000 52%, transparent 94%);
+          mask-image: linear-gradient(90deg, #000 52%, transparent 94%);
 }
 
 .hero .eyebrow { color: var(--white-72); }
@@ -547,6 +625,7 @@ section { padding-block: var(--space-3xl); }
    space, so it can never overlap the CTA row or the micro-trust line at any
    viewport height, while still reading as edge-pinned bottom-left. */
 .batch-badge {
+  position: relative;                               /* NEW */
   align-self: end;
   justify-self: stretch;                             /* FIX 1c: full-width strip */
   width: auto;
@@ -554,13 +633,27 @@ section { padding-block: var(--space-3xl); }
   border: 0;
   border-top: 1px solid rgba(255, 255, 255, .32);
   border-radius: 0;
-  background: transparent;              /* no fill; the field shows through */
+  /* spec 6: field-coloured plate. Invisible against the field; over the
+     portrait it guarantees the strip stays 8.12:1 white / 5.44:1 yellow
+     without trusting where the yellow placket lands at each viewport. */
+  background: var(--blue);
+  margin-inline: calc(-1 * var(--gutter));          /* plate goes full-bleed… */
+  padding-inline: var(--gutter);                    /* …content stays on the gutter */
   display: grid;
   align-items: baseline;
   column-gap: var(--space-2xl);
   grid-template-columns: max-content repeat(3, minmax(0, 1fr));
   color: var(--white);
   z-index: 4;
+
+  /* Client fix: the strip ran full-bleed across Elsya's chest, which read as
+     a waterline (her body continued below it) and pushed the Status column
+     behind her at z-index 2. The strip now stops where the portrait begins,
+     derived from --portrait-w so it stays correct at every viewport width
+     rather than only the one it was measured at. */
+  margin-right: 0;
+  padding-right: calc(var(--portrait-w) + var(--space-md));
+  column-gap: var(--space-xl);
 }
 .batch-badge__label {
   font-family: 'Inter', sans-serif;
@@ -601,9 +694,17 @@ section { padding-block: var(--space-3xl); }
 
 /* ---- Mobile behaviour (spec 5.9) ---- */
 @media (max-width: 47.99rem) {
+  /* spec 4.3/7: the portrait is not in the mobile build. At 375px it would
+     resolve to 150px — a postage stamp behind the CTA row — and there is no
+     negative space to place it. Mobile therefore stays byte-identical. */
+  .hero-portrait { display: none; }
   .batch-badge {
     width: auto;
     margin-top: var(--space-xl);
+    /* portrait is display:none below this tier, so the strip goes full-bleed
+       again — the desktop clearance would otherwise reserve dead space. */
+    margin-right: calc(-1 * var(--gutter));
+    padding-right: var(--gutter);
     grid-template-columns: minmax(0, 1fr);   /* strip stacks only on mobile */
     row-gap: .7rem;
     column-gap: 0;
