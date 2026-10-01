@@ -87,10 +87,12 @@
   --ink-muted: #4B5A6E;   /* secondary body on white (7.03:1); never on blue */
 
   /* --- Type scale (spec section 2). All clamps floor at 320px. --- */
-  /* Display clamp max is 8.75rem, not the spec's 10.5rem: at 10.5rem the
+  /* Display clamp max is 8rem, not the spec's 10.5rem: at 10.5rem the
      line "Live the Experience." needs 1577px and cannot fit a 1440px viewport
-     unbroken, which breaks the two-tier two-line stack. 8.75rem keeps it whole. */
-  --type-display: clamp(3.25rem, 11.5vw, 8.75rem);
+     unbroken, which breaks the two-tier two-line stack. 8rem keeps it whole
+     in a single line (1219px) on any viewport >= 1320px. FIX 1a also drops the
+     fluid slope 11.5vw -> 9vw so intermediate widths land on one line too. */
+  --type-display: clamp(3.25rem, 9vw, 8rem);       /* FIX 1a: 8rem ceiling kept — structural fix, not typographic */
   --type-split:   clamp(2.5rem, 8vw, 6.5rem);
   --type-h2:      clamp(1.9rem, 4.4vw, 3.6rem);
   --type-h3:      clamp(1.15rem, 1.6vw, 1.4rem);
@@ -457,23 +459,26 @@ section { padding-block: var(--space-3xl); }
   overflow: hidden;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  row-gap: var(--space-2xl);
+  row-gap: var(--space-xl);                          /* FIX 1c: was --space-2xl */
   align-content: space-between;
   min-height: 100svh;                                /* svh, not vh */
-  padding: calc(var(--nav-h) + var(--space-2xl)) var(--gutter) var(--space-2xl);
+  /* FIX 1b: nav is sticky and in flow, so padding must not re-add --nav-h */
+  padding-block: var(--space-2xl) var(--gutter);
+  padding-inline: var(--gutter);
 }
 
-/* z1 ghost glyph — brand blue tint, never grey (grey on blue is 5.51:1) */
+/* z1 ghost glyph — hairline outline only, never a filled mass (FIX 2) */
 .hero-ghost-glyph {
   position: absolute;
-  top: -.18em;
-  left: -.06em;
+  top: -.10em;                                       /* FIX 2 */
+  left: -.04em;
   font-family: 'Poppins', sans-serif;
   font-weight: 800;
-  font-size: clamp(20rem, 52vw, 46rem);
+  font-size: clamp(18rem, 42vw, 38rem);
   line-height: .8;
-  color: var(--blue-700);      /* effective 1.72:1 against the field */
-  opacity: .55;
+  color: transparent;                                /* the stroke carries it */
+  -webkit-text-stroke: 2px rgba(255, 255, 255, .09);   /* ~1.5:1 — present, self-subordinate */
+  opacity: 1;
   pointer-events: none;
   user-select: none;
   z-index: 1;
@@ -510,7 +515,7 @@ section { padding-block: var(--space-3xl); }
 .hero .lede {
   color: var(--white);
   font-family: 'Poppins', sans-serif;
-  font-size: var(--type-runner);
+  font-size: clamp(1.25rem, 2.4vw, 2.25rem);         /* FIX 1a */
   font-weight: 400;
   line-height: 1.22;
   letter-spacing: -.02em;
@@ -536,12 +541,17 @@ section { padding-block: var(--space-3xl); }
    viewport height, while still reading as edge-pinned bottom-left. */
 .batch-badge {
   align-self: end;
-  justify-self: start;
-  width: 280px;
-  padding: 1.1rem 1.15rem;
-  border: 1px solid rgba(255, 255, 255, .55);
+  justify-self: stretch;                             /* FIX 1c: full-width strip */
+  width: auto;
+  padding: .85rem 0 0;
+  border: 0;
+  border-top: 1px solid rgba(255, 255, 255, .32);
+  border-radius: 0;
   background: transparent;              /* no fill; the field shows through */
-  border-radius: var(--radius);
+  display: grid;
+  align-items: baseline;
+  column-gap: var(--space-2xl);
+  grid-template-columns: max-content repeat(3, minmax(0, 1fr));
   color: var(--white);
   z-index: 4;
 }
@@ -552,17 +562,16 @@ section { padding-block: var(--space-3xl); }
   text-transform: uppercase;
   font-weight: 600;
   color: var(--yellow);                 /* 5.44:1 */
-  margin: 0 0 .7rem;
+  margin: 0;                            /* baseline-aligned in the strip */
 }
-.batch-badge__glyph { margin-bottom: .7rem; color: var(--white); }
-.batch-badge__glyph svg { display: block; width: 24px; height: 24px; }
-.batch-badge__meta { margin: 0; font-size: var(--type-small); }
+.batch-badge__glyph, .batch-badge__emblem { display: none; }  /* FIX 1c, spec 5.7 */
+.batch-badge__meta { display: contents; margin: 0; font-size: var(--type-small); }
 .batch-badge__row {
   display: grid;
-  grid-template-columns: 4.5rem minmax(0, 1fr);
+  grid-template-columns: max-content minmax(0, 1fr);
   gap: .5rem;
-  padding-block: .3rem;
-  border-top: 1px solid rgba(255, 255, 255, .22);
+  padding-block: 0;
+  border-top: 0;
 }
 .batch-badge__row dt { color: rgba(255, 255, 255, .72); }   /* 4.72:1 */
 .batch-badge__row dd { margin: 0; font-weight: 500; overflow-wrap: anywhere; }
@@ -588,8 +597,13 @@ section { padding-block: var(--space-3xl); }
   .batch-badge {
     width: auto;
     margin-top: var(--space-xl);
+    grid-template-columns: minmax(0, 1fr);   /* strip stacks only on mobile */
+    row-gap: .7rem;
+    column-gap: 0;
   }
-  .hero-ghost-glyph { opacity: .38; }
+  .batch-badge__meta { display: grid; gap: .45rem; }   /* undo display:contents */
+  .batch-badge__row { grid-template-columns: max-content minmax(0, 1fr); }
+  .hero-ghost-glyph { opacity: 1; }
   .hero {
     min-height: auto;
     padding-block: var(--space-2xl);
@@ -598,7 +612,7 @@ section { padding-block: var(--space-3xl); }
   .hero-copy, .hero-title, .hero .lede { max-width: none; }
 }
 @media (max-width: 30rem) {
-  .batch-badge { padding: 1rem; }
+  .batch-badge { padding-top: .75rem; }
 }
 
 /* ============================================================
