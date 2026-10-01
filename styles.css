@@ -461,7 +461,11 @@ section { padding-block: var(--space-3xl); }
   grid-template-columns: minmax(0, 1fr);
   row-gap: var(--space-xl);                          /* FIX 1c: was --space-2xl */
   align-content: space-between;
-  min-height: 100svh;                                /* svh, not vh */
+  /* The nav is sticky AND in flow: it already consumes --nav-h above the
+     hero. Claiming a full 100svh on top of that pushes the hero's foot 77px
+     below the fold, so the badge strip can never be seen unscrolled. The
+     hero fills exactly the viewport that remains below the nav. */
+  min-height: calc(100svh - var(--nav-h) - 1px);      /* svh, not vh; -1px = header border */
   /* FIX 1b: nav is sticky and in flow, so padding must not re-add --nav-h */
   padding-block: var(--space-2xl) var(--gutter);
   padding-inline: var(--gutter);
@@ -519,8 +523,11 @@ section { padding-block: var(--space-3xl); }
   font-weight: 400;
   line-height: 1.22;
   letter-spacing: -.02em;
-  max-width: 34ch;
-  margin-bottom: var(--space-xl);
+  /* 34ch was the measure for the old 2.6rem runner. At the capped 2.25rem it
+     forces a 4-line lede that alone adds 120px to the hero. Re-measured so the
+     copy sets 3 lines in the same content track. */
+  max-width: 56ch;
+  margin-bottom: var(--space-lg);                    /* was --space-xl (40px) */
 }
 .hero .lede strong { font-weight: 800; color: var(--white); }
 
