@@ -51,28 +51,8 @@
 
   <!-- ============ 1. HERO ============ -->
   <section class="hero" id="hero">
-    <div class="hero-glow" aria-hidden="true"></div>
-    <!-- Goo filter: one instance, referenced by .hero-bubbles -->
-    <svg width="0" height="0" style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true" focusable="false">
-      <filter id="goo">
-        <feGaussianBlur in="SourceGraphic" stdDeviation="22" result="blur"/>
-        <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 10 -4" result="goo"/>
-        <feBlend in="SourceGraphic" in2="goo"/>
-      </filter>
-    </svg>
-
-    <!-- Bubble layer: decorative only -->
-    <div class="hero-bubbles" aria-hidden="true">
-      <span class="hero-bubble b1"></span>
-      <span class="hero-bubble b2"></span>
-      <span class="hero-bubble b3"></span>
-      <span class="hero-bubble b4"></span>
-      <span class="hero-bubble b5"></span>
-    </div>
-    <div class="hero-float float-supergrafis reveal">
-      <img src="assets/supergraphic/Supergrafis-01.png" alt="Decorative brand graphic — Super Duper" class="hero-visual">
-    </div>
-    <img src="assets/supergraphic/Supergrafis-02.png" alt="" class="hero-accent" aria-hidden="true">
+    <!-- z0 field: Supergrafis-03 as CSS background (§5.2)
+         z1 ghost glyph: injected below as .hero-ghost-glyph -->
     <div class="container hero-content">
       <p class="eyebrow reveal">SUPER DUPER LANGUAGE CENTER — YOGYAKARTA</p>
       <h1 class="hero-title reveal">
@@ -114,15 +94,12 @@
           </article>
         </div>
       </div>
-      <div class="value-visual reveal">
-        <img src="assets/supergraphic/Supergrafis-04.png" alt="Decorative brand graphic — Super Duper">
-      </div>
     </div>
   </section>
 
   <!-- ============ 3. EXPERIENCE BAND ============ -->
   <section class="experience-band">
-    <div class="exp-pattern" aria-hidden="true"></div>
+    <!-- field: Supergrafis-03 as CSS background (§4 row 3) -->
     <div class="container exp-content">
       <p class="eyebrow reveal">BELAJAR ITU PENGALAMAN</p>
       <h2 class="exp-title reveal">
@@ -141,9 +118,6 @@
 
       <div class="program-grid">
         <article class="program-card reveal">
-          <div class="program-head">
-            <span class="program-chip" data-glyph="bolt" aria-hidden="true"></span>
-          </div>
           <h3 class="program-title">Intensive Executive English</h3>
           <p class="program-body">Program intensif harian yang bikin kemampuanmu naik drastis dalam waktu singkat — dirancang untuk kamu yang serius mengejar target bahasa Inggris untuk kuliah, kerja, atau keperluan sehari-hari.</p>
           <ul class="program-features">
@@ -155,10 +129,6 @@
         </article>
 
         <article class="program-card reveal" style="--reveal-delay:.08s">
-          <div class="program-head">
-            <span class="program-chip" data-glyph="arc" aria-hidden="true"></span>
-            <span class="badge">ALUMNI-STYLE CAMP</span>
-          </div>
           <h3 class="program-title">English Camp · Asrama</h3>
           <p class="program-body">Pengalaman belajar menetap dengan lingkungan English Area dan fasilitas asrama — bahasa Inggris benar-benar mengelilingi keseharianmu.</p>
           <ul class="program-features">
@@ -178,12 +148,12 @@
       <p class="eyebrow reveal">KENAPA SUPER DUPER</p>
       <h2 class="section-title reveal">Dibangun Biar Kamu Cepat Bisa, Bukan Sekadar Paham.</h2>
       <div class="why-grid">
-        <article class="why-card reveal"><div class="why-dash" aria-hidden="true"></div><h3>Intensive</h3><p>Belajar padat dan terarah setiap hari, biar progresmu terasa dalam waktu singkat.</p></article>
-        <article class="why-card reveal" style="--reveal-delay:.05s"><div class="why-dash" aria-hidden="true"></div><h3>Immersive</h3><p>Lingkungan English Area dan asrama membuat bahasa Inggris mengelilingi keseharianmu.</p></article>
-        <article class="why-card reveal" style="--reveal-delay:.1s"><div class="why-dash" aria-hidden="true"></div><h3>Practical</h3><p>Materi yang langsung bisa dipakai: ngobrol, kerja, sampai persiapan internasional.</p></article>
-        <article class="why-card reveal" style="--reveal-delay:.15s"><div class="why-dash" aria-hidden="true"></div><h3>Community</h3><p>Belajar bareng komunitas yang positif, aktif, dan saling memotivasi.</p></article>
-        <article class="why-card reveal" style="--reveal-delay:.2s"><div class="why-dash" aria-hidden="true"></div><h3>Confidence</h3><p>Metode yang membangun rasa percaya diri untuk berani bicara sejak hari pertama.</p></article>
-        <article class="why-card reveal" style="--reveal-delay:.25s"><div class="why-dash" aria-hidden="true"></div><h3>Growth</h3><p>Setiap percakapan adalah langkah menuju potensimu yang lebih besar.</p></article>
+        <article class="why-card reveal"><h3>Intensive</h3><p>Belajar padat dan terarah setiap hari, biar progresmu terasa dalam waktu singkat.</p></article>
+        <article class="why-card reveal" style="--reveal-delay:.05s"><h3>Immersive</h3><p>Lingkungan English Area dan asrama membuat bahasa Inggris mengelilingi keseharianmu.</p></article>
+        <article class="why-card reveal" style="--reveal-delay:.1s"><h3>Practical</h3><p>Materi yang langsung bisa dipakai: ngobrol, kerja, sampai persiapan internasional.</p></article>
+        <article class="why-card reveal" style="--reveal-delay:.15s"><h3>Community</h3><p>Belajar bareng komunitas yang positif, aktif, dan saling memotivasi.</p></article>
+        <article class="why-card reveal" style="--reveal-delay:.2s"><h3>Confidence</h3><p>Metode yang membangun rasa percaya diri untuk berani bicara sejak hari pertama.</p></article>
+        <article class="why-card reveal" style="--reveal-delay:.25s"><h3>Growth</h3><p>Setiap percakapan adalah langkah menuju potensimu yang lebih besar.</p></article>
       </div>
     </div>
   </section>
@@ -466,9 +436,6 @@
 
   <!-- ============ 11. FINAL CTA ============ -->
   <section class="final-cta" id="daftar">
-    <div class="final-supergrafis" aria-hidden="true">
-      <img src="assets/supergraphic/Supergrafis-12.png" alt="">
-    </div>
     <div class="container final-content">
       <p class="eyebrow reveal">MULAI SEKARANG</p>
       <h2 class="final-title reveal">Your Next Conversation Starts Here.</h2>

@@ -108,43 +108,4 @@
   /* ---------- 5. Footer year ---------- */
   var yEl = document.getElementById('year');
   if (yEl) yEl.textContent = String(new Date().getFullYear());
-
-  /* ---------- 6. Hero bubble cursor-follow (parallax spring) ---------- */
-  // Only for fine pointers (mouse) and when motion isn't reduced. Transform-only,
-  // single rAF loop, no scroll listeners. Touch/coarse pointers get static field.
-  var bubbles = document.querySelector('.hero-bubbles');
-  var finePointer = window.matchMedia && window.matchMedia('(pointer: fine)').matches;
-  if (bubbles && finePointer && !reduceMotion) {
-    var hero = document.getElementById('hero') || document.querySelector('.hero');
-    var tx = 0, ty = 0;      // current (lerped) offset toward cursor
-    var gx = 0, gy = 0;      // target offset
-    var running = false;
-    var PARALLAX = 26;       // max travel px; keep it subtle behind H1
-
-    function onPointerMove(e) {
-      var rect = hero ? hero.getBoundingClientRect() : { left: 0, top: 0, width: window.innerWidth, height: window.innerHeight };
-      // Normalize cursor to hero center (-1..1), then scale to travel range.
-      gx = ((e.clientX - rect.left - rect.width  / 2) / (rect.width  / 2)) * PARALLAX;
-      gy = ((e.clientY - rect.top  - rect.height / 2) / (rect.height / 2)) * PARALLAX;
-      if (!running) {
-        running = true;
-        requestAnimationFrame(tick);
-      }
-    }
-    function tick() {
-      // Soft lerp (spring-ish) toward the target; tiny epsilon keeps it settling.
-      tx += (gx - tx) * 0.08;
-      ty += (gy - ty) * 0.08;
-      var scale = 1.04;
-      bubbles.style.transform = 'translate(' + tx.toFixed(2) + 'px,' + ty.toFixed(2) + 'px) scale(' + scale + ')';
-      if (Math.abs(gx - tx) < 0.05 && Math.abs(gy - ty) < 0.05) {
-        tx = gx; ty = gy;
-        bubbles.style.transform = 'translate(' + tx.toFixed(2) + 'px,' + ty.toFixed(2) + 'px) scale(' + scale + ')';
-        running = false;   // idle: stop looping until the cursor moves again
-        return;
-      }
-      requestAnimationFrame(tick);
-    }
-    hero.addEventListener('pointermove', onPointerMove, { passive: true });
-  }
 })();

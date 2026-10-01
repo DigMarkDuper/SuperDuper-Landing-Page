@@ -104,7 +104,7 @@ body {
   margin: 0;
   font-family: 'Inter', system-ui, sans-serif;
   font-size: 1rem;
-  line-height: 1.65;
+  line-height: 1.5;
   color: var(--ink);
   background: var(--white);
   -webkit-font-smoothing: antialiased;
@@ -374,54 +374,13 @@ section { padding-block: clamp(4rem, 10vw, 8rem); }
    ============================================================ */
 .hero {
   position: relative;
-  background: linear-gradient(120deg, var(--blue), var(--blue-deep) 130%);
+  background-color: var(--blue);
   color: var(--white);
   overflow: hidden;
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
 }
 .hero .eyebrow { color: rgba(255, 255, 255, .85); } /* MF-1: legible on hero blue */
-.hero-glow {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at 78% 38%, rgba(1, 43, 92, .55), rgba(3, 78, 158, 0) 70%);
-  pointer-events: none;
-}
-.hero-float {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: 46%;
-  height: 100%;
-  z-index: 2;
-  display: flex;
-  align-items: flex-end;
-  justify-content: flex-end;
-  overflow: hidden;
-  pointer-events: none;
-}
-.hero-visual {
-  max-width: 100%;
-  height: 100%;
-  object-fit: contain;
-  mix-blend-mode: normal;
-  animation: floaty 6s ease-in-out infinite;
-}
-@keyframes floaty {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-}
-.hero-accent {
-  position: absolute;
-  top: 10%;
-  left: 8%;
-  width: 90px;
-  opacity: .5;
-  object-fit: contain;
-  pointer-events: none;
-}
-
 .hero-content {
   position: relative;
   z-index: 3;
@@ -432,7 +391,6 @@ section { padding-block: clamp(4rem, 10vw, 8rem); }
 }
 .hero-title {
   font-weight: 800;
-  text-transform: uppercase;
   letter-spacing: -.02em;
   line-height: .95;
   font-size: clamp(2.9rem, 8.5vw, 7rem);
@@ -448,27 +406,6 @@ section { padding-block: clamp(4rem, 10vw, 8rem); }
   letter-spacing: .04em;
   color: rgba(255, 255, 255, .85);
   margin-top: 2rem;
-}
-
-@media (max-width: 959px) {
-  .hero {
-    grid-template-columns: 1fr;
-  }
-  .hero-float {
-    position: relative;
-    width: 100%;
-    height: auto;
-    padding-block: 2rem 0;
-    order: 2;
-  }
-  .hero-visual {
-    width: 100%;
-    height: auto;
-    object-fit: contain;
-    max-height: 34rem;
-    margin: 0 auto;
-  }
-  .hero-accent { display: none; }
 }
 
 /* ============================================================
@@ -516,19 +453,6 @@ section { padding-block: clamp(4rem, 10vw, 8rem); }
   color: var(--ink-muted);
 }
 
-.value-visual {
-  overflow: hidden;
-  border-radius: var(--radius-feature);
-  display: flex;
-  justify-content: center;
-}
-.value-visual img {
-  width: 100%;
-  height: auto;
-  object-fit: contain;
-  max-height: 42rem;
-}
-
 @media (min-width: 960px) {
   .value-grid { grid-template-columns: 7fr 5fr; }
 }
@@ -544,15 +468,6 @@ section { padding-block: clamp(4rem, 10vw, 8rem); }
   color: var(--white);
   position: relative;
   overflow: hidden;
-}
-.exp-pattern {
-  position: absolute;
-  inset: 0;
-  background-image: url('assets/supergraphic/Supergrafis-03.png');
-  background-size: 460px;
-  background-repeat: repeat;
-  opacity: .05;
-  pointer-events: none;
 }
 .exp-content {
   position: relative;
@@ -612,54 +527,6 @@ section { padding-block: clamp(4rem, 10vw, 8rem); }
   align-items: center;
   gap: .75rem;
   min-height: 3.5rem;              /* 56px — locked row height */
-}
-
-/* Compact motif chip: 56px blue tile, brand glyph drawn in pure CSS so the two
-   cards get an identical anchor with zero asset dependency. Decorative only. */
-.program-chip {
-  position: relative;
-  width: 3.5rem;
-  height: 3.5rem;
-  background: var(--blue);
-  border-radius: 14px;
-}
-.program-chip::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  margin: auto;
-}
-/* Legibility rule (@Neo spec F2): glyph bbox >= 50% of the 56px tile's smaller
-   dimension (>=28px) and its narrowest solid part >= 3px. Below that it is
-   texture, not a mark. */
-.program-chip[data-glyph="bolt"]::before {
-  width: 1.125rem;        /* 18px */
-  height: 1.75rem;        /* 28px */
-  background: var(--yellow);
-  clip-path: polygon(58% 0%, 18% 56%, 46% 56%, 34% 100%, 84% 42%, 52% 42%);
-}
-/* Quarter-ring (matches supergraphic Supergrafis-09: thick yellow arc, square
-   radial cut ends, bottom-right quadrant).
-
-   A mask-based version was tried first and rejected. mask-composite:intersect is
-   not honoured reliably here - it silently rendered a solid quarter DISC with no
-   hole at all, at every centre offset tried. Stroking a circle and clipping it to
-   one quadrant makes the hole real geometry instead of a composite result.
-
-   The clip polygon uses the exact centre point (50% 50%) as a vertex, so the
-   stroke is cut radially and the ends stay flat and square rather than tapered. */
-.program-chip[data-glyph="arc"]::before {
-  left: 50%;
-  top: 50%;
-  width: 2.5rem;            /* 40px border-box = outer r20 */
-  height: 2.5rem;
-  border: 9px solid var(--yellow);  /* inner r = (40 - 18)/2 = 11px -> 22px hole */
-  border-radius: 50%;
-  clip-path: polygon(50% 50%, 100% 50%, 100% 100%, 50% 100%);
-  /* Optical centring: the visible arc occupies the lower-right quadrant of this
-     box, so its centre of mass sits at box-centre +10px on both axes. Shifting
-     the box by -30px puts that centre of mass back on the tile centre. */
-  margin: -1.875rem 0 0 -1.875rem;
 }
 
 /* reserved: card-1 label pending @Ejak approval */
@@ -789,13 +656,6 @@ section { padding-block: clamp(4rem, 10vw, 8rem); }
 .why-card:hover {
   transform: translateY(-4px);
   box-shadow: var(--sh-md);
-}
-.why-dash {
-  width: 2rem;
-  height: 4px;
-  background: var(--yellow);
-  border-radius: 2px;
-  margin-bottom: .9rem;
 }
 .why-card h3 {
   font-weight: 700;
@@ -1266,20 +1126,6 @@ section { padding-block: clamp(4rem, 10vw, 8rem); }
   overflow: hidden;
   text-align: center;
 }
-.final-supergrafis {
-  position: absolute;
-  left: -8%;
-  bottom: -6%;
-  width: 42%;
-  opacity: .2;
-  pointer-events: none;
-  display: flex;
-  align-items: flex-end;
-}
-.final-supergrafis img {
-  width: 100%;
-  object-fit: contain;
-}
 .final-content {
   position: relative;
   z-index: 1;
@@ -1351,93 +1197,4 @@ section { padding-block: clamp(4rem, 10vw, 8rem); }
 
 @media (min-width: 720px) {
   .footer-grid { grid-template-columns: repeat(4, 1fr); }
-}
-/* ============================================================
-   HERO BUBBLE BACKGROUND (per HERO_BUBBLE_SPEC.md 8b)
-   ============================================================ */
-/* ---- Bubble background layer (additive, decorative) ---- */
-.hero-bubbles {
-  position: absolute;
-  inset: 0;
-  z-index: 1;                 /* above .hero-glow, below artwork + content */
-  filter: url(#goo);          /* single composite pass - gooey merge */
-  pointer-events: none;
-}
-.hero-bubbles {
-  --blue:         3, 78, 158;    /* #034E9E  - signature brand blue */
-  --blue-depth:  20, 98, 186;    /* #1462BA  - soft blue lift */
-  --yellow:     249, 208, 36;    /* #F9D024  - signature warmth */
-  --yellow-light:255, 220, 58;   /* #FFDC3A  - gold center */
-}
-
-.hero-bubble {
-  position: absolute;
-  border-radius: 50%;
-  mix-blend-mode: screen;
-  pointer-events: none;
-  will-change: transform;
-}
-
-/* b1 - soft blue anchor behind the title, slow vertical drift */
-.b1 {
-  left: 6%;  top: 20%;
-  width: 26rem; height: 26rem;
-  background: radial-gradient(circle at center, rgba(var(--blue), .30) 0%, rgba(var(--blue), 0) 50%);
-  animation: bubbleY 30s ease-in-out infinite;
-}
-/* b2 - lighter blue warmth, gentler orbit */
-.b2 {
-  left: 22%; top: 55%;
-  width: 22rem; height: 22rem;
-  background: radial-gradient(circle at center, rgba(var(--blue-depth), .26) 0%, rgba(var(--blue-depth), 0) 50%);
-  animation: bubbleSpin 20s linear infinite;
-  transform-origin: calc(50% - 400px) 50%;
-}
-/* b3 - blue->yellow transition "sun in the ocean", slow orbit (bottom-left) */
-.b3 {
-  left: -8%; bottom: -6%;
-  width: 34rem; height: 34rem;
-  background: radial-gradient(circle at center, rgba(var(--blue), .20) 0%, rgba(var(--blue-depth), .12) 45%, rgba(var(--yellow), .10) 70%, rgba(var(--yellow), 0) 100%);
-  animation: bubbleSpin40 40s linear infinite;
-  transform-origin: calc(50% + 300px) 30%;
-}
-/* b4 - gold pop behind the eyebrow, horizontal drift */
-.b4 {
-  left: 40%; top: 8%;
-  width: 20rem; height: 20rem;
-  background: radial-gradient(circle at center, rgba(var(--yellow), .38) 0%, rgba(var(--yellow), 0) 50%);
-  animation: bubbleX 40s ease-in-out infinite;
-}
-/* b5 - warm center glow, orbit (lower-left) */
-.b5 {
-  left: 12%; top: 70%;
-  width: 28rem; height: 28rem;
-  background: radial-gradient(circle at center, rgba(var(--yellow-light), .34) 0%, rgba(var(--yellow-light), 0) 50%);
-  animation: bubbleSpin 20s linear infinite;
-  transform-origin: calc(50% - 200px) 70%;
-}
-
-@keyframes bubbleY {
-  0%, 100% { transform: translateY(-50px); }
-  50%      { transform: translateY(50px); }
-}
-@keyframes bubbleX {
-  0%, 100% { transform: translateX(-50px); }
-  50%      { transform: translateX(50px); }
-}
-@keyframes bubbleSpin  { from { transform: rotate(0deg); }    to { transform: rotate(360deg); } }
-@keyframes bubbleSpin40{ from { transform: rotate(0deg); }    to { transform: rotate(360deg); } }
-
-/* ---- Reduced motion: bubbles freeze but stay visible & composed ---- */
-@media (prefers-reduced-motion: reduce) {
-  .hero-bubble { animation: none; }
-}
-
-/* ---- Mobile: stack is single-column; trim to 3 orbs, soften ---- */
-@media (max-width: 959px) {
-  .hero-bubbles { opacity: .65; }
-  .b2, .b5 { display: none; }                 /* drop orbit pair, keep 3 orbs */
-  .b1 { left: 2%; top: 18%; width: 16rem; height: 16rem; }
-  .b3 { left: -12%; bottom: 4%; width: 20rem; height: 20rem; }
-  .b4 { left: 30%; top: 4%; width: 14rem; height: 14rem; }
 }
