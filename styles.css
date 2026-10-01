@@ -872,9 +872,16 @@ section { padding-block: var(--space-3xl); }
 /* ============================================================
    7. FORMAT — two-column tabular spec sheet (spec 4 row 7)
    ============================================================ */
-.format { background: var(--blue); color: var(--white); }
-.format .eyebrow { color: var(--yellow); }   /* 5.44:1 */
-.format .section-title { color: var(--white); }
+/* FIX 3: spec 4 row 7 defines #format as a LIGHT tabular spec sheet. It was
+   painted blue, which interrupted the three consecutive white index sections
+   (#program head -> #why -> #kurikulum) and made the page read striped. Light
+   field restores the run; 3 dark fields remain across 12 sections. */
+.format { background: var(--white); color: var(--ink); }
+.format .eyebrow { color: var(--blue-600); }
+.format .section-title,
+.format .spec-value,
+.format .format-note { color: var(--ink); }
+.format .spec-label { color: var(--ink-muted); }   /* 7.03:1 on white */
 
 .format-sheet {
   display: grid;
@@ -888,7 +895,7 @@ section { padding-block: var(--space-3xl); }
   gap: var(--space-md);
   align-items: baseline;
   padding-block: var(--space-md);
-  border-top: 1px solid rgba(255, 255, 255, .28);
+  border-top: 1px solid var(--gray);        /* FIX 3: was rgba(255,255,255,.28) */
   min-width: 0;
 }
 .spec-label {
