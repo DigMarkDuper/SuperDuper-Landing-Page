@@ -280,16 +280,28 @@ section { padding-block: var(--space-3xl); }
    expand fill is the brand yellow. On hover the label flips to blue-800 on
    yellow = 9.38:1 (the upstream white-on-dark inverts that relationship).
    Built as an ADDITIVE component (.mf) rather than a rewrite of .btn, so the
-   6 remaining .btn call sites keep the verified sharp rectangular system. */
+   6 remaining .btn call sites keep the verified sharp rectangular system.
+
+   The label is NOT a flex item: .mf__label is width:auto and the button sizes
+   to disc + label + padding, so the label can never be squeezed by flex-shrink.
+   padding-inline-start holds the disc clearance (--mf-disc) and must be >= the
+   disc width or the disc sits on top of the first glyphs. Both use the same
+   token so they cannot drift apart. */
 .mf {
+  --mf-disc: 3rem;
   position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: flex-start;
+  /* width:max-content + no shrink: the pill is exactly as wide as its content,
+     so the label can never overflow the disc at narrow widths. */
+  width: max-content;
+  max-width: 100%;
+  flex: 0 0 auto;
   padding-block: .5rem;
-  padding-inline-start: 4.25rem;      /* disc 3rem + label clearance */
+  padding-inline-start: var(--mf-disc);   /* disc sits in this space */
   padding-inline-end: 1.75rem;
-  min-height: 3rem;
+  min-height: var(--mf-disc);
   border-radius: 1.625rem;
   text-decoration: none;
   cursor: pointer;
@@ -303,7 +315,7 @@ section { padding-block: var(--space-3xl); }
   position: absolute;
   left: 0;
   top: 0;
-  width: 3rem;
+  width: var(--mf-disc);
   height: 100%;
   border-radius: 1.625rem;
   background: var(--yellow);
@@ -322,6 +334,7 @@ section { padding-block: var(--space-3xl); }
 .mf__label {
   position: relative;
   z-index: 1;
+  flex: 0 0 auto;            /* the label is never a compressible flex item */
   font-family: 'Inter', sans-serif;
   font-size: var(--type-cta);
   font-weight: 700;
