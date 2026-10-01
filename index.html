@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Super Duper Language Center — intensive English learning in Yogyakarta. Build your confidence, communication skills, and real-world English ability. Duta Persada ecosystem.">
   <title>Super Duper Language Center — Intensive English Learning Yogyakarta</title>
+  <link rel="preload" as="image" href="assets/supergraphic/Supergrafis-03-1440.webp">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -24,10 +25,7 @@
       <a href="#camp">Camp</a>
       <a href="#faq">FAQ</a>
     </nav>
-    <div class="nav-ctas">
-      <a class="btn btn-ghost" href="#program">LIHAT PROGRAM</a>
-      <a class="btn btn-primary" href="#daftar">DAFTAR SEKARANG</a>
-    </div>
+    <a class="btn btn-primary nav-cta" href="#daftar">DAFTAR SEKARANG</a>
     <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false" role="button">
       <span></span><span></span><span></span>
     </button>
@@ -51,49 +49,81 @@
 
   <!-- ============ 1. HERO ============ -->
   <section class="hero" id="hero">
-    <!-- z0 field: Supergrafis-03 as CSS background (§5.2)
-         z1 ghost glyph: injected below as .hero-ghost-glyph -->
-    <div class="container hero-content">
+    <span class="hero-ghost-glyph" aria-hidden="true">S</span>
+    <div class="hero-copy">
       <p class="eyebrow reveal">SUPER DUPER LANGUAGE CENTER — YOGYAKARTA</p>
       <h1 class="hero-title reveal">
-        <span class="line-1">Speak English.</span>
-        <span class="line-2 hl-yellow">Live the Experience.</span>
+        <span class="hero-title__l1">Speak English.</span>
+        <span class="hero-title__l2">Live the <strong>Experience.</strong></span>
       </h1>
-      <p class="lede reveal">Intensive English learning in Yogyakarta designed to build your confidence, communication skills, and real-world English ability.</p>
+      <p class="lede reveal">Intensive English learning in Yogyakarta designed to build your <strong>confidence</strong>, <strong>communication skills</strong>, and real-world English ability.</p>
       <div class="hero-ctas reveal">
-        <a class="btn btn-primary btn-lg" href="#daftar">DAFTAR SEKARANG</a>
-        <a class="btn btn-ghost-invert" href="#program">LIHAT PROGRAM</a>
+        <a class="btn btn-primary" href="#daftar">DAFTAR SEKARANG</a>
+        <a class="btn btn-ghost btn-ghost-invert" href="#program">LIHAT PROGRAM</a>
       </div>
       <p class="micro-trust reveal">Intensif · Praktik langsung · Komunitas aktif</p>
     </div>
+
+    <!-- Enrollment status. Schedule and quota are unverified placeholders:
+         the page holds no such data and none is invented here. -->
+    <aside class="batch-badge" aria-label="Status pendaftaran batch berikutnya">
+      <p class="batch-badge__label">NEXT BATCH</p>
+      <div class="batch-badge__glyph" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true" focusable="false">
+          <path d="M13 2 4.5 13.2H11L9.5 22 19 10.4h-6.5L13 2Z"/>
+        </svg>
+      </div>
+      <dl class="batch-badge__meta">
+        <div class="batch-badge__row">
+          <dt>Jadwal</dt><dd>[FILL: tanggal &amp; jam]</dd>
+        </div>
+        <div class="batch-badge__row">
+          <dt>Kuota</dt><dd>[FILL: jumlah kursi]</dd>
+        </div>
+        <div class="batch-badge__row">
+          <dt>Status</dt><dd><span class="batch-badge__dot" aria-hidden="true"></span> Pendaftaran dibuka</dd>
+        </div>
+      </dl>
+      <p class="batch-badge__emblem" aria-hidden="true">DUTA PERSADA · 2026</p>
+    </aside>
   </section>
 
   <!-- ============ 2. VALUE PROPOSITION ============ -->
   <section class="value-prop" id="mengapa">
-    <div class="container value-grid">
-      <div class="value-copy">
-        <p class="eyebrow reveal">METODE BELAJAR</p>
-        <h2 class="section-title reveal">Belajar Bahasa Inggris Bukan Cuma Menghafal Grammar.</h2>
-        <p class="lede reveal">Di Super Duper, kamu belajar dengan cara yang bikin aktif berbicara sejak hari pertama — bukan sekadar mencatat rumus di kelas.</p>
-        <div class="pillars">
-          <article class="pillar-card reveal" style="--reveal-delay:0s">
-            <h3 class="pillar-title">Speak Confidence Method</h3>
-            <p>Belajar dengan pendekatan yang membuatmu aktif berbicara sejak hari pertama.</p>
-          </article>
-          <article class="pillar-card reveal" style="--reveal-delay:.08s">
-            <h3 class="pillar-title">Interactive Learning</h3>
-            <p>Diskusi, roleplay, games, dan praktik langsung agar belajar terasa menyenangkan.</p>
-          </article>
-          <article class="pillar-card reveal" style="--reveal-delay:.16s">
-            <h3 class="pillar-title">Real-Life English</h3>
-            <p>Materi disesuaikan dengan kebutuhan sehari-hari, dunia kerja, hingga persiapan internasional.</p>
-          </article>
-          <article class="pillar-card reveal" style="--reveal-delay:.24s">
-            <h3 class="pillar-title">Personal Progress</h3>
-            <p>Perkembangan belajarmu dipantau secara berkala sehingga hasilnya lebih terarah.</p>
-          </article>
-        </div>
-      </div>
+    <div class="container">
+      <p class="eyebrow reveal">METODE BELAJAR</p>
+      <h2 class="section-title reveal">Belajar Bahasa Inggris Bukan Cuma Menghafal Grammar.</h2>
+      <p class="runner reveal">Di Super Duper, kamu belajar dengan cara yang bikin <strong>aktif berbicara</strong> sejak hari pertama — bukan sekadar mencatat rumus di kelas.</p>
+      <ul class="index-list">
+        <li class="index-row reveal">
+          <span class="index-row__num">01</span>
+          <div>
+            <h3 class="index-row__title">Speak Confidence Method</h3>
+            <p class="index-row__body">Belajar dengan pendekatan yang membuatmu aktif berbicara sejak hari pertama.</p>
+          </div>
+        </li>
+        <li class="index-row reveal" style="--reveal-delay:.02s">
+          <span class="index-row__num">02</span>
+          <div>
+            <h3 class="index-row__title">Interactive Learning</h3>
+            <p class="index-row__body">Diskusi, roleplay, games, dan praktik langsung agar belajar terasa menyenangkan.</p>
+          </div>
+        </li>
+        <li class="index-row reveal" style="--reveal-delay:.04s">
+          <span class="index-row__num">03</span>
+          <div>
+            <h3 class="index-row__title">Real-Life English</h3>
+            <p class="index-row__body">Materi disesuaikan dengan kebutuhan sehari-hari, dunia kerja, hingga persiapan internasional.</p>
+          </div>
+        </li>
+        <li class="index-row reveal" style="--reveal-delay:.06s">
+          <span class="index-row__num">04</span>
+          <div>
+            <h3 class="index-row__title">Personal Progress</h3>
+            <p class="index-row__body">Perkembangan belajarmu dipantau secara berkala sehingga hasilnya lebih terarah.</p>
+          </div>
+        </li>
+      </ul>
     </div>
   </section>
 
@@ -106,40 +136,43 @@
         <span>Learn English.</span>
         <span class="hl-yellow">Live English.</span>
       </h2>
-      <p class="lede reveal">Bahasa Inggris bukan sekadar jam pelajaran — ia hidup di setiap momen: di kelas, di asrama, di komunitas.</p>
+      <p class="lede exp-runner reveal">Bahasa Inggris bukan sekadar jam pelajaran — ia hidup di setiap momen: di kelas, di asrama, di komunitas.</p>
     </div>
   </section>
 
   <!-- ============ 4. PROGRAMS ============ -->
   <section class="programs" id="program">
-    <div class="container">
+    <div class="container programs-intro">
       <p class="eyebrow reveal">PROGRAM</p>
       <h2 class="section-title reveal">Dua Jalur Belajar. Satu Tujuan: Mahir Berbicara.</h2>
-
-      <div class="program-grid">
-        <article class="program-card reveal">
-          <h3 class="program-title">Intensive Executive English</h3>
-          <p class="program-body">Program intensif harian yang bikin kemampuanmu naik drastis dalam waktu singkat — dirancang untuk kamu yang serius mengejar target bahasa Inggris untuk kuliah, kerja, atau keperluan sehari-hari.</p>
-          <ul class="program-features">
-            <li>Belajar 5 hari/minggu</li>
-            <li>Praktik langsung sejak hari pertama</li>
-            <li>Pengajar berpengalaman</li>
-          </ul>
-          <a class="btn btn-primary" href="#daftar">DAFTAR SEKARANG</a>
-        </article>
-
-        <article class="program-card reveal" style="--reveal-delay:.08s">
-          <h3 class="program-title">English Camp · Asrama</h3>
-          <p class="program-body">Pengalaman belajar menetap dengan lingkungan English Area dan fasilitas asrama — bahasa Inggris benar-benar mengelilingi keseharianmu.</p>
-          <ul class="program-features">
-            <li>Tinggal di asrama</li>
-            <li>English Area 24 jam</li>
-            <li>Komunitas camp yang aktif</li>
-          </ul>
-          <a class="btn btn-primary" href="#daftar">DAFTAR SEKARANG</a>
-        </article>
-      </div>
     </div>
+    <article class="program-block program-block--a">
+      <div class="container program-block__inner">
+        <p class="eyebrow reveal">PROGRAM INTENSIF</p>
+        <h2 class="program-title reveal">Intensive Executive English</h2>
+        <p class="program-body reveal">Program intensif harian yang bikin kemampuanmu naik drastis dalam waktu singkat — dirancang untuk kamu yang serius mengejar target bahasa Inggris untuk kuliah, kerja, atau keperluan sehari-hari.</p>
+        <ul class="program-features reveal">
+          <li>Belajar 5 hari/minggu</li>
+          <li>Praktik langsung sejak hari pertama</li>
+          <li>Pengajar berpengalaman</li>
+        </ul>
+        <a class="btn btn-primary reveal" href="#daftar">DAFTAR SEKARANG</a>
+      </div>
+    </article>
+
+    <article class="program-block program-block--b">
+      <div class="container program-block__inner">
+        <p class="eyebrow reveal">PROGRAM CAMP</p>
+        <h2 class="program-title reveal">English Camp · Asrama</h2>
+        <p class="program-body reveal">Pengalaman belajar menetap dengan lingkungan English Area dan fasilitas asrama — bahasa Inggris benar-benar mengelilingi keseharianmu.</p>
+        <ul class="program-features reveal">
+          <li>Tinggal di asrama</li>
+          <li>English Area 24 jam</li>
+          <li>Komunitas camp yang aktif</li>
+        </ul>
+        <a class="btn btn-primary reveal" href="#daftar">DAFTAR SEKARANG</a>
+      </div>
+    </article>
   </section>
 
   <!-- ============ 5. WHY SUPER DUPER ============ -->
@@ -147,14 +180,14 @@
     <div class="container">
       <p class="eyebrow reveal">KENAPA SUPER DUPER</p>
       <h2 class="section-title reveal">Dibangun Biar Kamu Cepat Bisa, Bukan Sekadar Paham.</h2>
-      <div class="why-grid">
-        <article class="why-card reveal"><h3>Intensive</h3><p>Belajar padat dan terarah setiap hari, biar progresmu terasa dalam waktu singkat.</p></article>
-        <article class="why-card reveal" style="--reveal-delay:.05s"><h3>Immersive</h3><p>Lingkungan English Area dan asrama membuat bahasa Inggris mengelilingi keseharianmu.</p></article>
-        <article class="why-card reveal" style="--reveal-delay:.1s"><h3>Practical</h3><p>Materi yang langsung bisa dipakai: ngobrol, kerja, sampai persiapan internasional.</p></article>
-        <article class="why-card reveal" style="--reveal-delay:.15s"><h3>Community</h3><p>Belajar bareng komunitas yang positif, aktif, dan saling memotivasi.</p></article>
-        <article class="why-card reveal" style="--reveal-delay:.2s"><h3>Confidence</h3><p>Metode yang membangun rasa percaya diri untuk berani bicara sejak hari pertama.</p></article>
-        <article class="why-card reveal" style="--reveal-delay:.25s"><h3>Growth</h3><p>Setiap percakapan adalah langkah menuju potensimu yang lebih besar.</p></article>
-      </div>
+      <ul class="why-grid">
+        <li class="why-cell reveal"><span class="why-cell__num">01</span><h3 class="why-cell__word">Intensive</h3><p>Belajar padat dan terarah setiap hari, biar progresmu terasa dalam waktu singkat.</p></li>
+        <li class="why-cell reveal" style="--reveal-delay:.02s"><span class="why-cell__num">02</span><h3 class="why-cell__word">Immersive</h3><p>Lingkungan English Area dan asrama membuat bahasa Inggris mengelilingi keseharianmu.</p></li>
+        <li class="why-cell reveal" style="--reveal-delay:.04s"><span class="why-cell__num">03</span><h3 class="why-cell__word">Practical</h3><p>Materi yang langsung bisa dipakai: ngobrol, kerja, sampai persiapan internasional.</p></li>
+        <li class="why-cell reveal" style="--reveal-delay:.02s"><span class="why-cell__num">04</span><h3 class="why-cell__word">Community</h3><p>Belajar bareng komunitas yang positif, aktif, dan saling memotivasi.</p></li>
+        <li class="why-cell reveal" style="--reveal-delay:.04s"><span class="why-cell__num">05</span><h3 class="why-cell__word">Confidence</h3><p>Metode yang membangun rasa percaya diri untuk berani bicara sejak hari pertama.</p></li>
+        <li class="why-cell reveal" style="--reveal-delay:.06s"><span class="why-cell__num">06</span><h3 class="why-cell__word">Growth</h3><p>Setiap percakapan adalah langkah menuju potensimu yang lebih besar.</p></li>
+      </ul>
     </div>
   </section>
 
@@ -163,35 +196,34 @@
     <div class="container">
       <p class="eyebrow reveal">PERJALANAN BELAJAR</p>
       <h2 class="section-title reveal">Dari Nol Sampai Lancar Ngobrol.</h2>
-      <div class="journey">
-        <div class="step reveal"><span class="step-num">1</span><div><h3>Grammar</h3><p>Pondasi aturan agar kamu bicara yang benar dan rapi.</p></div></div>
-        <div class="step reveal" style="--reveal-delay:.05s"><span class="step-num">2</span><div><h3>Conversation</h3><p>Latihan ngobrol sehari-hari dengan topik nyata.</p></div></div>
-        <div class="step reveal" style="--reveal-delay:.1s"><span class="step-num">3</span><div><h3>Speaking Drills</h3><p>Sesi khusus biar mulutmu terbiasa dengan bahasa Inggris.</p></div></div>
-        <div class="step reveal" style="--reveal-delay:.15s"><span class="step-num">4</span><div><h3>Storytelling</h3><p>Bercerita dengan runtut dan menarik dalam bahasa Inggris.</p></div></div>
-        <div class="step reveal" style="--reveal-delay:.2s"><span class="step-num">5</span><div><h3>Roleplay</h3><p>Simulasi situasi nyata: belanja, wawancara, presentasi.</p></div></div>
-        <div class="step reveal" style="--reveal-delay:.05s"><span class="step-num">6</span><div><h3>Pronunciation</h3><p>Pelafalan yang jelas biar percakapanmu gampang dipahami.</p></div></div>
-        <div class="step reveal" style="--reveal-delay:.1s"><span class="step-num">7</span><div><h3>Vocabulary</h3><p>Perkaya kosa kata praktis yang sering dipakai di lapangan.</p></div></div>
-        <div class="step reveal" style="--reveal-delay:.15s"><span class="step-num">8</span><div><h3>Presentation</h3><p>Berani tampil dan mempresentasikan ide dalam bahasa Inggris.</p></div></div>
-        <div class="step reveal" style="--reveal-delay:.2s"><span class="step-num">9</span><div><h3>English Games</h3><p>Belajar sambil bermain supaya nggak kaku dan nggak ngebosenin.</p></div></div>
-        <div class="step reveal" style="--reveal-delay:.25s"><span class="step-num">10</span><div><h3>English Camp</h3><p>Puncak pengalaman: praktik total di lingkungan camp &amp; asrama.</p></div></div>
-      </div>
+      <ol class="journey">
+        <li class="step reveal"><span class="step-num">01</span><div><h3>Grammar</h3><p>Pondasi aturan agar kamu bicara yang benar dan rapi.</p></div></li>
+        <li class="step reveal" style="--reveal-delay:.02s"><span class="step-num">02</span><div><h3>Conversation</h3><p>Latihan ngobrol sehari-hari dengan topik nyata.</p></div></li>
+        <li class="step reveal" style="--reveal-delay:.04s"><span class="step-num">03</span><div><h3>Speaking Drills</h3><p>Sesi khusus biar mulutmu terbiasa dengan bahasa Inggris.</p></div></li>
+        <li class="step reveal" style="--reveal-delay:.06s"><span class="step-num">04</span><div><h3>Storytelling</h3><p>Bercerita dengan runtut dan menarik dalam bahasa Inggris.</p></div></li>
+        <li class="step reveal" style="--reveal-delay:.08s"><span class="step-num">05</span><div><h3>Roleplay</h3><p>Simulasi situasi nyata: belanja, wawancara, presentasi.</p></div></li>
+        <li class="step reveal" style="--reveal-delay:.02s"><span class="step-num">06</span><div><h3>Pronunciation</h3><p>Pelafalan yang jelas biar percakapanmu gampang dipahami.</p></div></li>
+        <li class="step reveal" style="--reveal-delay:.04s"><span class="step-num">07</span><div><h3>Vocabulary</h3><p>Perkaya kosa kata praktis yang sering dipakai di lapangan.</p></div></li>
+        <li class="step reveal" style="--reveal-delay:.06s"><span class="step-num">08</span><div><h3>Presentation</h3><p>Berani tampil dan mempresentasikan ide dalam bahasa Inggris.</p></div></li>
+        <li class="step reveal" style="--reveal-delay:.08s"><span class="step-num">09</span><div><h3>English Games</h3><p>Belajar sambil bermain supaya nggak kaku dan nggak ngebosenin.</p></div></li>
+        <li class="step reveal" style="--reveal-delay:.1s"><span class="step-num">10</span><div><h3>English Camp</h3><p>Puncak pengalaman: praktik total di lingkungan camp &amp; asrama.</p></div></li>
+      </ol>
     </div>
   </section>
 
   <!-- ============ 7. FORMAT ============ -->
   <section class="format" id="format">
-    <div class="format-accent" aria-hidden="true"></div>
     <div class="container">
       <p class="eyebrow reveal">CARA BELAJAR</p>
       <h2 class="section-title reveal">Format Intensif yang Efektif.</h2>
-      <div class="format-grid">
-        <div class="spec-card reveal"><span class="spec-label">Durasi</span><span class="spec-value">± 2 bulan</span></div>
-        <div class="spec-card reveal" style="--reveal-delay:.04s"><span class="spec-label">Intensitas</span><span class="spec-value">5 hari/minggu</span></div>
-        <div class="spec-card reveal" style="--reveal-delay:.08s"><span class="spec-label">Durasi harian</span><span class="spec-value">± 10–12 jam/hari</span></div>
-        <div class="spec-card reveal" style="--reveal-delay:.12s"><span class="spec-label">Metode</span><span class="spec-value">Intensive</span></div>
-        <div class="spec-card reveal" style="--reveal-delay:.16s"><span class="spec-label">Lingkungan</span><span class="spec-value">English Area</span></div>
-        <div class="spec-card reveal" style="--reveal-delay:.2s"><span class="spec-label">Ekosistem</span><span class="spec-value">Asrama &amp; camp</span></div>
-      </div>
+      <dl class="format-sheet">
+        <div class="spec-row reveal"><dt class="spec-label">Durasi</dt><dd class="spec-value">± 2 bulan</dd></div>
+        <div class="spec-row reveal" style="--reveal-delay:.02s"><dt class="spec-label">Intensitas</dt><dd class="spec-value">5 hari/minggu</dd></div>
+        <div class="spec-row reveal" style="--reveal-delay:.04s"><dt class="spec-label">Durasi harian</dt><dd class="spec-value">± 10–12 jam/hari</dd></div>
+        <div class="spec-row reveal" style="--reveal-delay:.06s"><dt class="spec-label">Metode</dt><dd class="spec-value">Intensive</dd></div>
+        <div class="spec-row reveal" style="--reveal-delay:.02s"><dt class="spec-label">Lingkungan</dt><dd class="spec-value">English Area</dd></div>
+        <div class="spec-row reveal" style="--reveal-delay:.04s"><dt class="spec-label">Ekosistem</dt><dd class="spec-value">Asrama &amp; camp</dd></div>
+      </dl>
       <p class="format-note reveal">Detail jadwal &amp; biaya menyusul.</p>
     </div>
   </section>
@@ -205,153 +237,106 @@
       <div class="camp-grid">
         <figure class="camp-lead reveal">
           <img src="assets/camp/gang-alumni.webp" alt="Super Duper campsite community — alumni group">
+          <figcaption class="camp-caption">Ruang kelas modern · Asrama · Area komunitas</figcaption>
         </figure>
         <figure class="camp-card reveal" style="--reveal-delay:.05s">
           <img src="assets/camp/asrama.webp" alt="Super Duper dormitory asrama accommodation">
+          <figcaption class="camp-caption">Asrama</figcaption>
         </figure>
         <figure class="camp-card reveal" style="--reveal-delay:.1s">
           <img src="assets/camp/r-kelas.webp" alt="Super Duper classroom ruang kelas">
+          <figcaption class="camp-caption">Ruang kelas modern</figcaption>
         </figure>
         <figure class="camp-card reveal" style="--reveal-delay:.15s">
           <img src="assets/camp/tangga.webp" alt="Super Duper camp staircase tangga">
+          <figcaption class="camp-caption">Area komunitas</figcaption>
         </figure>
       </div>
-      <p class="camp-caption reveal">Ruang kelas modern · Asrama · Area komunitas</p>
     </div>
   </section>
 
   <!-- ============ 9. SOCIAL PROOF ============ -->
   <section class="social-proof" aria-labelledby="sp-title">
-    <div class="sp-backdrop" aria-hidden="true"></div>
-    <div class="sp-accent" aria-hidden="true"></div>
-
     <div class="container sp-container">
       <p class="eyebrow reveal">CERITA MEREKA</p>
       <h2 class="section-title reveal" id="sp-title">Cerita dari Yang Dulu Gak Gengsi Ngomong Inggris</h2>
       <p class="lede reveal">Semua orang belajar dari nol. Beda cuma, mereka udah mulai duluan.</p>
 
+      <!-- Disclosure promoted per spec 9.6: above the grid, yellow left border, not dismissible. -->
       <p class="sp-disclosure reveal">
         <span class="sp-disclosure-label">Catatan: simulasi untuk ilustrasi</span>
         <span class="sp-disclosure-text">Nama dan kutipan di bawah adalah contoh profil peserta kelas yang kami layani.</span>
       </p>
 
       <div class="testimonial-grid">
-        <article class="testimonial-card reveal" data-testid="testimonial-card">
-          <span class="card-flag">Ilustrasi</span>
-          <p class="card-tag">Makin berani ngomong</p>
-          <span class="card-quote-mark" aria-hidden="true">&ldquo;</span>
-          <blockquote class="card-quote">
-            Awalnya aku sheepet pas presentasi. Sekarang? Nggak gengsi lagi, kak.
-          </blockquote>
-          <span class="card-dash" aria-hidden="true"></span>
-          <div class="card-person">
-            <img class="card-avatar"
-                 src="assets/testimonial/01-rizky-mahasiswa.png"
-                 alt="Foto ilustrasi peserta kelas, bukan foto asli"
-                 width="256" height="256" decoding="async">
-            <div class="card-meta">
-              <h3 class="card-name">Rizky Ananda</h3>
-              <p class="card-role">Mahasiswa S1 · Jogja</p>
+        <article class="testimonial-row reveal" data-testid="testimonial-card">
+          <p class="testimonial-row__tag">Ilustrasi · Makin berani ngomong</p>
+          <blockquote class="testimonial-row__quote">Awalnya aku sheepet pas presentasi. Sekarang? Nggak gengsi lagi, kak.</blockquote>
+          <div class="testimonial-row__person">
+            <img class="testimonial-row__avatar" src="assets/testimonial/01-rizky-mahasiswa.png" alt="Foto ilustrasi peserta kelas, bukan foto asli" width="256" height="256" decoding="async">
+            <div>
+              <h3 class="testimonial-row__name">Rizky Ananda</h3>
+              <p class="testimonial-row__role">Mahasiswa S1 · Jogja</p>
             </div>
           </div>
         </article>
 
-        <article class="testimonial-card reveal" data-testid="testimonial-card" style="--reveal-delay:.06s">
-          <span class="card-flag">Ilustrasi</span>
-          <p class="card-tag">Jadwal gw atur sendiri</p>
-          <span class="card-quote-mark" aria-hidden="true">&ldquo;</span>
-          <blockquote class="card-quote">
-            Gw bisa geser jadwal pas lagi shift di dapur. Aman, no drama.
-          </blockquote>
-          <span class="card-dash" aria-hidden="true"></span>
-          <div class="card-person">
-            <img class="card-avatar"
-                 src="assets/testimonial/02-dimas-culinary.png"
-                 alt="Foto ilustrasi peserta kelas, bukan foto asli"
-                 width="256" height="256" loading="lazy" decoding="async">
-            <div class="card-meta">
-              <h3 class="card-name">Dimas Prasetyo</h3>
-              <p class="card-role">Culinary Student · Yogyakarta</p>
+        <article class="testimonial-row reveal" data-testid="testimonial-card" style="--reveal-delay:.02s">
+          <p class="testimonial-row__tag">Ilustrasi · Jadwal gw atur sendiri</p>
+          <blockquote class="testimonial-row__quote">Gw bisa geser jadwal pas lagi shift di dapur. Aman, no drama.</blockquote>
+          <div class="testimonial-row__person">
+            <img class="testimonial-row__avatar" src="assets/testimonial/02-dimas-culinary.png" alt="Foto ilustrasi peserta kelas, bukan foto asli" width="256" height="256" loading="lazy" decoding="async">
+            <div>
+              <h3 class="testimonial-row__name">Dimas Prasetyo</h3>
+              <p class="testimonial-row__role">Culinary Student · Yogyakarta</p>
             </div>
           </div>
         </article>
 
-        <article class="testimonial-card reveal" data-testid="testimonial-card" style="--reveal-delay:.12s">
-          <span class="card-flag">Ilustrasi</span>
-          <p class="card-tag">Lolos interview pertama</p>
-          <span class="card-quote-mark" aria-hidden="true">&ldquo;</span>
-          <blockquote class="card-quote">
-            Interview pertama aku grogi banget. Yang kedua? Kayak ngobrol biasa sama temen.
-          </blockquote>
-          <span class="card-dash" aria-hidden="true"></span>
-          <div class="card-person">
-            <img class="card-avatar"
-                 src="assets/testimonial/03-bagas-fresh-graduate.png"
-                 alt="Foto ilustrasi peserta kelas, bukan foto asli"
-                 width="256" height="256" loading="lazy" decoding="async">
-            <div class="card-meta">
-              <h3 class="card-name">Bagas Nurcahyo</h3>
-              <p class="card-role">Fresh Graduate · Pencari Kerja</p>
+        <article class="testimonial-row reveal" data-testid="testimonial-card" style="--reveal-delay:.04s">
+          <p class="testimonial-row__tag">Ilustrasi · Lolos interview pertama</p>
+          <blockquote class="testimonial-row__quote">Interview pertama aku grogi banget. Yang kedua? Kayak ngobrol biasa sama temen.</blockquote>
+          <div class="testimonial-row__person">
+            <img class="testimonial-row__avatar" src="assets/testimonial/03-bagas-fresh-graduate.png" alt="Foto ilustrasi peserta kelas, bukan foto asli" width="256" height="256" loading="lazy" decoding="async">
+            <div>
+              <h3 class="testimonial-row__name">Bagas Nurcahyo</h3>
+              <p class="testimonial-row__role">Fresh Graduate · Pencari Kerja</p>
             </div>
           </div>
         </article>
 
-        <article class="testimonial-card reveal" data-testid="testimonial-card" style="--reveal-delay:.06s">
-          <span class="card-flag">Ilustrasi</span>
-          <p class="card-tag">Nggak minder grammar</p>
-          <span class="card-quote-mark" aria-hidden="true">&ldquo;</span>
-          <blockquote class="card-quote">
-            Tiga tahun gue cuma bisa nulis "speaking" di buku. Sekarang gue kirim chat ke clients pakai Inggris.
-          </blockquote>
-          <span class="card-dash" aria-hidden="true"></span>
-          <div class="card-person">
-            <img class="card-avatar"
-                 src="assets/testimonial/04-nadia-mahasiswa-ti.png"
-                 alt="Foto ilustrasi peserta kelas, bukan foto asli"
-                 width="256" height="256" loading="lazy" decoding="async">
-            <div class="card-meta">
-              <h3 class="card-name">Nadia Salsabila</h3>
-              <p class="card-role">Mahasiswa S1 · Sistem Informasi</p>
+        <article class="testimonial-row reveal" data-testid="testimonial-card" style="--reveal-delay:.02s">
+          <p class="testimonial-row__tag">Ilustrasi · Nggak minder grammar</p>
+          <blockquote class="testimonial-row__quote">Tiga tahun gue cuma bisa nulis "speaking" di buku. Sekarang gue kirim chat ke clients pakai Inggris.</blockquote>
+          <div class="testimonial-row__person">
+            <img class="testimonial-row__avatar" src="assets/testimonial/04-nadia-mahasiswa-ti.png" alt="Foto ilustrasi peserta kelas, bukan foto asli" width="256" height="256" loading="lazy" decoding="async">
+            <div>
+              <h3 class="testimonial-row__name">Nadia Salsabila</h3>
+              <p class="testimonial-row__role">Mahasiswa S1 · Sistem Informasi</p>
             </div>
           </div>
         </article>
 
-        <article class="testimonial-card reveal" data-testid="testimonial-card" style="--reveal-delay:.12s">
-          <span class="card-flag">Ilustrasi</span>
-          <p class="card-tag">Hebat di depan forum</p>
-          <span class="card-quote-mark" aria-hidden="true">&ldquo;</span>
-          <blockquote class="card-quote">
-            Aku yang biasanya diem di rapat organisasi. Sekarang aku yang presentasi, dan cuma satu yang aku persiapin.
-          </blockquote>
-          <span class="card-dash" aria-hidden="true"></span>
-          <div class="card-person">
-            <img class="card-avatar"
-                 src="assets/testimonial/05-fitria-organisasi.png"
-                 alt="Foto ilustrasi peserta kelas, bukan foto asli"
-                 width="256" height="256" loading="lazy" decoding="async">
-            <div class="card-meta">
-              <h3 class="card-name">Fitria Rahmawati</h3>
-              <p class="card-role">Aktivis Organisasi</p>
+        <article class="testimonial-row reveal" data-testid="testimonial-card" style="--reveal-delay:.04s">
+          <p class="testimonial-row__tag">Ilustrasi · Hebat di depan forum</p>
+          <blockquote class="testimonial-row__quote">Aku yang biasanya diem di rapat organisasi. Sekarang aku yang presentasi, dan cuma satu yang aku persiapin.</blockquote>
+          <div class="testimonial-row__person">
+            <img class="testimonial-row__avatar" src="assets/testimonial/05-fitria-organisasi.png" alt="Foto ilustrasi peserta kelas, bukan foto asli" width="256" height="256" loading="lazy" decoding="async">
+            <div>
+              <h3 class="testimonial-row__name">Fitria Rahmawati</h3>
+              <p class="testimonial-row__role">Aktivis Organisasi</p>
             </div>
           </div>
         </article>
 
-        <article class="testimonial-card reveal" data-testid="testimonial-card" style="--reveal-delay:.18s">
-          <span class="card-flag">Ilustrasi</span>
-          <p class="card-tag">Nggak fear call klien</p>
-          <span class="card-quote-mark" aria-hidden="true">&ldquo;</span>
-          <blockquote class="card-quote">
-            Negotiate sama vendor Asia lewat Inggris. Dulu itu makan waktu, sekarang cuma lima belas menit.
-          </blockquote>
-          <span class="card-dash" aria-hidden="true"></span>
-          <div class="card-person">
-            <img class="card-avatar"
-                 src="assets/testimonial/06-amalia-professional.png"
-                 alt="Foto ilustrasi peserta kelas, bukan foto asli"
-                 width="256" height="256" loading="lazy" decoding="async">
-            <div class="card-meta">
-              <h3 class="card-name">Amalia Puspita</h3>
-              <p class="card-role">Professional · Konsultan</p>
+        <article class="testimonial-row reveal" data-testid="testimonial-card" style="--reveal-delay:.06s">
+          <p class="testimonial-row__tag">Ilustrasi · Nggak fear call klien</p>
+          <blockquote class="testimonial-row__quote">Negotiate sama vendor Asia lewat Inggris. Dulu itu makan waktu, sekarang cuma lima belas menit.</blockquote>
+          <div class="testimonial-row__person">
+            <img class="testimonial-row__avatar" src="assets/testimonial/06-amalia-professional.png" alt="Foto ilustrasi peserta kelas, bukan foto asli" width="256" height="256" loading="lazy" decoding="async">
+            <div>
+              <h3 class="testimonial-row__name">Amalia Puspita</h3>
+              <p class="testimonial-row__role">Professional · Konsultan</p>
             </div>
           </div>
         </article>
@@ -361,9 +346,12 @@
 
   <!-- ============ 10. FAQ ============ -->
   <section class="faq" id="faq">
-    <div class="container">
-      <p class="eyebrow reveal">INFORMASI PRAKTIS</p>
-      <h2 class="section-title reveal">Pertanyaan yang Sering Diajukan</h2>
+    <div class="container faq-grid">
+      <div class="faq-intro">
+        <p class="eyebrow reveal">INFORMASI PRAKTIS</p>
+        <h2 class="section-title reveal">Pertanyaan yang Sering Diajukan</h2>
+        <p class="faq-cta reveal">Masih bingung? <a href="#daftar">Hubungi kami</a>.</p>
+      </div>
       <div class="acc" id="faq-accordion">
         <div class="acc-item">
           <button class="acc-head" type="button" role="button" aria-expanded="false" aria-controls="faq-p1" id="faq-b1">
@@ -430,7 +418,6 @@
           </div>
         </div>
       </div>
-      <p class="faq-cta">Masih bingung? <a href="#daftar">Hubungi kami</a>.</p>
     </div>
   </section>
 
@@ -438,7 +425,7 @@
   <section class="final-cta" id="daftar">
     <div class="container final-content">
       <p class="eyebrow reveal">MULAI SEKARANG</p>
-      <h2 class="final-title reveal">Your Next Conversation Starts Here.</h2>
+      <h2 class="final-title reveal">Your Next <span class="hl-yellow">Conversation</span> Starts Here.</h2>
       <p class="lede reveal">Start your English journey with Super Duper Language Center.</p>
       <a class="btn btn-primary btn-lg reveal" href="#daftar">DAFTAR SEKARANG</a>
     </div>
@@ -448,30 +435,23 @@
 
 <!-- ============ FOOTER ============ -->
 <footer class="site-footer" data-testid="footer">
-  <div class="container footer-grid">
+  <div class="container footer-mast">
     <div class="footer-brand">
       <img src="assets/logo/Brandmark.svg" alt="Super Duper Language Center brandmark" class="footer-mark">
       <p>Intensive English learning di Yogyakarta — setiap percakapan adalah langkah menuju potensimu yang lebih besar.</p>
     </div>
-    <div class="footer-col">
-      <h4>Navigasi</h4>
+    <nav class="footer-links" aria-label="Footer navigation">
       <a href="#program">Program</a>
       <a href="#mengapa">Mengapa</a>
       <a href="#kurikulum">Kurikulum</a>
       <a href="#camp">Camp</a>
       <a href="#faq">FAQ</a>
-    </div>
-    <div class="footer-col">
-      <h4>Program</h4>
-      <a href="#program">Intensive Executive English</a>
-      <a href="#program">English Camp · Asrama</a>
-    </div>
-    <div class="footer-col">
-      <h4>Kontak</h4>
-      <address>Jalan Duta Persada 56, Kraton, Yogyakarta, DI Yogyakarta</address>
-      <p>@superduper</p>
-      <p>[TBD — kontak resmi]</p>
-    </div>
+    </nav>
+  </div>
+  <div class="container footer-contact">
+    <address>Jalan Duta Persada 56, Kraton, Yogyakarta, DI Yogyakarta</address>
+    <p>@superduper</p>
+    <p>[TBD — kontak resmi]</p>
   </div>
   <div class="container footer-bottom">
     <p>© <span id="year">2026</span> Super Duper Language Center · Bagian dari ekosistem Duta Persada</p>

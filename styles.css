@@ -68,28 +68,60 @@
   font-display: swap;
 }
 
-/* ---------- Design tokens ---------- */
+/* ---------- Design tokens ----------
+   Editorial restyle per EDITORIAL_RESTYLE_SPEC.md section 2 (type scale),
+   section 3 (colour roles), section 4 (edge system). */
 :root {
-  --blue: #034E9E;
-  --blue-deep: #012B5C;
-  --blue-soft: #E7F0FA;
-  --yellow: #F9D024;
-  --yellow-soft: #FFF3C4;
+  /* --- Colour roles (spec section 3). No hex outside this block. --- */
+  --blue: #034E9E;        /* primary brand field */
+  --blue-900: #061A3C;    /* deepest block: final CTA, FAQ */
+  --blue-800: #012B5C;    /* nav, hover fills, deep CTA label */
+  --blue-700: #0A2A5E;    /* body ink on white (13.95:1), focus ring on white */
+  --blue-600: #0E3E86;    /* links + eyebrows on white (10.23:1) */
+  --yellow: #F9D024;      /* energy accent, one per viewport */
   --yellow-hover: #FFDC3A;
   --white: #FFFFFF;
-  --gray: #D1D5DB;
-  --ink: #0A1F38;
-  --ink-muted: #4B5A6E;
+  --white-72: #B8C6D8;    /* muted text on blue (4.72:1) */
+  --gray: #D1D5DB;        /* hairlines and decor only — never text */
+  --ink: #0A2A5E;         /* body text on white */
+  --ink-muted: #4B5A6E;   /* secondary body on white (7.03:1); never on blue */
 
-  --sh-sm: 0 2px 8px rgba(1, 43, 92, .08);
-  --sh-md: 0 10px 30px rgba(1, 43, 92, .12);
-  --sh-lg: 0 24px 60px rgba(1, 43, 92, .18);
+  /* --- Type scale (spec section 2). All clamps floor at 320px. --- */
+  --type-display: clamp(3.25rem, 11.5vw, 10.5rem);
+  --type-split:   clamp(2.5rem, 8vw, 6.5rem);
+  --type-h2:      clamp(1.9rem, 4.4vw, 3.6rem);
+  --type-h3:      clamp(1.15rem, 1.6vw, 1.4rem);
+  --type-runner:  clamp(1.3rem, 2.9vw, 2.6rem);
+  --type-lede:    clamp(1.05rem, 1.5vw, 1.3rem);
+  --type-body:    1rem;
+  --type-small:   .875rem;
+  --type-eyebrow: .75rem;
+  --type-cta:     .875rem;
+  --type-num:     clamp(1.4rem, 2.2vw, 2rem);
 
-  --radius-card: 16px;
-  --radius-feature: 24px;
+  /* --- Edge system: 24px gutter, full-bleed sections --- */
+  --gutter: 24px;
+  --nav-h: 76px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 40px;
+  --space-2xl: 64px;
+  --space-3xl: 96px;
 
+  /* --- Sharp, not soft: every radius is 0 or 2px --- */
+  --radius: 0;
+  --radius-sm: 2px;
+
+  /* --- Motion (spec section 7) --- */
   --ease-out: cubic-bezier(.22, 1, .36, 1);
-  --transition: .55s var(--ease-out);
+  --dur-fast: 180ms;
+  --dur-reveal: 520ms;
+  --dur-panel: 240ms;
+}
+
+@media (max-width: 30rem) {
+  :root { --gutter: 16px; }
 }
 
 /* ---------- Base ---------- */
