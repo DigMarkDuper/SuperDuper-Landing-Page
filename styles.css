@@ -273,6 +273,93 @@ section { padding-block: var(--space-3xl); }
 
 .hl-yellow { color: var(--yellow); }
 
+/* ---------- Massive-Mayfly CTA (uiverse.io/cssbuttons-io/massive-mayfly-74)
+   Upstream is a dark disc (#282936) that expands into a full-width pill on
+   hover while the arrow slides right and the label inverts to white.
+   Brand mapping: #282936 is off-brand, so the disc is brand blue and the
+   expand fill is the brand yellow. On hover the label flips to blue-800 on
+   yellow = 9.38:1 (the upstream white-on-dark inverts that relationship).
+   Built as an ADDITIVE component (.mf) rather than a rewrite of .btn, so the
+   6 remaining .btn call sites keep the verified sharp rectangular system. */
+.mf {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-block: .5rem;
+  padding-inline-start: 4.25rem;      /* disc 3rem + label clearance */
+  padding-inline-end: 1.75rem;
+  min-height: 3rem;
+  border-radius: 1.625rem;
+  text-decoration: none;
+  cursor: pointer;
+  overflow: hidden;
+  isolation: isolate;
+  -webkit-tap-highlight-color: transparent;
+}
+.mf__disc {
+  display: grid;
+  place-items: center;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 3rem;
+  height: 100%;
+  border-radius: 1.625rem;
+  background: var(--yellow);
+  transition: width .45s cubic-bezier(.65, 0, .076, 1),
+              background-color .45s cubic-bezier(.65, 0, .076, 1);
+}
+.mf__arrow {
+  display: block;
+  width: .625rem;
+  height: .625rem;
+  border-top: 2px solid var(--blue-800);
+  border-right: 2px solid var(--blue-800);
+  transform: rotate(45deg);           /* chevron pointing right */
+  transition: transform .45s cubic-bezier(.65, 0, .076, 1);
+}
+.mf__label {
+  position: relative;
+  z-index: 1;
+  font-family: 'Inter', sans-serif;
+  font-size: var(--type-cta);
+  font-weight: 700;
+  letter-spacing: .08em;
+  color: var(--yellow);
+  white-space: nowrap;
+  transition: color .35s ease;
+}
+.mf:hover .mf__disc,
+.mf:focus-visible .mf__disc { width: 100%; }
+.mf:hover .mf__arrow,
+.mf:focus-visible .mf__arrow { transform: rotate(45deg) translate(5px, -5px); }
+.mf:hover .mf__label,
+.mf:focus-visible .mf__label { color: var(--blue-800); }   /* 9.38:1 on yellow */
+
+/* Secondary — inverted on the blue field: white disc, white label. On hover the
+   disc fills with brand blue and the label flips to white (8.12:1). */
+.mf--ghost .mf__disc { background: var(--white); }
+.mf--ghost .mf__arrow { border-color: var(--blue); }
+.mf--ghost .mf__label { color: var(--white); }
+.mf--ghost:hover .mf__disc,
+.mf--ghost:focus-visible .mf__disc { background: var(--blue-700); }
+.mf--ghost:hover .mf__label,
+.mf--ghost:focus-visible .mf__label { color: var(--white); }
+
+/* Keyboard parity: the disc expansion is the whole affordance, so focus must
+   trigger it exactly like hover, and the ring must stay visible on the blue. */
+.mf:focus-visible {
+  outline: 2px solid var(--white);
+  outline-offset: 3px;
+}
+.mf--ghost:focus-visible { outline-color: var(--yellow); }
+
+@media (prefers-reduced-motion: reduce) {
+  .mf__disc, .mf__arrow, .mf__label { transition: none; }
+  .mf:hover .mf__arrow, .mf:focus-visible .mf__arrow { transform: rotate(45deg); }
+}
+
 /* ---------- Buttons (spec 6.1) — sharp, flat, no gradient, no shadow ---------- */
 .btn {
   display: inline-flex;
@@ -705,9 +792,17 @@ section { padding-block: var(--space-3xl); }
   /* 34ch was the measure for the old 2.6rem runner. At the capped 2.25rem it
      forces a 4-line lede that alone adds 120px to the hero. Re-measured so the
      copy sets 3 lines in the same content track. */
-  max-width: 56ch;
-  margin-bottom: var(--space-lg);                    /* was --space-xl (40px) */
-}
+  /* 56ch let the lede run to x=1124 while Elsya's first visible ink pixel
+       (measured on the WebP alpha, not her bounding box) starts at x=926 -- a
+       ~200px overlap where white text crossed her hair. The container inset
+       widened it from -388px to -408px of box overlap, but the root cause is
+       this unbounded measure, not the inset.
+       Cap the measure against the portrait's real left edge plus clearance.
+       --portrait-w is the box width and the box is right-anchored, so the safe
+       type track is the viewport minus the box, the inset, and the gutters. */
+    max-width: min(56ch, calc(100vw - var(--portrait-w) - var(--hero-inset) - var(--space-xl) * 2));
+    margin-bottom: var(--space-lg);                    /* was --space-xl (40px) */
+  }
 .hero .lede strong { font-weight: 800; color: var(--white); }
 
 .hero-ctas { display: flex; gap: 1rem; flex-wrap: wrap; }
