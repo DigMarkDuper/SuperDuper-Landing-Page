@@ -289,6 +289,13 @@ section { padding-block: var(--space-3xl); }
    token so they cannot drift apart. */
 .mf {
   --mf-disc: 3rem;
+  /* The disc sits at left:0 and is --mf-disc wide, so the label must start at
+     least that far out. It previously used the SAME value, giving a measured
+     disc-to-label gap of exactly 0px — the circles touched their own labels,
+     which is what read as "sangat dempetan". The label now clears the disc by
+     --mf-gap so the two read as separate elements. */
+  --mf-gap: 1.15rem;
+  --mf-label-x: calc(var(--mf-disc) + var(--mf-gap));
   position: relative;
   display: inline-flex;
   align-items: center;
@@ -299,16 +306,16 @@ section { padding-block: var(--space-3xl); }
   max-width: 100%;
   flex: 0 0 auto;
   padding-block: .5rem;
-    padding-inline-start: var(--mf-disc);   /* disc sits in this space */
-    padding-inline-end: 1.75rem;
-    /* Belt and braces against vertical stretch: .hero-ctas is a flex row and a
-       stretched row used to stretch this pill (reproduced at 250px). align-items
-       on the row fixes the cause; an explicit height makes the button immune even
-       if it is ever moved into another stretched flex/grid container. */
-    height: var(--mf-disc);
-    min-height: var(--mf-disc);
-    align-self: center;
-    border-radius: 1.625rem;
+      padding-inline-start: var(--mf-label-x);   /* gap between disc and label */
+      padding-inline-end: 1.75rem;
+      /* Belt and braces against vertical stretch: .hero-ctas is a flex row and a
+         stretched row used to stretch this pill (reproduced at 250px). align-items
+         on the row fixes the cause; an explicit height makes the button immune even
+         if it is ever moved into another stretched flex/grid container. */
+      height: var(--mf-disc);
+      min-height: var(--mf-disc);
+      align-self: center;
+      border-radius: 1.625rem;
   text-decoration: none;
   cursor: pointer;
   overflow: hidden;
@@ -316,8 +323,12 @@ section { padding-block: var(--space-3xl); }
   -webkit-tap-highlight-color: transparent;
 }
 .mf__disc {
-  display: grid;
-  place-items: center;
+  display: flex;
+  align-items: center;
+  /* flex-start + half-disc offset pins the chevron to the disc's ORIGINAL width
+     even while the disc expands, so it never re-centres mid-pill. */
+  justify-content: flex-start;
+  padding-left: calc((var(--mf-disc) - .625rem) / 2);
   position: absolute;
   left: 0;
   top: 0;
@@ -351,8 +362,14 @@ section { padding-block: var(--space-3xl); }
 }
 .mf:hover .mf__disc,
 .mf:focus-visible .mf__disc { width: 100%; }
+/* The chevron lives INSIDE the disc, which grows from 3rem to the full button
+   width. `place-items:center` on the growing disc therefore dragged the chevron
+   to the middle of the expanded pill — reported as the ">" jumping into the
+   middle. The disc keeps its own origin: the chevron is pinned to the disc's own
+   width via flex-start plus a half-disc offset, so it travels WITH the expanding
+   pill instead of re-centring inside it. */
 .mf:hover .mf__arrow,
-.mf:focus-visible .mf__arrow { transform: rotate(45deg) translate(5px, -5px); }
+.mf:focus-visible .mf__arrow { transform: rotate(45deg) translate(6px, -6px); }
 .mf:hover .mf__label,
 .mf:focus-visible .mf__label { color: var(--blue-800); }   /* 9.38:1 on yellow */
 
@@ -823,6 +840,21 @@ section { padding-block: var(--space-3xl); }
     margin-bottom: var(--space-lg);                    /* was --space-xl (40px) */
   }
 .hero .lede strong { font-weight: 800; color: var(--white); }
+
+/* Vertical rhythm in the hero copy block. Measured gaps were 16 / 24 / 24 / 24px,
+   which on a 102.9px display line-height reads as one crowded mass — reported as
+   "text is too crowded". Each step is now separated by a clear band so the
+      eyebrow, headline, lede, CTAs and trust line read as distinct layers.
+      --hero-type-bottom drives the portrait's top offset as
+      64px + 34px (eyebrow) + 1.72 x --hero-fs (headline) + 16px, so the eyebrow
+      MUST stay at 34px tall: .625rem margin + its own 21px line box. The change
+      below keeps it at 34px exactly and spends the freed space on the headline,
+      lede and CTA gaps instead. */
+   .hero .eyebrow { margin-bottom: .625rem; }        /* 34px block preserved */
+.hero-title { margin-bottom: 2rem; }               /* 24px -> 32px */
+.hero .lede { margin-bottom: 2.25rem; }            /* 24px -> 36px */
+.hero-ctas { margin-bottom: .5rem; }
+.micro-trust { margin-top: 0; }
 
 /* align-items:center is REQUIRED, not cosmetic. .mf is a flex item and the
    default is `align-items: stretch`, so if this row is ever made tall — by a
