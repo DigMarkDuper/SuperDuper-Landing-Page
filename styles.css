@@ -567,36 +567,54 @@ section { padding-block: var(--space-3xl); }
   z-index: 0;
   overflow: hidden;
   pointer-events: none;
-  --blob: clamp(190px, 23vw, 430px);
-  opacity: .34;                                   /* softened: background only */
+  --blob: clamp(150px, 18vw, 330px);
+  opacity: .30;                        /* washed but present — .19 read as absent */
 }
 .hero-blobs__goo {
   position: absolute;
   inset: 0;
-  filter: url(#sd-gooey);
+  /* The upstream SVG gooey filter was measured at 3 FPS on this hero versus
+     120 FPS without it — feGaussianBlur over a 160%x160% filter region
+     re-rasterises the whole hero every frame. Pausing the animations restored
+     122 FPS WITH the filter still applied, proving the cost is the per-frame
+     filter pass, not the transform. At 19% layer opacity the metaball
+     merging is invisible anyway, so softness now comes from a radial-gradient
+     falloff: visually the same wash, transform-only animation, compositor
+     cheap. Do NOT reintroduce an SVG filter here without re-measuring FPS. */
 }
-.hero-blobs__svg { position: absolute; width: 0; height: 0; }
+.hero-blobs__svg { display: none; }
 .hero-blob {
   position: absolute;
   border-radius: 50%;
-  filter: blur(2px);
   will-change: transform;
 }
-/* Cluster centre: 62% / 58% keeps the field clear of the headline's left half. */
-.hero-blob--1 { background: #1A5BC2; width: calc(var(--blob) * 1.1); height: calc(var(--blob) * 1.1);
-  left: 52%; top: 44%; animation: sd-blob-a 25.6s ease-in-out infinite; }
-.hero-blob--2 { background: rgba(249, 208, 36, .5); width: calc(var(--blob) * .95); height: calc(var(--blob) * .95);
-  left: 64%; top: 56%; animation: sd-blob-b 22.1s ease-in-out infinite 1.5s; }
-.hero-blob--3 { background: #5B8FD6; opacity: .55; width: calc(var(--blob) * .85); height: calc(var(--blob) * .85);
-  left: 57%; top: 62%; animation: sd-blob-c 19.7s ease-in-out infinite 3s; }
-.hero-blob--4 { background: #0E3E86; width: calc(var(--blob) * 1.05); height: calc(var(--blob) * 1.05);
-  left: 68%; top: 40%; animation: sd-blob-d 24.4s ease-in-out infinite 4.5s; }
+/* `left` positions the blob's EDGE, not its centre, and each blob is ~8-9% of
+   hero width, so these values put the centres at roughly 12/28/42/56/69/81/94%
+   — an even left-to-right spread reaching every column, not one cluster. */
+.hero-blob--1 { background: radial-gradient(circle, rgba(26,91,194,.80) 0%, rgba(26,91,194,.34) 40%, rgba(26,91,194,0) 72%); width: calc(var(--blob) * 1.1); height: calc(var(--blob) * 1.1);
+  left: 3%; top: 30%; animation: sd-blob-a 31s ease-in-out infinite; }
+.hero-blob--2 { background: radial-gradient(circle, rgba(249,208,36,.35) 0%, rgba(249,208,36,.15) 40%, rgba(249,208,36,0) 72%); width: calc(var(--blob) * .95); height: calc(var(--blob) * .95);
+  left: 20%; top: 72%; animation: sd-blob-b 27s ease-in-out infinite 1.5s; }
+.hero-blob--3 { background: radial-gradient(circle, rgba(91,143,214,.45) 0%, rgba(91,143,214,.19) 40%, rgba(91,143,214,0) 72%); width: calc(var(--blob) * .85); height: calc(var(--blob) * .85);
+  left: 34%; top: 24%; animation: sd-blob-c 24s ease-in-out infinite 3s; }
+.hero-blob--4 { background: radial-gradient(circle, rgba(14,62,134,.90) 0%, rgba(14,62,134,.38) 40%, rgba(14,62,134,0) 72%); width: calc(var(--blob) * 1.05); height: calc(var(--blob) * 1.05);
+  left: 47%; top: 62%; animation: sd-blob-d 30s ease-in-out infinite 4.5s; }
+.hero-blob--5 { background: radial-gradient(circle, rgba(26,91,194,.60) 0%, rgba(26,91,194,.25) 40%, rgba(26,91,194,0) 72%); width: calc(var(--blob) * 1.2); height: calc(var(--blob) * 1.2);
+  left: 60%; top: 82%; animation: sd-blob-e 34s ease-in-out infinite 2s; }
+.hero-blob--6 { background: radial-gradient(circle, rgba(91,143,214,.38) 0%, rgba(91,143,214,.16) 40%, rgba(91,143,214,0) 72%); width: calc(var(--blob) * .9); height: calc(var(--blob) * .9);
+  left: 73%; top: 14%; animation: sd-blob-f 28s ease-in-out infinite 5.5s; }
+.hero-blob--7 { background: radial-gradient(circle, rgba(249,208,36,.25) 0%, rgba(249,208,36,.11) 40%, rgba(249,208,36,0) 72%); width: calc(var(--blob) * 1); height: calc(var(--blob) * 1);
+  left: 86%; top: 66%; animation: sd-blob-g 33s ease-in-out infinite 7s; }
 
-/* Travel paths transcribed from the upstream x/y keyframe arrays. */
-@keyframes sd-blob-a { 0%,100% { transform: translate(0,0); }      33% { transform: translate(80px,-50px); } 66% { transform: translate(-60px,60px); } }
-@keyframes sd-blob-b { 0%,100% { transform: translate(0,0); }      33% { transform: translate(-70px,60px); } 66% { transform: translate(80px,-40px); } }
-@keyframes sd-blob-c { 0%,100% { transform: translate(0,0); }      33% { transform: translate(50px,70px); }  66% { transform: translate(-40px,-60px); } }
-@keyframes sd-blob-d { 0%,100% { transform: translate(0,0); }      33% { transform: translate(-90px,-40px); } 66% { transform: translate(50px,50px); } }
+/* Travel paths transcribed from the upstream x/y keyframe arrays, with wider
+   amplitudes so the wash moves across the field instead of pulsing in place. */
+@keyframes sd-blob-a { 0%,100% { transform: translate(0,0); }      33% { transform: translate(140px,-90px); } 66% { transform: translate(-110px,100px); } }
+@keyframes sd-blob-b { 0%,100% { transform: translate(0,0); }      33% { transform: translate(-120px,105px); } 66% { transform: translate(135px,-70px); } }
+@keyframes sd-blob-c { 0%,100% { transform: translate(0,0); }      33% { transform: translate(90px,125px); }  66% { transform: translate(-75px,-105px); } }
+@keyframes sd-blob-d { 0%,100% { transform: translate(0,0); }      33% { transform: translate(-150px,-70px); } 66% { transform: translate(85px,90px); } }
+@keyframes sd-blob-e { 0%,100% { transform: translate(0,0); }      33% { transform: translate(120px,60px); }  66% { transform: translate(-95px,-115px); } }
+@keyframes sd-blob-f { 0%,100% { transform: translate(0,0); }      33% { transform: translate(-80px,-125px); } 66% { transform: translate(105px,80px); } }
+@keyframes sd-blob-g { 0%,100% { transform: translate(0,0); }      33% { transform: translate(95px,-105px); }  66% { transform: translate(-130px,70px); } }
 
 /* Reduced motion: hold a still, soft frame. Never a blank field. */
 @media (prefers-reduced-motion: reduce) {
@@ -606,11 +624,14 @@ section { padding-block: var(--space-3xl); }
 /* Mobile: the portrait is hidden below 768px, so the cluster recentres and
    stays clear of the CTA row rather than hiding entirely. */
 @media (max-width: 47.99rem) {
-  .hero-blobs { --blob: clamp(150px, 52vw, 260px); opacity: .28; }
-  .hero-blob--1 { left: 34%; top: 30%; }
-  .hero-blob--2 { left: 52%; top: 40%; }
-  .hero-blob--3 { left: 44%; top: 52%; }
-  .hero-blob--4 { left: 62%; top: 34%; }
+  .hero-blobs { --blob: clamp(130px, 44vw, 210px); opacity: .24; }
+  .hero-blob--1 { left: 8%;  top: 16%; }
+  .hero-blob--2 { left: 38%; top: 44%; }
+  .hero-blob--3 { left: 66%; top: 22%; }
+  .hero-blob--4 { left: 78%; top: 58%; }
+  .hero-blob--5 { left: 20%; top: 68%; }
+  .hero-blob--6 { left: 50%; top: 12%; }
+  .hero-blob--7 { left: 60%; top: 78%; }
 }
 
 /* z1 ghost glyph — hairline outline only, never a filled mass (FIX 2) */
