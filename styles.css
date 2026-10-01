@@ -299,10 +299,16 @@ section { padding-block: var(--space-3xl); }
   max-width: 100%;
   flex: 0 0 auto;
   padding-block: .5rem;
-  padding-inline-start: var(--mf-disc);   /* disc sits in this space */
-  padding-inline-end: 1.75rem;
-  min-height: var(--mf-disc);
-  border-radius: 1.625rem;
+    padding-inline-start: var(--mf-disc);   /* disc sits in this space */
+    padding-inline-end: 1.75rem;
+    /* Belt and braces against vertical stretch: .hero-ctas is a flex row and a
+       stretched row used to stretch this pill (reproduced at 250px). align-items
+       on the row fixes the cause; an explicit height makes the button immune even
+       if it is ever moved into another stretched flex/grid container. */
+    height: var(--mf-disc);
+    min-height: var(--mf-disc);
+    align-self: center;
+    border-radius: 1.625rem;
   text-decoration: none;
   cursor: pointer;
   overflow: hidden;
@@ -818,7 +824,14 @@ section { padding-block: var(--space-3xl); }
   }
 .hero .lede strong { font-weight: 800; color: var(--white); }
 
-.hero-ctas { display: flex; gap: 1rem; flex-wrap: wrap; }
+/* align-items:center is REQUIRED, not cosmetic. .mf is a flex item and the
+   default is `align-items: stretch`, so if this row is ever made tall — by a
+   wrapped third button, a taller sibling in the same row, or a grid/flex parent
+   that stretches it — the pill stretches vertically too: reproduced at a 250px
+   row giving a 250px pill with a 21px label floating in the middle. That is
+   exactly the squashed-label defect reported. Pinning the button's own height
+   with height:var(--mf-disc) makes it immune to any row height at all. */
+.hero-ctas { display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; }
 .micro-trust {
   font-family: 'Inter', sans-serif;
   font-weight: 600;
