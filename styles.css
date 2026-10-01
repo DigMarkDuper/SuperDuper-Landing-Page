@@ -636,18 +636,7 @@ section { padding-block: var(--space-3xl); }
   --portrait-aspect: 0.8246;                        /* 1086 / 1317 exactly */
   --portrait-w: min(46vw, 660px, calc(var(--portrait-band) * var(--portrait-aspect)));
   --portrait-h: calc(var(--portrait-w) / var(--portrait-aspect));
-  }
-
-  /* Field-image tiers, chosen by viewport width. 1600px and up gets the 1600 tier;
-     2000px and up gets 2560. Beyond 2560 the master is 4500px, so even a 3440px
-     viewport stays at or under a 1.4x upscale of the 2560 tier — and the monogram
-     is a soft low-contrast pattern where that residual is not visible. */
-  @media (min-width: 100rem) {                     /* 1600px */
-    .hero { background-image: url('assets/supergraphic/Supergrafis-03-1600.webp'); }
-  }
-  @media (min-width: 125rem) {                     /* 2000px */
-    .hero { background-image: url('assets/supergraphic/Supergrafis-03-2560.webp'); }
-  }
+}
 
 /* z2 portrait — Elsya, absolute, bottom-right, bleeding off the bottom edge
    and cropped by the hero's own overflow: hidden. The box aspect 1.115 makes
@@ -1655,4 +1644,31 @@ section { padding-block: var(--space-3xl); }
 @media (max-width: 47.99rem) {
   .footer-mast { grid-template-columns: minmax(0, 1fr); align-items: start; }
   .footer-links { gap: var(--space-md); }
+}
+
+/* ---------- Field-image tiers (Supergrafis-03) ----------
+   THREE sections share this asset: .hero, .experience-band and .final-cta.
+
+   THIS BLOCK MUST STAY LAST. It is a plain source-order override with no extra
+   specificity, so any section rule that appears after it wins on the cascade and
+   silently reinstates the 1440px asset. When these tiers sat right after .hero,
+   .experience-band (~line 1068) and .final-cta (~line 1568) were still to come,
+   so they kept the pixelated 1440 file at every viewport while .hero looked
+   correct -- which is exactly why the problem looked "hero only" when it was
+   the whole page. Verified by computed backgroundImage across all three.
+
+   Selected by VIEWPORT WIDTH, never image-set(): image-set resolves candidates
+   against DEVICE pixel ratio, so a 1x 2560px monitor would still be served the
+   1440 tier and stay pixelated -- the exact bug being fixed. Beyond 2560 the
+   master is 4500px, so even a 3440px viewport sits within 1.4x of the 2560 tier,
+   and this is a soft low-contrast pattern where that residual is not visible. */
+@media (min-width: 100rem) {                     /* 1600px */
+  .hero,
+  .experience-band,
+  .final-cta { background-image: url('assets/supergraphic/Supergrafis-03-1600.webp'); }
+}
+@media (min-width: 125rem) {                     /* 2000px */
+  .hero,
+  .experience-band,
+  .final-cta { background-image: url('assets/supergraphic/Supergrafis-03-2560.webp'); }
 }
