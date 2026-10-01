@@ -545,6 +545,74 @@ section { padding-block: var(--space-3xl); }
   .hero .lede { max-width: min(56ch, 760px); }     /* pays for the extra line */
 }
 
+/* ---- Noise Blob (melon-ui port) ----------------------------------------
+   Vanilla port of melon-ui registry/components/noise-blob.tsx: four circles
+   drifting on a loop, merged by an SVG gooey filter (feGaussianBlur +
+   feColorMatrix alpha threshold + feBlend).
+
+   Brand mapping and softening — this sits UNDER white text at 8.12:1, so:
+   - palette is brand tints only: light blue #1A5BC2, yellow #F9D024 at low
+     alpha, pale blue #5B8FD6, deep tint #0E3E86. No off-brand hues.
+   - the whole layer is capped at low opacity; it reads as depth, not pattern.
+   - the cluster is pushed right and down, clear of the H1 which fills its
+     1400px track, so blobs never drift under the headline.
+   - z-index 0: above the Supergrafis-03 field image, below the ghost glyph (1),
+     Elsya (2), copy (3) and the badge strip (4).
+   --blob: the upstream blobSize prop, scaled for a 1400px hero and made fluid.
+   --blob-dur: upstream (14 / speed) * sizeMult, at speed 0.62 = calmer.
+   --------------------------------------------------------------------- */
+.hero-blobs {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  --blob: clamp(190px, 23vw, 430px);
+  opacity: .34;                                   /* softened: background only */
+}
+.hero-blobs__goo {
+  position: absolute;
+  inset: 0;
+  filter: url(#sd-gooey);
+}
+.hero-blobs__svg { position: absolute; width: 0; height: 0; }
+.hero-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(2px);
+  will-change: transform;
+}
+/* Cluster centre: 62% / 58% keeps the field clear of the headline's left half. */
+.hero-blob--1 { background: #1A5BC2; width: calc(var(--blob) * 1.1); height: calc(var(--blob) * 1.1);
+  left: 52%; top: 44%; animation: sd-blob-a 25.6s ease-in-out infinite; }
+.hero-blob--2 { background: rgba(249, 208, 36, .5); width: calc(var(--blob) * .95); height: calc(var(--blob) * .95);
+  left: 64%; top: 56%; animation: sd-blob-b 22.1s ease-in-out infinite 1.5s; }
+.hero-blob--3 { background: #5B8FD6; opacity: .55; width: calc(var(--blob) * .85); height: calc(var(--blob) * .85);
+  left: 57%; top: 62%; animation: sd-blob-c 19.7s ease-in-out infinite 3s; }
+.hero-blob--4 { background: #0E3E86; width: calc(var(--blob) * 1.05); height: calc(var(--blob) * 1.05);
+  left: 68%; top: 40%; animation: sd-blob-d 24.4s ease-in-out infinite 4.5s; }
+
+/* Travel paths transcribed from the upstream x/y keyframe arrays. */
+@keyframes sd-blob-a { 0%,100% { transform: translate(0,0); }      33% { transform: translate(80px,-50px); } 66% { transform: translate(-60px,60px); } }
+@keyframes sd-blob-b { 0%,100% { transform: translate(0,0); }      33% { transform: translate(-70px,60px); } 66% { transform: translate(80px,-40px); } }
+@keyframes sd-blob-c { 0%,100% { transform: translate(0,0); }      33% { transform: translate(50px,70px); }  66% { transform: translate(-40px,-60px); } }
+@keyframes sd-blob-d { 0%,100% { transform: translate(0,0); }      33% { transform: translate(-90px,-40px); } 66% { transform: translate(50px,50px); } }
+
+/* Reduced motion: hold a still, soft frame. Never a blank field. */
+@media (prefers-reduced-motion: reduce) {
+  .hero-blob { animation: none; }
+}
+
+/* Mobile: the portrait is hidden below 768px, so the cluster recentres and
+   stays clear of the CTA row rather than hiding entirely. */
+@media (max-width: 47.99rem) {
+  .hero-blobs { --blob: clamp(150px, 52vw, 260px); opacity: .28; }
+  .hero-blob--1 { left: 34%; top: 30%; }
+  .hero-blob--2 { left: 52%; top: 40%; }
+  .hero-blob--3 { left: 44%; top: 52%; }
+  .hero-blob--4 { left: 62%; top: 34%; }
+}
+
 /* z1 ghost glyph — hairline outline only, never a filled mass (FIX 2) */
 .hero-ghost-glyph {
   position: absolute;

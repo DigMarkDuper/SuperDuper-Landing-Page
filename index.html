@@ -49,6 +49,27 @@
 
   <!-- ============ 1. HERO ============ -->
   <section class="hero" id="hero">
+    <!-- Noise Blob — vanilla port of melon-ui/registry/components/noise-blob.tsx
+         (SVG gooey filter + moving circles). Brand-mapped and softened for a
+         background layer: it must never disturb white text at 8.12:1. -->
+    <div class="hero-blobs" aria-hidden="true">
+      <div class="hero-blobs__goo">
+        <span class="hero-blob hero-blob--1"></span>
+        <span class="hero-blob hero-blob--2"></span>
+        <span class="hero-blob hero-blob--3"></span>
+        <span class="hero-blob hero-blob--4"></span>
+      </div>
+      <svg class="hero-blobs__svg" focusable="false" aria-hidden="true">
+        <defs>
+          <filter id="sd-gooey" x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="22" result="blur" />
+            <feColorMatrix in="blur" mode="matrix"
+              values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 30 -15" result="goo" />
+            <feBlend in="SourceGraphic" in2="goo" />
+          </filter>
+        </defs>
+      </svg>
+    </div>
     <span class="hero-ghost-glyph" aria-hidden="true">S</span>
     <div class="hero-copy">
       <p class="eyebrow reveal">SUPER DUPER LANGUAGE CENTER — YOGYAKARTA</p>

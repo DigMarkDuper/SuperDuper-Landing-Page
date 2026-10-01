@@ -54,6 +54,41 @@ Revisit only if it becomes visible at normal viewing distance on real displays.
 - White on brand blue `#034E9E` = **8.12:1**. Yellow `#F9D024` on blue = **5.44:1**.
   (Neo's spec originally said 8.62:1; corrected and verified.)
 
+## Noise Blob background layer (melon-ui port)
+
+Vanilla port of `melon-ui/registry/components/noise-blob.tsx` — four drifting circles merged by an
+SVG gooey filter (`feGaussianBlur` + `feColorMatrix` alpha threshold + `feBlend`). Upstream is
+React + framer-motion; this project has neither, so the motion is CSS keyframes transcribed from
+the upstream `x`/`y` arrays and the durations are `(14 / speed) * sizeMult` at `speed: 0.62`.
+
+**Brand mapping.** Upstream defaults are `#ff5c71` / `#7fff5e` / `#e8d5b7` — off-brand and far too
+loud for a background. Replaced with brand tints: `#1A5BC2`, `rgba(249,208,36,.5)`, `#5B8FD6`,
+`#0E3E86`. Layer opacity capped at `.34` desktop / `.28` mobile.
+
+**Placement.** `z-index: 0` — above the Supergrafis-03 field image, below the ghost glyph (1),
+Elsya (2), copy (3), badge strip (4). The cluster is pushed right and down (52–68% x, 40–62% y)
+because the H1 fills its 1400px track to the pixel; blobs must never drift under it.
+
+**Verified:** 108 FPS with the filter animating. Worst-case field pixel `#517785` = **4.85:1**
+white, **0 pixels below AA (4.5:1)** anywhere in the hero, measured on an isolated flat-blue field
+with no text. `prefers-reduced-motion` holds a still frame rather than a blank field.
+
+## Measurement pitfall — headless Chrome cannot verify this page
+
+`chrome --headless --screenshot` **never fires `IntersectionObserver`**, so every `.reveal` element
+stays at its pre-transition opacity. Captures therefore show the type semi-transparent, which
+produces completely bogus readings — this cost three wrong conclusions in a row:
+
+- "white on field is 2.97:1" → real value is **8.12:1**
+- "white on field is 1.40:1" → that pixel was an antialiased glyph edge, not the field
+- "`Experience.` renders olive `#C0B23F`" → real computed colour is exactly **`#F9D024`**; the
+  captured pixels were `#F9D024` at ~77% opacity blended with the field
+
+**Rule:** verify text rendering and contrast through the live DOM (`getComputedStyle`,
+`elementsFromPoint`) or a capture path that runs the real IntersectionObserver. Treat headless
+pixel sampling as valid only for regions with **no text**. Confirm any suspicious reading by
+checking computed style before believing it.
+
 ## Outstanding data — needs Ejak, not engineering
 
 Three live placeholders remain on the page:
