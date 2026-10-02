@@ -1056,7 +1056,11 @@ section { padding-block: var(--space-3xl); }
   display: flex;
   align-items: center;
 }
-.exp-content { min-height: 60vh; }
+.exp-content {
+  position: relative;  /* above the 4.3 parallax overlay (see STACKING note) */
+  z-index: 1;
+  min-height: 60vh;
+}
 .experience-band .eyebrow { color: var(--yellow); }  /* 5.44:1 */
 .exp-title {
   font-family: 'Poppins', sans-serif;
@@ -1830,12 +1834,20 @@ section { padding-block: var(--space-3xl); }
 /* ---------- 4.3 Experience band parallax ----------
    The band's field image is painted by an overlay pseudo-element that inherits the
    parent's already-resolved background-image, so it tracks whichever image tier is
-   active without duplicating the tier rules. */
+   active without duplicating the tier rules.
+
+   STACKING (mandatory): the overlay is a positioned pseudo-element, so it paints
+   ABOVE any in-flow static content. `.exp-content` is position:static, so without
+   an explicit layer the scaled image covered the whole copy column and the section
+   read as empty blue. Both halves of the pair are required: z-index:0 on the
+   overlay puts it above the section's own background, position:relative + z-index:1
+   on .exp-content puts the copy above the overlay. Mirrors .hero-field/.hero-copy. */
 .js .experience-band { position: relative; overflow: hidden; }
 .js .experience-band::before {
   content: '';
   position: absolute;
   inset: 0;
+  z-index: 0;
   background-image: inherit;
   background-size: cover;
   background-position: center;
