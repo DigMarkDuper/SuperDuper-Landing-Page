@@ -752,24 +752,14 @@ section { padding-block: var(--space-3xl); }
   left: 20%; top: 72%; animation: sd-blob-b 27s ease-in-out infinite 1.5s; }
 .hero-blob--3 { background: radial-gradient(circle, rgba(91,143,214,.45) 0%, rgba(91,143,214,.28) 40%, rgba(91,143,214,0) 78%); width: calc(var(--blob) * .85); height: calc(var(--blob) * .85);
   left: 34%; top: 24%; animation: sd-blob-c 24s ease-in-out infinite 3s; }
-.hero-blob--4 { background: radial-gradient(circle, rgba(14,62,134,.90) 0%, rgba(14,62,134,.56) 40%, rgba(14,62,134,0) 78%); width: calc(var(--blob) * 1.05); height: calc(var(--blob) * 1.05);
-  left: 47%; top: 62%; animation: sd-blob-d 30s ease-in-out infinite 4.5s; }
-.hero-blob--5 { background: radial-gradient(circle, rgba(26,91,194,.60) 0%, rgba(26,91,194,.38) 40%, rgba(26,91,194,0) 78%); width: calc(var(--blob) * 1.2); height: calc(var(--blob) * 1.2);
-  left: 60%; top: 82%; animation: sd-blob-e 34s ease-in-out infinite 2s; }
-.hero-blob--6 { background: radial-gradient(circle, rgba(91,143,214,.38) 0%, rgba(91,143,214,.24) 40%, rgba(91,143,214,0) 78%); width: calc(var(--blob) * .9); height: calc(var(--blob) * .9);
-  left: 73%; top: 14%; animation: sd-blob-f 28s ease-in-out infinite 5.5s; }
-.hero-blob--7 { background: radial-gradient(circle, rgba(249,208,36,.25) 0%, rgba(249,208,36,.16) 40%, rgba(249,208,36,0) 78%); width: calc(var(--blob) * 1); height: calc(var(--blob) * 1);
-  left: 86%; top: 66%; animation: sd-blob-g 33s ease-in-out infinite 7s; }
+/* Blobs 4-7 were cut with their spans and keyframes (MOTION_SPEC.md 4.1). */
 
 /* Travel paths transcribed from the upstream x/y keyframe arrays, with wider
    amplitudes so the wash moves across the field instead of pulsing in place. */
 @keyframes sd-blob-a { 0%,100% { transform: translate(0,0); }      33% { transform: translate(140px,-90px); } 66% { transform: translate(-110px,100px); } }
 @keyframes sd-blob-b { 0%,100% { transform: translate(0,0); }      33% { transform: translate(-120px,105px); } 66% { transform: translate(135px,-70px); } }
 @keyframes sd-blob-c { 0%,100% { transform: translate(0,0); }      33% { transform: translate(90px,125px); }  66% { transform: translate(-75px,-105px); } }
-@keyframes sd-blob-d { 0%,100% { transform: translate(0,0); }      33% { transform: translate(-150px,-70px); } 66% { transform: translate(85px,90px); } }
-@keyframes sd-blob-e { 0%,100% { transform: translate(0,0); }      33% { transform: translate(120px,60px); }  66% { transform: translate(-95px,-115px); } }
-@keyframes sd-blob-f { 0%,100% { transform: translate(0,0); }      33% { transform: translate(-80px,-125px); } 66% { transform: translate(105px,80px); } }
-@keyframes sd-blob-g { 0%,100% { transform: translate(0,0); }      33% { transform: translate(95px,-105px); }  66% { transform: translate(-130px,70px); } }
+/* sd-blob-d/e/f/g were removed with their spans (MOTION_SPEC.md 4.1, keep a/b/c). */
 
 /* Reduced motion: hold a still, soft frame. Never a blank field. */
 @media (prefers-reduced-motion: reduce) {
@@ -783,10 +773,6 @@ section { padding-block: var(--space-3xl); }
   .hero-blob--1 { left: 8%;  top: 16%; }
   .hero-blob--2 { left: 38%; top: 44%; }
   .hero-blob--3 { left: 66%; top: 22%; }
-  .hero-blob--4 { left: 78%; top: 58%; }
-  .hero-blob--5 { left: 20%; top: 68%; }
-  .hero-blob--6 { left: 50%; top: 12%; }
-  .hero-blob--7 { left: 60%; top: 78%; }
 }
 
 /* z1 ghost glyph — hairline outline only, never a filled mass (FIX 2) */
@@ -1687,4 +1673,483 @@ section { padding-block: var(--space-3xl); }
   .hero,
   .experience-band,
   .final-cta { background-image: url('assets/supergraphic/Supergrafis-03-2560.webp'); }
+}
+
+/* === MOTION v1 (MOTION_SPEC.md) — APPENDED BLOCK, MUST STAY LAST IN FILE === */
+/* New motion rules live here ONLY. Equal-specificity collisions are resolved by source
+   order, and reordering this block behind any later rule has broken the page before
+   (bug 25e7b98). Do not insert motion rules above this marker. */
+
+/* ---------- 1. Tokens (spec 3) ---------- */
+:root {
+  --sd-ease-out: cubic-bezier(0.16, 1, 0.30, 1);
+  --sd-ease-inout: cubic-bezier(0.65, 0, 0.35, 1);
+  --sd-ease-magnetic: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --sd-dur-micro: 160ms;
+  --sd-dur-fast: 320ms;
+  --sd-dur-base: 560ms;
+  --sd-dur-slow: 820ms;
+  --sd-dur-panel: 340ms;
+  --sd-rail: 0.18;
+  --sd-lift: 6px;
+  --sd-tilt: 4deg;
+  --sd-magnet: 0.28;
+  --sd-magnet-cap: 14px;
+  --sd-stagger-cap: 560ms;
+
+  /* Pin bases = measured baseline heights at 6dc4450 (spec 5). */
+  --sd-hc-900: 1916.91px;   /* .programs @1024 */
+  --sd-hc-1280: 2081.70px;  /* .programs @1280 */
+  --sd-hc-1440: 2110.09px;  /* .programs @1440+ */
+  --sd-hs-900: 900.02px;    /* .curriculum @1024 */
+  --sd-hs-1280: 898.77px;   /* .curriculum @1280 */
+  --sd-hs-1440: 911.09px;   /* .curriculum @1440+ */
+}
+
+/* ---------- 2. Keyframes (spec 3/2.2) ---------- */
+@keyframes sd-in-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes sd-in-up-why {
+  from { opacity: 0; transform: translateY(calc((var(--i) + 1) * 10px)); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes sd-in-left {
+  from { opacity: 0; transform: translateX(-18px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes sd-in-right {
+  from { opacity: 0; transform: translateX(18px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes sd-in-down {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes sd-word-in {
+  from { opacity: 0; transform: translateY(0.55em); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes sd-wipe {
+  from { clip-path: inset(0 0 100% 0); opacity: 0; }
+  to   { clip-path: inset(0 0 0 0); opacity: 1; }
+}
+@keyframes sd-ticker-reveal {
+  from { clip-path: inset(0 100% 0 0); }
+  to   { clip-path: inset(0 0 0 0); }
+}
+@keyframes sd-ticker-loop {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-50%, 0, 0); }
+}
+/* Blob drift: sd-blob-a/b/c are defined earlier in the file and are NOT redefined
+   here. Only the tuned timings below, which win on source order. */
+
+/* ---------- 3. Base states (spec 2.2, 2.4) ----------
+   Every hidden state is .js-scoped, so JS-off renders everything complete
+   (EVA CORRECTION 3). */
+
+.js .reveal.is-visible { transition: none; }
+/* animation-fill-mode is backwards, so the element falls back to these resting
+   values the moment its entrance finishes. */
+.js .step.is-visible,
+.js .why-cell.is-visible,
+.js .spec-row.is-visible,
+.js .index-row.is-visible,
+.js .camp-card.is-visible,
+.js .eyebrow.is-visible,
+.js .section-title.is-visible,
+.js .lede.is-visible,
+.js .btn.is-visible,
+.js .program-title.is-visible,
+.js .program-body.is-visible,
+.js .program-features.is-visible { opacity: 1; }
+
+/* Staggered entrance is animation-delay driven, not transition-delay. */
+.js .step.is-visible,
+.js .why-cell.is-visible,
+.js .spec-row.is-visible,
+.js .index-row.is-visible,
+.js .camp-card.is-visible,
+.js .eyebrow.is-visible,
+.js .section-title.is-visible,
+.js .lede.is-visible,
+.js .btn.is-visible,
+.js .program-title.is-visible,
+.js .program-body.is-visible,
+.js .program-features.is-visible {
+  animation-duration: var(--sd-dur-fast);
+  animation-timing-function: var(--sd-ease-out);
+  /* backwards, not both: the delay holds the from-state, and once the entrance
+     ends the element releases back to its own resting style. fill-mode "both"
+     would pin the final keyframe forever and lock out transform writes from the
+     shared rAF loop (magnetic CTA, camp tilt). */
+  animation-fill-mode: backwards;
+  animation-delay: calc(var(--i, 0) * 1ms);
+  animation-name: sd-in-up;
+}
+.js .why-cell.is-visible { animation-duration: var(--sd-dur-fast); animation-name: sd-in-up-why; }
+.js .index-row.is-visible { animation-name: sd-in-left; }
+.js .camp-card.is-visible { animation-duration: var(--sd-dur-base); animation-name: sd-in-down; }
+.js .program-title.is-visible,
+.js .program-body.is-visible,
+.js .program-features.is-visible { animation-duration: var(--sd-dur-base); }
+.js .section-title.is-visible,
+.js .lede.is-visible,
+.js .btn.is-visible { animation-delay: 0ms; animation-name: sd-in-up; }
+.js .eyebrow.is-visible { animation-delay: calc(var(--i, 0) * 30ms); }
+/* Paired spec-row offset (spec 4.7): odd from the left, even from the right,
+   60ms between halves, 120ms between pairs. */
+.js .spec-row.is-visible.is-odd { animation-name: sd-in-left;
+  animation-delay: calc((var(--pair, 0) * 120 + 0) * 1ms); }
+.js .spec-row.is-visible.is-even { animation-name: sd-in-right;
+  animation-delay: calc((var(--pair, 0) * 120 + 60) * 1ms); }
+/* .testimonial-row: NO MOTION (spec 4.9). Explicitly excluded from the engine. */
+.js .testimonial-row.is-visible { animation: none; opacity: 1; transform: none; }
+
+/* ---------- 4.1 Hero ---------- */
+.js .hero-blob--1 { animation: sd-blob-a 18s ease-in-out infinite alternate; }
+.js .hero-blob--2 { animation: sd-blob-b 24s ease-in-out infinite alternate 1.5s; }
+.js .hero-blob--3 { animation: sd-blob-c 31s ease-in-out infinite alternate 3s; }
+.js .hero-title__l1, .js .hero-title__l2 { display: inline-block; }
+.js .w { display: inline-block; white-space: pre; }
+.js .w[aria-hidden="true"] { opacity: 0; transform: translateY(0.55em); }
+.js .hero-title.is-visible .w {
+  animation: sd-word-in var(--sd-dur-base) var(--sd-ease-out) both;
+  animation-delay: calc(var(--w, 0) * 55ms);
+}
+.js .hero-copy .lede.is-visible { animation-delay: 180ms; }
+.js .hero-ctas.is-visible { animation-delay: 180ms; }
+
+/* ---------- 4.2 Value prop wipe ---------- */
+.js .value-prop .section-title.is-visible {
+  animation: sd-wipe var(--sd-dur-slow) var(--sd-ease-out) both;
+  animation-delay: 120ms;
+}
+.js .value-prop .runner.is-visible { animation-delay: 140ms; }
+
+/* ---------- 4.3 Experience band parallax ----------
+   The band's field image is painted by an overlay pseudo-element that inherits the
+   parent's already-resolved background-image, so it tracks whichever image tier is
+   active without duplicating the tier rules. */
+.js .experience-band { position: relative; overflow: hidden; }
+.js .experience-band::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: inherit;
+  background-size: cover;
+  background-position: center;
+  transform: translate3d(0, 0, 0) scale(1.14);
+  transform-origin: center;
+}
+
+/* ---------- 4.4 Programs rail ---------- */
+.js .programs { position: relative; overflow: hidden; }
+.js .programs-track { display: block; }
+.js .program-block__inner { max-width: 56ch; }
+
+@media (min-width: 56.25rem) { /* 900px */
+  .js .programs { overflow: visible; }
+  .js .programs-track {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: stretch;
+  }
+  .js .programs-track > .program-block {
+    flex: 0 0 100%;
+    min-width: 100%;
+  }
+  /* Row entrance keyed to the row's own leading edge crossing 60% of the viewport. */
+  .js .program-title.is-visible,
+  .js .program-body.is-visible,
+  .js .program-features.is-visible {
+    animation-duration: var(--sd-dur-base);
+    animation-delay: calc(var(--i, 0) * 80ms);
+  }
+}
+/* Pin distance (spec 5) — min-height, never padding. */
+@media (min-width: 80rem) and (prefers-reduced-motion: no-preference) { /* 1280 */
+  .js .programs { min-height: calc(var(--sd-hc-1440) + 0.9 * 100vh); }
+}
+@media (min-width: 56.25rem) and (max-width: 79.999rem) and (prefers-reduced-motion: no-preference) {
+  .js .programs { min-height: calc(var(--sd-hc-900) + 0.6 * 100vh); }
+}
+@media (min-width: 79.999rem) and (max-width: 89.999rem) and (prefers-reduced-motion: no-preference) {
+  .js .programs { min-height: calc(var(--sd-hc-1280) + 0.9 * 100vh); }
+}
+
+/* ---------- 4.5 Why: ascending cells ---------- */
+.js .why-cell.is-visible { animation-delay: calc(var(--i, 0) * 70ms); }
+
+/* ---------- 4.6 Curriculum sticky index ---------- */
+.js .curriculum { position: relative; }
+.js .curriculum .container { display: grid; }
+.js .curriculum-index { display: none; }
+
+@media (min-width: 56.25rem) and (prefers-reduced-motion: no-preference) {
+  .js .curriculum .container {
+    grid-template-columns: 18rem minmax(0, 1fr);
+    column-gap: var(--space-2xl);
+    align-items: start;
+  }
+  .js .curriculum-index {
+    display: block;
+    position: sticky;
+    top: 50vh;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .js .curriculum-index li {
+    position: relative;
+    padding: .35rem 0 .35rem .9rem;
+    border-left: 3px solid var(--gray);
+    font-size: var(--type-small);
+    color: var(--ink-muted);
+  }
+  .js .curriculum-index li::before {
+    content: '';
+    position: absolute;
+    left: -3px;
+    top: 0;
+    width: 3px;
+    height: 100%;
+    background: var(--yellow);
+    transform: scaleY(0);
+    transform-origin: center;
+    transition: transform var(--sd-dur-fast) var(--sd-ease-out);
+  }
+  .js .curriculum-index li[aria-current="true"] { color: var(--ink); }
+  .js .curriculum-index li[aria-current="true"]::before { transform: scaleY(1); }
+}
+@media (min-width: 90rem) and (prefers-reduced-motion: no-preference) { /* 1440 */
+  .js .curriculum { min-height: calc(var(--sd-hs-1440) + 0.8 * 100vh); }
+}
+@media (min-width: 80rem) and (max-width: 89.999rem) and (prefers-reduced-motion: no-preference) {
+  .js .curriculum { min-height: calc(var(--sd-hs-1280) + 0.8 * 100vh); }
+}
+@media (min-width: 56.25rem) and (max-width: 79.999rem) and (prefers-reduced-motion: no-preference) {
+  .js .curriculum { min-height: calc(var(--sd-hs-900) + 0.8 * 100vh); }
+}
+
+/* ---------- 4.8 Camp tilt ---------- */
+@media (hover: hover) and (pointer: fine) {
+  .js .camp-grid { perspective: 900px; }
+  .js .camp-card { transform: translateY(0); }
+  .js .camp-card:not(.is-tilting) {
+    transition: transform var(--sd-dur-fast) var(--sd-ease-out);
+  }
+  .js .camp-card.is-lifted::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    box-shadow: 0 12px 28px rgba(3, 78, 158, .18);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--sd-dur-micro) var(--sd-ease-out);
+  }
+  .js .camp-card.is-lifted::after { opacity: 1; }
+  .js .camp-card.is-lifted { transform: translateY(calc(-1 * var(--sd-lift))); }
+}
+
+/* ---------- 4.11 Ticker + magnetic CTA ---------- */
+.js .final-cta { position: relative; }
+.js .ticker {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  overflow: hidden;
+  background: var(--yellow);
+  color: var(--ink);
+  padding-block: .5rem;
+  pointer-events: none;
+  clip-path: inset(0 100% 0 0); /* masked until its own reveal runs */
+}
+.js .ticker__track {
+  display: flex;
+  width: max-content;
+  animation: sd-ticker-loop var(--sd-ticker-dur, 40s) linear infinite;
+  animation-play-state: paused; /* no CPU spent on an off-screen marquee */
+}
+.js .ticker.is-in .ticker__track { animation-play-state: running; }
+.js .ticker__track > span { padding-right: 2.5rem; white-space: nowrap; }
+.js .ticker.is-in { animation: sd-ticker-reveal var(--sd-dur-slow) var(--sd-ease-out) both; }
+@media (hover: hover) and (pointer: fine) {
+  .js .final-cta .btn { will-change: auto; }
+}
+@media (hover: none), (pointer: coarse) {
+  .js .final-cta .btn:active { transform: scale(.97); }
+}
+
+/* ---------- 2.1 Chapter rail ---------- */
+.js .chapter-rail {
+  position: fixed;
+  right: 1.25rem;
+  top: 50vh;
+  transform: translateY(-50%);
+  z-index: 40;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-end;
+}
+.js .chapter-rail[hidden] { display: none; }
+.js .chapter-rail a {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  text-decoration: none;
+}
+.js .chapter-rail a:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
+.js .chapter-rail__label {
+  font-size: .6875rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: var(--white);
+  padding: .1rem .4rem;
+  border: 1px solid var(--gray);
+  opacity: 0;
+  transform: translateX(4px);
+  transition: opacity var(--sd-dur-micro) var(--sd-ease-out),
+              transform var(--sd-dur-micro) var(--sd-ease-out);
+  white-space: nowrap;
+}
+.js .chapter-rail a:hover .chapter-rail__label,
+.js .chapter-rail a:focus-visible .chapter-rail__label { opacity: 1; transform: translateX(0); }
+.js .chapter-rail__mark {
+  display: block;
+  width: 3px;
+  height: 22px;
+  background: var(--gray);
+  transform: scaleY(.45);
+  transition: transform var(--sd-dur-micro) var(--sd-ease-out),
+              background-color var(--sd-dur-micro) var(--sd-ease-out);
+}
+.js .chapter-rail a[aria-current="true"] .chapter-rail__mark {
+  background: var(--blue);
+  transform: scaleY(1);
+}
+.js .chapter-rail__marker {
+  position: absolute;
+  right: 0;
+  width: 3px;
+  height: 22px;
+  background: var(--blue);
+  transform: translate3d(0, 0, 0);
+  will-change: transform;
+  transition: opacity var(--sd-dur-micro) var(--sd-ease-out);
+}
+@media (min-width: 80rem) { /* 1280: marks visible */
+  .js .chapter-rail { display: flex; }
+}
+@media (min-width: 64rem) and (max-width: 79.999rem) { /* 1024-1279: hairline only */
+  .js .chapter-rail a { pointer-events: none; }
+  .js .chapter-rail__label { display: none; }
+  .js .chapter-rail__mark { width: 3px; height: 3px; transform: none; }
+  .js .chapter-rail a[aria-current="true"] .chapter-rail__mark { transform: none; }
+}
+@media (max-width: 63.999rem) { /* below 1024: fully hidden */
+  .js .chapter-rail { display: none; }
+}
+
+/* ---------- Bounded will-change (spec 7) ---------- */
+.js .is-wc-blob { will-change: transform; }
+.js .is-wc-band { will-change: transform; }
+.js .is-wc-track { will-change: transform; }
+.js .is-wc-magnet { will-change: transform; }
+
+/* ---------- FAQ panel: the ONLY height animation (spec 4.10) ---------- */
+.js .acc-panel {
+  height: 0;
+  overflow: hidden;
+  transition: height var(--sd-dur-panel) var(--sd-ease-inout);
+}
+.js .acc-panel[hidden] { display: none; }
+.js .acc-panel.is-animating { overflow: hidden; }
+
+/* ============================================================
+   5. REDUCED MOTION — every effect lands on its FINAL state.
+   No element is left at opacity: 0. Last in file so it wins on
+   equal specificity.
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  /* 1 rail */
+  .js .chapter-rail { display: none; }
+  /* 2 stagger: all visible, every delay 0 */
+  .js .reveal,
+  .js .reveal.is-visible,
+  .js .step, .js .why-cell, .js .spec-row, .js .index-row, .js .camp-card,
+  .js .eyebrow, .js .section-title, .js .lede, .js .btn, .js .runner,
+  .js .program-title, .js .program-body, .js .program-features,
+  .js .testimonial-row {
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+    animation-delay: 0ms !important;
+    --i: 0 !important;
+  }
+  /* 3 hero blobs: 3 static blobs */
+  .js .hero-blob { animation: none !important; transform: none !important; }
+  /* 4 word split never applied (JS guard) — belt and braces */
+  .js .w, .js .w[aria-hidden="true"] { opacity: 1 !important; transform: none !important; }
+  /* 5 wipe */
+  .js .value-prop .section-title,
+  .js .value-prop .section-title.is-visible {
+    clip-path: none !important;
+    opacity: 1 !important;
+    animation: none !important;
+  }
+  /* 6 image parallax: no overscan gap */
+  .js .experience-band::before { display: none !important; transform: none !important; }
+  .js .experience-band { overflow: visible !important; }
+  /* 7 programs rail off, vertical stack, pin delta 0 */
+  .js .programs { min-height: 0 !important; overflow: visible !important; }
+  .js .programs-track { display: block !important; transform: none !important; }
+  .js .programs-track > .program-block { flex: none !important; min-width: 0 !important; }
+  /* 8 why stagger */
+  .js .why-cell { translate: none !important; }
+  /* 9 curriculum: no sticky, no pin, no bar, static list of all 10 steps */
+  .js .curriculum { min-height: 0 !important; }
+  .js .curriculum .container { display: block !important; }
+  .js .curriculum-index { display: none !important; }
+  /* 10 format stagger */
+  .js .spec-row { translate: none !important; }
+  /* 11 camp entrance */
+  .js .camp-card { transform: none !important; }
+  /* 12 camp tilt: none */
+  .js .camp-grid { perspective: none !important; }
+  .js .camp-card.is-lifted::after { display: none !important; }
+  .js .camp-card.is-lifted { transform: none !important; }
+  /* 13 social proof static */
+  .js .testimonial-row { transform: none !important; }
+  /* 14 FAQ: hidden toggles instantly, no measurement */
+  .js .acc-panel { height: auto !important; transition: none !important; }
+  /* 15 marquee: static readable line, not hidden. Kept in flow-absolute so the
+     section does not gain height: the band is a layout device, and spec 5 locks
+     .final-cta's height. */
+  .js .ticker { clip-path: none !important; opacity: 1 !important; animation: none !important;
+    position: absolute !important; }
+  .js .ticker__track {
+    transform: none !important;
+    animation: none !important;
+    width: auto !important;
+    white-space: normal;
+  }
+  .js .ticker__track > span { white-space: normal; }
+  /* 16 magnetic: no handler, transform none, hover tint kept */
+  .js .final-cta .btn { transform: none !important; }
+  /* will-change always released */
+  .js .is-wc-blob, .js .is-wc-band, .js .is-wc-track, .js .is-wc-magnet,
+  .js .chapter-rail__marker,
+  /* the pre-existing permanent .hero-blob promotion (styles.css:744) is released
+     here too, so nothing holds a layer under reduced motion */
+  .hero-blob { will-change: auto !important; }
+  /* 6b pin distance lives only in no-preference — asserted by min-height:0 above */
 }

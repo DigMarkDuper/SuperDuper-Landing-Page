@@ -19,6 +19,10 @@ package.json
 package-lock.json
 shot-*.png
 
+# Motion-pass QA harness (.planning/_measure/): probe scripts + geometry JSON.
+# Verification evidence lives in the commit message and MOTION_SPEC.md, not the repo.
+.planning/_measure/
+
 # Elsya master + matte source (4.1MB). The site loads only the two optimised
 # WebPs (assets/hero/student-elsya-720.webp / -1240.webp); these originals are
 # never referenced by any HTML/CSS/JS. Kept locally outside the repo at
