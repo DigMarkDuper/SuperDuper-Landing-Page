@@ -84,21 +84,23 @@
       <p class="micro-trust reveal">Intensif · Praktik langsung · Komunitas aktif</p>
     </div>
 
-    <!-- Elsya. Consent confirmed — informative image, so it carries a real alt.
-         The box crop (aspect 1.115) shows the top 74% of the source, which
-         excludes the name badge and the chest logo. -->
-    <figure class="hero-portrait">
-      <picture>
-        <source type="image/webp"
-                srcset="assets/hero/student-elsya-720.webp 720w, assets/hero/student-elsya-1240.webp 1240w"
-                sizes="(max-width: 768px) 62vw, (max-width: 1399px) 46vw, 40vw">
-        <img class="hero-portrait__img"
-             src="assets/hero/student-elsya-1240.webp"
-             width="1086" height="1317"
-             alt="Elsya, peserta Super Duper Language Center"
-             loading="eager" fetchpriority="high" decoding="async">
-      </picture>
-    </figure>
+    <!-- Front-facing student in the Super Duper uniform, cut out and supplied
+             by the client as a ready RGBA matte (1137x1383, native aspect 0.8221).
+             No name is asserted here because none was supplied with the photograph.
+             The box aspect 0.8246 is within 0.3% of the source, so contain shows the
+             whole cut with no letterbox bars. -->
+        <figure class="hero-portrait">
+          <picture>
+            <source type="image/webp"
+                    srcset="assets/hero/student-front-660.webp 660w, assets/hero/student-front-1320.webp 1320w"
+                    sizes="(max-width: 768px) 62vw, (max-width: 1399px) 46vw, 40vw">
+            <img class="hero-portrait__img"
+                 src="assets/hero/student-front-1320.webp"
+                 width="1137" height="1383"
+                 alt="Peserta Super Duper Language Center memakai seragam resmi"
+                 loading="eager" fetchpriority="high" decoding="async">
+          </picture>
+        </figure>
 
     <!-- Enrollment status. Schedule and quota are unverified placeholders:
          the page holds no such data and none is invented here. -->

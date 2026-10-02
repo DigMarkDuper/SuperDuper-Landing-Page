@@ -602,7 +602,16 @@ section { padding-block: var(--space-3xl); }
      hero fills exactly the viewport that remains below the nav. */
   min-height: calc(100svh - var(--nav-h) - 1px);      /* svh, not vh; -1px = header border */
   /* FIX 1b: nav is sticky and in flow, so padding must not re-add --nav-h */
-  padding-block: var(--space-2xl) var(--gutter);
+  /* The copy was pinned to the top by --space-2xl (64px), which left ~446px of
+     dead blue between the text bottom and the badge strip at 2190x1133 — the
+     hero read as top-heavy. The drop is now DERIVED FROM THE HERO'S OWN SPARE
+     HEIGHT, not a fixed pad: it only appears once there is genuinely room, and
+     collapses back to 64px on short screens so the badge strip can never be
+     pushed below the fold (the invariant the old note warned about).
+       hero-h 691 (768px viewport) -> (691-700) is negative -> clamped to 64px
+       hero-h 1056 (1133px viewport) -> 195px, which optically centres the copy */
+  --hero-pad-top: clamp(64px, calc((var(--hero-h) - 700px) * 0.55), 280px);
+  padding-block: var(--hero-pad-top) var(--gutter);
   /* Breathing room on the left. Every other section is a centered .container
      (max 1240px), but the hero was edge-pinned at a flat 24px -- so on a 2190px
      screen the type clung to the viewport edge at x=24 while every section
@@ -617,10 +626,17 @@ section { padding-block: var(--space-3xl); }
   /* --- Hero portrait geometry (spec 2.1). The portrait is absolutely
      positioned, so it takes zero width from the type track and zero height
      from the flow: the H1 keeps its full 1400px track and the fold arithmetic
-     is unchanged. --hero-type-bottom is the H1 line-box bottom plus 16px
+     is unchanged. --portrait-anchor is the H1 line-box bottom plus 16px
      clearance (64px pad + 34px eyebrow + 1.72 x --hero-fs + 16px). */
   --hero-h: calc(100svh - var(--nav-h) - 1px);
-  --hero-type-bottom: calc(64px + 34px + 1.72 * var(--hero-fs) + 16px);
+  /* The portrait is DELIBERATELY NOT ANCHORED TO THE COPY. The copy now drops
+     with --hero-pad-top, but the client wants the figure held at full size, so
+     the anchor keeps the original 64px-based figure (64 pad + 34 eyebrow +
+     1.72 x --hero-fs + 16). Because the band derives from this anchor, the
+     figure's WIDTH AND HER 96px BLEED are byte-identical to the pre-drop build
+     at every viewport. They are right-anchored and the lede's max-width already
+     subtracts --portrait-w, so the lowered copy never collides with her. */
+  --portrait-anchor: calc(64px + 34px + 1.72 * var(--hero-fs) + 16px);
 
   /* Elsya must never be cropped BY THE BOX. The box was 1.115 wide-against-tall
      while the cutout is 0.824, so object-fit:cover silently discarded 26% of
@@ -632,7 +648,7 @@ section { padding-block: var(--space-3xl); }
      normal editorial crop, whereas the box crop was amputating her torso.
      Capping her inside the band instead left her 0.217 of the hero width at
      1366px — too small, cornered, and lost in dead blue. */
-  --portrait-band: calc(var(--hero-h) - var(--hero-type-bottom) + 96px);
+  --portrait-band: calc(var(--hero-h) - var(--portrait-anchor) + 96px);
   --portrait-aspect: 0.8246;                        /* 1086 / 1317 exactly */
   --portrait-w: min(46vw, 660px, calc(var(--portrait-band) * var(--portrait-aspect)));
   --portrait-h: calc(var(--portrait-w) / var(--portrait-aspect));
@@ -644,7 +660,7 @@ section { padding-block: var(--space-3xl); }
    name badge and the chest logo. */
 .hero-portrait {
   position: absolute;
-  top: var(--hero-type-bottom);
+  top: var(--portrait-anchor);
   right: calc(-1 * var(--space-md));               /* bleeds off the right too */
   width: var(--portrait-w);
   height: var(--portrait-h);
@@ -852,7 +868,7 @@ section { padding-block: var(--space-3xl); }
    which on a 102.9px display line-height reads as one crowded mass — reported as
    "text is too crowded". Each step is now separated by a clear band so the
       eyebrow, headline, lede, CTAs and trust line read as distinct layers.
-      --hero-type-bottom drives the portrait's top offset as
+      --portrait-anchor drives the portrait's top offset as
       64px + 34px (eyebrow) + 1.72 x --hero-fs (headline) + 16px, so the eyebrow
       MUST stay at 34px tall: .625rem margin + its own 21px line box. The change
       below keeps it at 34px exactly and spends the freed space on the headline,
