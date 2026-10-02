@@ -1686,9 +1686,9 @@ section { padding-block: var(--space-3xl); }
   --sd-ease-inout: cubic-bezier(0.65, 0, 0.35, 1);
   --sd-ease-magnetic: cubic-bezier(0.34, 1.56, 0.64, 1);
   --sd-dur-micro: 160ms;
-  --sd-dur-fast: 320ms;
-  --sd-dur-base: 560ms;
-  --sd-dur-slow: 820ms;
+  --sd-dur-fast: 560ms;
+  --sd-dur-base: 820ms;
+  --sd-dur-slow: 1100ms;
   --sd-dur-panel: 340ms;
   --sd-rail: 0.18;
   --sd-lift: 6px;
@@ -1696,14 +1696,6 @@ section { padding-block: var(--space-3xl); }
   --sd-magnet: 0.28;
   --sd-magnet-cap: 14px;
   --sd-stagger-cap: 560ms;
-
-  /* Pin bases = measured baseline heights at 6dc4450 (spec 5). */
-  --sd-hc-900: 1916.91px;   /* .programs @1024 */
-  --sd-hc-1280: 2081.70px;  /* .programs @1280 */
-  --sd-hc-1440: 2110.09px;  /* .programs @1440+ */
-  --sd-hs-900: 900.02px;    /* .curriculum @1024 */
-  --sd-hs-1280: 898.77px;   /* .curriculum @1280 */
-  --sd-hs-1440: 911.09px;   /* .curriculum @1440+ */
 }
 
 /* ---------- 2. Keyframes (spec 3/2.2) ---------- */
@@ -1786,25 +1778,30 @@ section { padding-block: var(--space-3xl); }
      would pin the final keyframe forever and lock out transform writes from the
      shared rAF loop (magnetic CTA, camp tilt). */
   animation-fill-mode: backwards;
-  animation-delay: calc(var(--i, 0) * 1ms);
+  /* --sd-stag-step is the per-index multiplier, set by the group rules below.
+     min() is the real 560ms ceiling: no group can exceed the cap even if the
+     JS-side index cap were bypassed. */
+  animation-delay: min(calc(var(--i, 0) * var(--sd-stag-step, 1ms)), var(--sd-stagger-cap));
   animation-name: sd-in-up;
 }
+.js .step.is-visible { --sd-stag-step: 55ms; }   /* 10 items -> 495ms */
 .js .why-cell.is-visible { animation-duration: var(--sd-dur-fast); animation-name: sd-in-up-why; }
-.js .index-row.is-visible { animation-name: sd-in-left; }
-.js .camp-card.is-visible { animation-duration: var(--sd-dur-base); animation-name: sd-in-down; }
+.js .index-row.is-visible { --sd-stag-step: 110ms; animation-name: sd-in-left; } /* 4 -> 330ms */
+.js .camp-card.is-visible { --sd-stag-step: 90ms; animation-duration: var(--sd-dur-base); animation-name: sd-in-down; }
 .js .program-title.is-visible,
 .js .program-body.is-visible,
-.js .program-features.is-visible { animation-duration: var(--sd-dur-base); }
+.js .program-features.is-visible { --sd-stag-step: 80ms; animation-duration: var(--sd-dur-base); }
 .js .section-title.is-visible,
 .js .lede.is-visible,
 .js .btn.is-visible { animation-delay: 0ms; animation-name: sd-in-up; }
-.js .eyebrow.is-visible { animation-delay: calc(var(--i, 0) * 30ms); }
+.js .section-title.is-visible { animation-duration: var(--sd-dur-slow); }
+.js .eyebrow.is-visible { animation-delay: min(calc(var(--i, 0) * 30ms), var(--sd-stagger-cap)); }
 /* Paired spec-row offset (spec 4.7): odd from the left, even from the right,
    60ms between halves, 120ms between pairs. */
 .js .spec-row.is-visible.is-odd { animation-name: sd-in-left;
-  animation-delay: calc((var(--pair, 0) * 120 + 0) * 1ms); }
+  animation-delay: min(calc(var(--pair, 0) * 120ms), var(--sd-stagger-cap)); }
 .js .spec-row.is-visible.is-even { animation-name: sd-in-right;
-  animation-delay: calc((var(--pair, 0) * 120 + 60) * 1ms); }
+  animation-delay: min(calc(var(--pair, 0) * 120ms + 60ms), var(--sd-stagger-cap)); }
 /* .testimonial-row: NO MOTION (spec 4.9). Explicitly excluded from the engine. */
 .js .testimonial-row.is-visible { animation: none; opacity: 1; transform: none; }
 
@@ -1825,7 +1822,8 @@ section { padding-block: var(--space-3xl); }
 /* ---------- 4.2 Value prop wipe ---------- */
 .js .value-prop .section-title.is-visible {
   animation: sd-wipe var(--sd-dur-slow) var(--sd-ease-out) both;
-  animation-delay: 120ms;
+  animation-delay: 0ms; /* deliberate: the wipe starts with the title, like every
+                           other section title. The old 120ms was incidental. */
 }
 .js .value-prop .runner.is-visible { animation-delay: 140ms; }
 
@@ -1845,94 +1843,20 @@ section { padding-block: var(--space-3xl); }
   transform-origin: center;
 }
 
-/* ---------- 4.4 Programs rail ---------- */
-.js .programs { position: relative; overflow: hidden; }
-.js .programs-track { display: block; }
+/* ---------- 4.4 Programs ---------- */
+/* Static, vertically stacked program blocks. The horizontal rail is gone
+   (it had no scroll driver, so it was inert); the blocks are ordinary
+   staggered vertical reveals driven by the shared observer. */
+.js .programs { position: relative; }
 .js .program-block__inner { max-width: 56ch; }
 
-@media (min-width: 56.25rem) { /* 900px */
-  .js .programs { overflow: visible; }
-  .js .programs-track {
-    display: flex;
-    flex-wrap: nowrap;
-    align-items: stretch;
-  }
-  .js .programs-track > .program-block {
-    flex: 0 0 100%;
-    min-width: 100%;
-  }
-  /* Row entrance keyed to the row's own leading edge crossing 60% of the viewport. */
-  .js .program-title.is-visible,
-  .js .program-body.is-visible,
-  .js .program-features.is-visible {
-    animation-duration: var(--sd-dur-base);
-    animation-delay: calc(var(--i, 0) * 80ms);
-  }
-}
-/* Pin distance (spec 5) — min-height, never padding. */
-@media (min-width: 80rem) and (prefers-reduced-motion: no-preference) { /* 1280 */
-  .js .programs { min-height: calc(var(--sd-hc-1440) + 0.9 * 100vh); }
-}
-@media (min-width: 56.25rem) and (max-width: 79.999rem) and (prefers-reduced-motion: no-preference) {
-  .js .programs { min-height: calc(var(--sd-hc-900) + 0.6 * 100vh); }
-}
-@media (min-width: 79.999rem) and (max-width: 89.999rem) and (prefers-reduced-motion: no-preference) {
-  .js .programs { min-height: calc(var(--sd-hc-1280) + 0.9 * 100vh); }
-}
-
 /* ---------- 4.5 Why: ascending cells ---------- */
-.js .why-cell.is-visible { animation-delay: calc(var(--i, 0) * 70ms); }
+.js .why-cell.is-visible {
+  animation-delay: min(calc(var(--i, 0) * 70ms), var(--sd-stagger-cap));
+}
 
-/* ---------- 4.6 Curriculum sticky index ---------- */
+/* ---------- 4.6 Curriculum ---------- */
 .js .curriculum { position: relative; }
-.js .curriculum .container { display: grid; }
-.js .curriculum-index { display: none; }
-
-@media (min-width: 56.25rem) and (prefers-reduced-motion: no-preference) {
-  .js .curriculum .container {
-    grid-template-columns: 18rem minmax(0, 1fr);
-    column-gap: var(--space-2xl);
-    align-items: start;
-  }
-  .js .curriculum-index {
-    display: block;
-    position: sticky;
-    top: 50vh;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-  .js .curriculum-index li {
-    position: relative;
-    padding: .35rem 0 .35rem .9rem;
-    border-left: 3px solid var(--gray);
-    font-size: var(--type-small);
-    color: var(--ink-muted);
-  }
-  .js .curriculum-index li::before {
-    content: '';
-    position: absolute;
-    left: -3px;
-    top: 0;
-    width: 3px;
-    height: 100%;
-    background: var(--yellow);
-    transform: scaleY(0);
-    transform-origin: center;
-    transition: transform var(--sd-dur-fast) var(--sd-ease-out);
-  }
-  .js .curriculum-index li[aria-current="true"] { color: var(--ink); }
-  .js .curriculum-index li[aria-current="true"]::before { transform: scaleY(1); }
-}
-@media (min-width: 90rem) and (prefers-reduced-motion: no-preference) { /* 1440 */
-  .js .curriculum { min-height: calc(var(--sd-hs-1440) + 0.8 * 100vh); }
-}
-@media (min-width: 80rem) and (max-width: 89.999rem) and (prefers-reduced-motion: no-preference) {
-  .js .curriculum { min-height: calc(var(--sd-hs-1280) + 0.8 * 100vh); }
-}
-@media (min-width: 56.25rem) and (max-width: 79.999rem) and (prefers-reduced-motion: no-preference) {
-  .js .curriculum { min-height: calc(var(--sd-hs-900) + 0.8 * 100vh); }
-}
 
 /* ---------- 4.8 Camp tilt ---------- */
 @media (hover: hover) and (pointer: fine) {
@@ -2062,7 +1986,6 @@ section { padding-block: var(--space-3xl); }
 /* ---------- Bounded will-change (spec 7) ---------- */
 .js .is-wc-blob { will-change: transform; }
 .js .is-wc-band { will-change: transform; }
-.js .is-wc-track { will-change: transform; }
 .js .is-wc-magnet { will-change: transform; }
 
 /* ---------- FAQ panel: the ONLY height animation (spec 4.10) ---------- */
@@ -2109,16 +2032,12 @@ section { padding-block: var(--space-3xl); }
   /* 6 image parallax: no overscan gap */
   .js .experience-band::before { display: none !important; transform: none !important; }
   .js .experience-band { overflow: visible !important; }
-  /* 7 programs rail off, vertical stack, pin delta 0 */
-  .js .programs { min-height: 0 !important; overflow: visible !important; }
-  .js .programs-track { display: block !important; transform: none !important; }
-  .js .programs-track > .program-block { flex: none !important; min-width: 0 !important; }
+  /* 7 programs: static vertical stack, no pin */
+  .js .programs { min-height: 0 !important; }
   /* 8 why stagger */
   .js .why-cell { translate: none !important; }
-  /* 9 curriculum: no sticky, no pin, no bar, static list of all 10 steps */
+  /* 9 curriculum: static list of all 10 steps, no pin */
   .js .curriculum { min-height: 0 !important; }
-  .js .curriculum .container { display: block !important; }
-  .js .curriculum-index { display: none !important; }
   /* 10 format stagger */
   .js .spec-row { translate: none !important; }
   /* 11 camp entrance */
@@ -2146,7 +2065,7 @@ section { padding-block: var(--space-3xl); }
   /* 16 magnetic: no handler, transform none, hover tint kept */
   .js .final-cta .btn { transform: none !important; }
   /* will-change always released */
-  .js .is-wc-blob, .js .is-wc-band, .js .is-wc-track, .js .is-wc-magnet,
+  .js .is-wc-blob, .js .is-wc-band, .js .is-wc-magnet,
   .js .chapter-rail__marker,
   /* the pre-existing permanent .hero-blob promotion (styles.css:744) is released
      here too, so nothing holds a layer under reduced motion */

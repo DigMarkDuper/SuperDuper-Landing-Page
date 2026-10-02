@@ -151,9 +151,13 @@
      MOTION v1 (MOTION_SPEC.md)
      ============================================================ */
 
-  /* ---------- 6. Stagger engine (2.2): zero-based --i per group, set once ---------- */
+  /* ---------- 6. Stagger engine (2.2): zero-based --i per group, set once ----------
+     The per-index multipliers live in CSS as --sd-stag-step and are clamped to
+     --sd-stagger-cap by min(). The cap here mirrors that as a second line of
+     defence; the CSS min() is the real guarantee. */
+  var STAGGER_CAP = 560;
   function setGroup(selector, step) {
-    var cap = Math.floor(560 / step);
+    var cap = Math.floor(STAGGER_CAP / step);
     Array.prototype.slice.call(document.querySelectorAll(selector)).forEach(function (el, i) {
       el.style.setProperty('--i', Math.min(i, cap));
     });
@@ -161,7 +165,7 @@
   setGroup('.step', 55);
   setGroup('.eyebrow', 30);
   setGroup('.why-cell', 70);
-  setGroup('.index-row', 70);
+  setGroup('.index-row', 110);
   setGroup('.camp-card', 90);
   setGroup('.program-title', 80);
   setGroup('.program-body', 80);
@@ -204,51 +208,12 @@
     });
   })();
 
-  /* ---------- 8. Programs rail track (4.4) ---------- */
-  var programs = document.querySelector('.programs');
-  var track = null;
-  var programBlocks = Array.prototype.slice.call(document.querySelectorAll('.program-block'));
-  (function buildTrack() {
-    if (!programs || programBlocks.length < 2) return;
-    track = document.createElement('div');
-    track.className = 'programs-track';
-    programBlocks[0].parentNode.insertBefore(track, programBlocks[0]);
-    programBlocks.forEach(function (b) { track.appendChild(b); });
-  })();
-  function railEnabled() {
-    return !!(track && window.matchMedia('(min-width: 56.25rem)').matches);
-  }
-  var programRows = Array.prototype.slice.call(
-    document.querySelectorAll('.program-title, .program-body, .program-features')
-  );
-  // The per-block .eyebrow sits inside the rail too, so it is positioned by the
-  // rail transform rather than by the page, and the general observer cannot see
-  // it until the rail has travelled. It rides the same progress gate.
-  Array.prototype.slice.call(document.querySelectorAll('.program-block .eyebrow'))
-    .forEach(function (el) { programRows.push(el); });
+  /* ---------- 8. Program rows (4.4) ----------
+     The horizontal rail is gone: without the pin it had no scroll driver and
+     never travelled. The blocks are ordinary vertical reveals handled by the
+     shared observer, so there is nothing to build and nothing to drive. */
 
-  /* ---------- 9. Curriculum pinned index (4.6) ---------- */
-  var indexList = null, steps = [], indexItems = [], activeStep = -1;
-  (function buildCurriculumIndex() {
-    var journey = document.querySelector('.curriculum .journey');
-    if (!journey) return;
-    steps = Array.prototype.slice.call(journey.querySelectorAll('.step'));
-    if (!steps.length) return;
-    var list = document.createElement('ol');
-    list.className = 'curriculum-index';
-    steps.forEach(function (s, i) {
-      var li = document.createElement('li');
-      var h = s.querySelector('h3');
-      li.textContent = h ? h.textContent : '';
-      li.setAttribute('aria-current', i === 0 ? 'true' : 'false');
-      list.appendChild(li);
-    });
-    journey.parentNode.insertBefore(list, journey);
-    indexList = list;
-    indexItems = Array.prototype.slice.call(list.children);
-  })();
-
-  /* ---------- 10. Chapter rail (2.1) ---------- */
+  /* ---------- 9. Chapter rail (2.1) ---------- */
   var SECTIONS = ['hero', 'value-prop', 'experience-band', 'programs', 'why',
     'curriculum', 'format', 'camp', 'social-proof', 'faq', 'final-cta'];
   var railSections = SECTIONS.map(function (s) { return document.querySelector('.' + s); });
@@ -356,11 +321,11 @@
   }
 
   /* ---------- 13. THE single shared rAF loop (2.3) ----------
-     One reader, one pass, driving rail + blobs + band + rail travel +
-     curriculum index + tilt + magnetic + ticker sizing. One cached rect
-     per section per frame. The loop unsubscribes when the page is hidden. */
+     One reader, one pass, driving blobs + band + tilt + magnetic + ticker
+     sizing. One cached rect per section per frame. The loop unsubscribes when
+     the page is hidden. */
   var running = false;
-  var wc = { blob: false, band: false, track: false };
+  var wc = { blob: false, band: false };
   var tickerW = 0;
 
   function frame() {
@@ -420,63 +385,6 @@
         band.classList.remove('is-wc-band');
         band.style.removeProperty('--px');
         wc.band = false;
-      }
-    }
-
-    /* programs rail: linear, never eased — a scrubbed rail must track the finger.
-       progress = clamp((scrollY - sectionTop) / sectionHeight, 0, 1) per spec 4.4. */
-    var pr = programs ? programs.getBoundingClientRect() : null;
-    if (track && pr) {
-      if (railEnabled() && inView(pr, h)) {
-        if (!wc.track) { track.classList.add('is-wc-track'); wc.track = true; }
-        var span = Math.max(track.scrollWidth - window.innerWidth, 0);
-        var sectionTop = pr.top + window.scrollY;
-        var prog = clamp((window.scrollY - sectionTop) / Math.max(pr.height, 1), 0, 1);
-        track.style.transform = 'translate3d(' + (-prog * span).toFixed(2) + 'px,0,0)';
-      } else {
-        if (wc.track) { track.classList.remove('is-wc-track'); wc.track = false; }
-        if (track.style.transform) track.style.transform = '';
-      }
-    }
-
-    /* Program rows reveal as the rail carries them in (spec 4.4). This reuses
-       the rail's own travel progress, so a row fires exactly when the rail has
-       travelled far enough to bring it into view. Viewport geometry cannot be
-       used here: on a horizontal rail a row is scrolled past vertically long
-       before its leading edge reaches the screen, so a geometric test would
-       never fire for the second block. The general observer never fires for
-       these rows either, because they sit outside the viewport box entirely
-       until the rail translates them in. */
-    if (railEnabled() && pr) {
-      var pTop = pr.top + window.scrollY;
-      var pProg = clamp((window.scrollY - pTop) / Math.max(pr.height, 1), 0, 1);
-      // the rail reaches full travel at the end of the section, so the second
-      // block's rows fire as the travel passes the point that brings it on screen
-      var share = 0.4;
-      for (var r = 0; r < programRows.length; r++) {
-        var row = programRows[r];
-        if (row.classList.contains('is-visible')) continue;
-        if (pProg >= share) row.classList.add('is-visible');
-      }
-      // never leave a rail row hidden once the rail has been fully travelled
-      if (pProg >= 0.999) {
-        for (var r2 = 0; r2 < programRows.length; r2++) programRows[r2].classList.add('is-visible');
-      }
-    }
-
-    /* curriculum index: active row = the step nearest the viewport centre */
-    if (indexList) {
-      var best = 0, bestD = Infinity;
-      for (var s = 0; s < steps.length; s++) {
-        var sr = steps[s].getBoundingClientRect();
-        var d = Math.abs(sr.top + sr.height / 2 - vh);
-        if (d < bestD) { bestD = d; best = s; }
-      }
-      if (best !== activeStep) {
-        indexItems.forEach(function (li, j) {
-          li.setAttribute('aria-current', j === best ? 'true' : 'false');
-        });
-        activeStep = best;
       }
     }
 
