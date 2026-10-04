@@ -186,21 +186,32 @@
     if (!h1) return;
     h1.setAttribute('aria-label', h1.textContent.replace(/\s+/g, ' ').trim());
     var words = [];
-    Array.prototype.slice.call(h1.children).forEach(function (line) {
-      var text = line.textContent;
-      var frag = document.createDocumentFragment();
-      text.split(/(\s+)/).forEach(function (part) {
-        if (!part) return;
-        if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(part)); return; }
-        var s = document.createElement('span');
-        s.className = 'w';
-        s.textContent = part;
-        frag.appendChild(s);
-        words.push(s);
+    /* Walk CHILD NODES, never textContent. The old version read textContent per
+       line and wrote a flat fragment back, which DESTROYED the inline markup:
+       .hero-title strong { color: var(--yellow) } existed in the stylesheet but
+       the <strong> around "Experience." was deleted on load, so line 2 rendered
+       solid white. Preserving element nodes and splitting their text children
+       keeps the emphasis — and any future emphasis — alive through the split. */
+    function splitWords(node) {
+      Array.prototype.slice.call(node.childNodes).forEach(function (child) {
+        if (child.nodeType === 3) {
+          var frag = document.createDocumentFragment();
+          child.nodeValue.split(/(\s+)/).forEach(function (part) {
+            if (!part) return;
+            if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(part)); return; }
+            var s = document.createElement('span');
+            s.className = 'w';
+            s.textContent = part;
+            frag.appendChild(s);
+            words.push(s);
+          });
+          node.replaceChild(frag, child);
+        } else if (child.nodeType === 1) {
+          splitWords(child);          /* keep <strong>, split inside it */
+        }
       });
-      line.textContent = '';
-      line.appendChild(frag);
-    });
+    }
+    Array.prototype.slice.call(h1.children).forEach(splitWords);
     var n = Math.min(words.length, 8); // 8-step cap, ~440ms total
     words.forEach(function (w, i) {
       w.style.setProperty('--w', Math.min(i, n - 1));
