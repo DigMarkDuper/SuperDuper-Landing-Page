@@ -491,6 +491,7 @@ section { padding-block: var(--space-3xl); }
      .btn-ghost "LIHAT PROGRAM" pair -- on exactly the spacing it has today. */
   margin-right: .6rem;
 }
+.btn__shop { display: block; width: 1.125rem; height: 1.125rem; flex: 0 0 auto; margin-right: .6rem; }
 
 .btn:active { transform: translateY(1px); }
 .btn[aria-disabled="true"],
@@ -508,6 +509,16 @@ section { padding-block: var(--space-3xl); }
 .btn-primary:hover {
   background: var(--wa-green-hover);
   border-color: var(--wa-green-hover);
+}
+/* Final CTA ("MULAI SEKARANG") is a direct-registration link, not the
+   WhatsApp-consultation funnel. It keeps the original yellow + navy
+   so it reads as a separate action. Higher specificity (0,2,0) beats
+   .btn-primary (0,1,0). */
+.final-cta .btn-primary {
+  background: var(--yellow); border-color: var(--yellow); color: var(--blue-800);
+}
+.final-cta .btn-primary:hover {
+  background: var(--yellow-hover); border-color: var(--yellow-hover); color: var(--blue-800);
 }
 
 .btn-ghost {
