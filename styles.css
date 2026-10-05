@@ -80,6 +80,13 @@
   --blue-600: #0E3E86;    /* links + eyebrows on white (10.23:1) */
   --yellow: #F9D024;      /* energy accent, one per viewport */
   --yellow-hover: #FFDC3A;
+  /* WhatsApp brand green, used ONLY as the CTA fill. The ink on it is the
+     existing --blue-800 navy, never white: navy on #25D366 is 7.05:1 (AAA at
+     every text size), whereas white on the same green is 1.98:1 and fails the
+     3:1 non-text floor outright. The hover fill is one step darker so navy
+     still clears AA at 5.5:1. */
+  --wa-green: #25D366;
+  --wa-green-hover: #1FBA63;  /* navy #012B5C on this = 5.5:1 */
   --white: #FFFFFF;
   --white-72: #B8C6D8;    /* muted text on blue (4.72:1) */
   --gray: #D1D5DB;        /* hairlines and decor only — never text */
@@ -299,6 +306,12 @@ section { padding-block: var(--space-3xl); }
    disc width or the disc sits on top of the first glyphs. Both use the same
    token so they cannot drift apart. */
 .mf {
+  /* WhatsApp CTA: the PILL is the fill and the ink is the navy, matching the
+     .btn contract above. The disc is only the icon slot, so it is transparent at
+     rest and sweeps navy across the pill on hover. Contrast is symmetric: navy
+     on green is 7.05:1 at rest AND green on navy is 7.05:1 on hover. */
+  background: var(--wa-green);
+  color: var(--blue-800);      /* also the SVG ink, via currentColor */
   --mf-disc: 3rem;
   /* The disc sits at left:0 and is --mf-disc wide, so the label must start at
      least that far out. It previously used the SAME value, giving a measured
@@ -346,10 +359,24 @@ section { padding-block: var(--space-3xl); }
   width: var(--mf-disc);
   height: 100%;
   border-radius: 1.625rem;
-  background: var(--yellow);
+  /* Transparent at rest so the pill's own green reads through as the fill;
+     .mf--ghost below overrides this back to white. */
+  background: transparent;
   transition: width .45s cubic-bezier(.65, 0, .076, 1),
               background-color .45s cubic-bezier(.65, 0, .076, 1);
 }
+/* Icon slot centring. .mf__disc centres the .625rem chevron via
+   padding-left: calc((var(--mf-disc) - .625rem) / 2). The primary variant holds
+   a 1.25rem glyph instead, so it re-centres against its own size; anchored on
+   .mf__wa so the ghost chevron keeps the .625rem offset untouched. */
+.mf:not(.mf--ghost) .mf__disc { padding-left: calc((var(--mf-disc) - 1.25rem) / 2); }
+.mf__wa {
+  display: block;
+  width: 1.25rem;
+  height: 1.25rem;
+  flex: 0 0 auto;
+}
+
 .mf__arrow {
   display: block;
   width: .625rem;
@@ -367,12 +394,17 @@ section { padding-block: var(--space-3xl); }
   font-size: var(--type-cta);
   font-weight: 700;
   letter-spacing: .08em;
-  color: var(--yellow);
+  color: var(--blue-800);      /* navy on the green pill = 7.05:1 */
   white-space: nowrap;
   transition: color .35s ease;
 }
 .mf:hover .mf__disc,
-.mf:focus-visible .mf__disc { width: 100%; }
+.mf:focus-visible .mf__disc {
+  width: 100%;
+  /* Navy sweep: this is the hover half of the fill inversion. The ghost's own
+     blue-700 rule is later and more specific, so it still wins there. */
+  background: var(--blue-800);
+}
 /* The chevron lives INSIDE the disc, which grows from 3rem to the full button
    width. `place-items:center` on the growing disc therefore dragged the chevron
    to the middle of the expanded pill — reported as the ">" jumping into the
@@ -382,10 +414,25 @@ section { padding-block: var(--space-3xl); }
 .mf:hover .mf__arrow,
 .mf:focus-visible .mf__arrow { transform: rotate(45deg) translate(6px, -6px); }
 .mf:hover .mf__label,
-.mf:focus-visible .mf__label { color: var(--blue-800); }   /* 9.38:1 on yellow */
+.mf:focus-visible .mf__label { color: var(--wa-green); }   /* 7.05:1 on navy */
+/* The glyph must flip with the label. Its fill is currentColor and the disc
+   under it inverts to navy on hover, so leaving the glyph navy put it on
+   navy -- measured 1:1, i.e. invisible. Green on that navy is 7.05:1, the
+   same pair as the label. .2s beats the disc's .45s sweep so the glyph is
+   already green by the time the navy reaches it. */
+.mf:hover .mf__wa,
+.mf:focus-visible .mf__wa {
+  color: var(--wa-green);
+  transition: color .2s ease;
+}
 
 /* Secondary — inverted on the blue field: white disc, white label. On hover the
    disc fills with brand blue and the label flips to white (8.12:1). */
+/* Reset only the pill fill the base .mf now sets -- without this the ghost
+   would inherit the WhatsApp green and its white disc + white label (8.12:1 on
+   blue) would sit on green instead of the blue hero field. Every other ghost
+   rule below is byte-identical to before. */
+.mf--ghost { background: transparent; }
 .mf--ghost .mf__disc { background: var(--white); }
 .mf--ghost .mf__arrow { border-color: var(--blue); }
 .mf--ghost .mf__label { color: var(--white); }
@@ -403,7 +450,7 @@ section { padding-block: var(--space-3xl); }
 .mf--ghost:focus-visible { outline-color: var(--yellow); }
 
 @media (prefers-reduced-motion: reduce) {
-  .mf__disc, .mf__arrow, .mf__label { transition: none; }
+  .mf__disc, .mf__arrow, .mf__label, .mf__wa { transition: none; }
   .mf:hover .mf__arrow, .mf:focus-visible .mf__arrow { transform: rotate(45deg); }
 }
 
@@ -429,18 +476,38 @@ section { padding-block: var(--space-3xl); }
               border-color var(--dur-fast) var(--ease-out),
               color var(--dur-fast) var(--ease-out);
 }
+/* WhatsApp glyph. Inline SVG, currentColor, so the icon colour can never
+   drift from the label colour: both resolve to the CTA ink token. Fixed px size
+   because .btn sets text-transform/letter-spacing for the LABEL -- neither has
+   any effect on a <path>, and sizing in rem keeps the glyph on the 1rem grid. */
+.btn__wa {
+  display: block;
+  width: 1.125rem;
+  height: 1.125rem;
+  flex: 0 0 auto;
+  /* The label is a bare text node inside this inline-flex row, so it lands in
+     an anonymous flex item. margin-right (not gap) is used deliberately: it
+     travels with the icon only, leaving every .btn without a glyph -- the
+     .btn-ghost "LIHAT PROGRAM" pair -- on exactly the spacing it has today. */
+  margin-right: .6rem;
+}
+
 .btn:active { transform: translateY(1px); }
 .btn[aria-disabled="true"],
 .btn:disabled { opacity: .4; pointer-events: none; }
 
+/* WhatsApp CTA. The fill is the brand green; the ink is the existing
+   --blue-800 navy, NOT white: navy on #25D366 is 7.05:1 (AAA), while white on
+   the same green is 1.98:1 and fails even the 3:1 non-text floor. The hover
+   fill darkens one step to keep navy above AA at 5.5:1. */
 .btn-primary {
-  color: var(--blue-800);      /* #012B5C on #F9D024 = 9.38:1 */
-  background: var(--yellow);
-  border-color: var(--yellow);
+  color: var(--blue-800);      /* #012B5C on #25D366 = 7.05:1 (AAA) */
+  background: var(--wa-green);
+  border-color: var(--wa-green);
 }
 .btn-primary:hover {
-  background: var(--yellow-hover);
-  border-color: var(--yellow-hover);
+  background: var(--wa-green-hover);
+  border-color: var(--wa-green-hover);
 }
 
 .btn-ghost {
@@ -462,6 +529,23 @@ section { padding-block: var(--space-3xl); }
 /* Tracking is the first thing to give before size, per spec 6.1 */
 @media (max-width: 22.5rem) {
   .btn { letter-spacing: .08em; padding-inline: 1.25rem; }
+  /* 5 more characters in the label, so the glyph gives up size alongside the
+     tracking. --mf-disc is deliberately NOT reduced: the pill's height is
+     var(--mf-disc), and dropping it would cost the 48px tap target. */
+  .btn__wa { width: 1rem; height: 1rem; margin-right: .5rem; }
+  .mf { --mf-gap: .7rem; padding-inline-end: 1.25rem; }
+  .mf--ghost { --mf-gap: .7rem; padding-inline-end: 1.25rem; }
+  .mf__label { font-size: .8125rem; letter-spacing: .06em; }
+  /* The overlay CTA inherits 1.35rem from .mobile-menu a, and at 320px the
+     21-character label no longer fit its nowrap box (measured: text spanned
+     [-6.4, 326.5] inside a [16, 304] button). Give the glyph and the tracking
+     first, then a step down in size -- 375/390 already fit and are untouched.
+     Selector needs (0,2,0) to beat .mobile-menu a's (0,1,1), and is scoped to
+     .btn-primary so the ghost beside it keeps its existing 1.35rem size. */
+  .mobile-menu .btn-primary { font-size: .9375rem; letter-spacing: .06em; }
+  .mobile-menu .btn__wa { width: 1rem; height: 1rem; margin-right: .5rem; }
+  .mf__wa { width: 1.125rem; height: 1.125rem; }
+  .mf:not(.mf--ghost) .mf__disc { padding-left: calc((var(--mf-disc) - 1.125rem) / 2); }
 }
 
 @media (max-width: 479px) {
@@ -579,6 +663,13 @@ section { padding-block: var(--space-3xl); }
   align-items: center;
 }
 .mobile-ctas { display: flex; flex-direction: column; gap: 1rem; margin-top: auto; }
+/* .mobile-menu a (0,1,1) outranks .btn-primary (0,1,0), so the CTA inside this
+   overlay was inheriting the menu's white link ink -- 1.98:1 on the WhatsApp
+   green, on the glyph too since it is fill="currentColor". Re-assert the navy
+   here. Only .btn-primary is named: the ghost "LIHAT PROGRAM" beside it is meant
+   to be white-on-blue and is left alone. */
+.mobile-menu .btn-primary { color: var(--blue-800); }
+.mobile-menu .btn-primary:hover { color: var(--blue-800); }
 
 @media (max-width: 959px) {
   .nav-links, .nav-cta { display: none; }
