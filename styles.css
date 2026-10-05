@@ -537,7 +537,7 @@ section { padding-block: var(--space-3xl); }
   .mf--ghost { --mf-gap: .7rem; padding-inline-end: 1.25rem; }
   .mf__label { font-size: .8125rem; letter-spacing: .06em; }
   /* The overlay CTA inherits 1.35rem from .mobile-menu a, and at 320px the
-     21-character label no longer fit its nowrap box (measured: text spanned
+     22-character label no longer fit its nowrap box (measured: text spanned
      [-6.4, 326.5] inside a [16, 304] button). Give the glyph and the tracking
      first, then a step down in size -- 375/390 already fit and are untouched.
      Selector needs (0,2,0) to beat .mobile-menu a's (0,1,1), and is scoped to
