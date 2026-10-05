@@ -1377,7 +1377,82 @@ section { padding-block: var(--space-3xl); }
 }
 
 /* ============================================================
-   9. SOCIAL PROOF — hairline-ruled 2-column index (spec 4 row 9, 6.5)
+   9. TOUR BAND — lobby push-in, muted loop (poster-paint first)
+   ============================================================ */
+.tour {
+  background: var(--blue);
+  color: var(--white);
+  padding-block: var(--space-2xl);
+}
+.tour .eyebrow { color: var(--yellow); }
+.tour .section-title { color: var(--white); max-width: 18ch; }
+.tour__frame { position: relative; margin: var(--space-2xl) 0 0; }
+.tour-figure { margin: 0; }
+.tour__media {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  background: var(--blue-900);
+  border-radius: var(--radius);
+}
+.tour-toggle {
+  position: absolute;
+  left: var(--space-md);
+  bottom: var(--space-md);
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  min-height: 44px;
+  padding: .6rem .9rem;
+  background: var(--yellow);
+  color: var(--blue-800);
+  border: 0;
+  border-radius: var(--radius-sm);
+  font: 600 var(--type-eyebrow) 'Inter', sans-serif;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.tour-toggle__icon {
+  width: 10px; height: 12px;
+  border-left: 3px solid currentColor;
+  border-right: 3px solid currentColor;
+}
+.tour-toggle[aria-pressed="true"] .tour-toggle__icon {
+  width: 0; height: 0;
+  border: 6px solid transparent;
+  border-left: 9px solid currentColor;
+  border-right: 0;
+}
+.tour-caption {
+  margin-top: .7rem;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: var(--type-eyebrow);
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--white-72);
+}
+.tour__fallback {
+  margin: 0;
+  padding: var(--space-md);
+  color: var(--white);
+  font-size: var(--type-small);
+}
+.tour-toggle:focus-visible { outline-color: var(--white); }
+
+@media (min-width: 48rem) {
+  .tour-toggle { left: var(--space-lg); bottom: var(--space-lg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tour-toggle { display: none !important; }
+}
+
+/* ============================================================
+   10. SOCIAL PROOF — hairline-ruled 2-column index (spec 4 row 10, 6.5)
    ============================================================ */
 .social-proof { background: var(--white); }
 
@@ -1475,7 +1550,7 @@ section { padding-block: var(--space-3xl); }
 }
 
 /* ============================================================
-   10. FAQ — blue-900 programme block (spec 4 row 10)
+   11. FAQ — blue-900 programme block (spec 4 row 11)
    ============================================================ */
 .faq {
   background: var(--blue-900);
@@ -1564,7 +1639,7 @@ section { padding-block: var(--space-3xl); }
 }
 
 /* ============================================================
-   11. FINAL CTA — closing statement (spec 4 row 11)
+   12. FINAL CTA — closing statement (spec 4 row 12)
    ============================================================ */
 .final-cta {
   background-color: var(--blue-900);

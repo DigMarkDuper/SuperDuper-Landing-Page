@@ -226,7 +226,7 @@
 
   /* ---------- 9. Chapter rail (2.1) ---------- */
   var SECTIONS = ['hero', 'value-prop', 'experience-band', 'programs', 'why',
-    'curriculum', 'format', 'camp', 'social-proof', 'faq', 'final-cta'];
+    'curriculum', 'format', 'camp', 'tour', 'social-proof', 'faq', 'final-cta'];
   var railSections = SECTIONS.map(function (s) { return document.querySelector('.' + s); });
   var marker = null, railLinks = [], activeSection = -1;
   (function buildChapterRail() {
@@ -451,6 +451,92 @@
     if (document.hidden) stop(); else start();
   });
   window.addEventListener('resize', sizeTicker, { passive: true });
+
+  /* ---------- 14. Tour the Space video band (9) ----------
+     Poster paints first; nothing plays until this block runs. The markup
+     deliberately carries NO autoplay attribute, so a script failure can
+     never autoplay a prefers-reduced-motion visitor: the attribute is
+     added here, on the no-preference path only, immediately before
+     play(). Reduced-motion visitors keep the poster and lose the toggle. */
+  var tour = document.querySelector('.tour');
+  if (tour) {
+    var video = tour.querySelector('.tour__media');
+    var btn = tour.querySelector('[data-tour-toggle]');
+    var noop = function () {};
+    var wasPlaying = false;
+
+    if (video) {
+      video.muted = true; // attribute is in the markup too; belt and braces
+
+      /* aria-pressed=true means "paused, press to play" — it matches the icon
+         swap in styles.css and the label the markup ships with. */
+      var syncToggle = function () {
+        if (!btn) return;
+        var paused = video.paused;
+        btn.setAttribute('aria-pressed', String(paused));
+        var label = btn.querySelector('.tour-toggle__label');
+        if (label) label.textContent = paused ? 'PUTAR' : 'JEDA';
+      };
+
+      if (reduceMotion) {
+        video.pause();
+        if (btn) btn.hidden = true;
+      } else if ('IntersectionObserver' in window) {
+        var tourObserver = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (!entry.isIntersecting) return;
+            tourObserver.unobserve(entry.target); // fire once, never re-trigger
+            video.setAttribute('autoplay', '');
+            var attempt = video.play();
+            if (attempt && attempt.catch) {
+              attempt.then(syncToggle, function () {
+                /* Blocked or decode failure: poster stays up, the autoplay
+                   attribute comes back off, and the toggle stays offered. */
+                video.removeAttribute('autoplay');
+                if (btn) btn.hidden = false;
+                syncToggle();
+              });
+            } else {
+              syncToggle();
+            }
+          });
+        }, { threshold: 0.5 });
+        tourObserver.observe(video);
+      } else {
+        video.setAttribute('autoplay', '');
+        video.play().catch(noop);
+        syncToggle();
+      }
+
+      if (btn) {
+        btn.addEventListener('click', function () {
+          var paused = video.paused;
+          if (paused) {
+            paused = false;
+            video.play().catch(noop);
+          } else {
+            paused = true;
+            video.pause();
+          }
+          btn.setAttribute('aria-pressed', String(paused));
+          var label = btn.querySelector('.tour-toggle__label');
+          if (label) label.textContent = paused ? 'PUTAR' : 'JEDA';
+        });
+      }
+
+      /* Paused on tab-hide, resumed only if it was playing when we hid. */
+      document.addEventListener('visibilitychange', function () {
+        if (document.hidden) {
+          wasPlaying = !video.paused;
+          video.pause();
+        } else if (wasPlaying && !reduceMotion) {
+          wasPlaying = false;
+          video.play().catch(noop);
+        }
+        syncToggle();
+      });
+    }
+  }
 
   /* ---------- 2.4 Reduced-motion master guard ----------
      No rAF loop is started, no word split is applied, and every reveal lands on

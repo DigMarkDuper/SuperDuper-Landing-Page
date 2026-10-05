@@ -302,7 +302,32 @@
     </div>
   </section>
 
-  <!-- ============ 9. SOCIAL PROOF ============ -->
+  <!-- ============ 9. TOUR THE SPACE ============ -->
+  <section class="tour" aria-labelledby="tour-title">
+    <div class="container">
+      <p class="eyebrow reveal">RUANG BELAJAR</p>
+      <h2 class="section-title reveal" id="tour-title">Tour the Space.</h2>
+      <figure class="tour-figure">
+        <!-- The positioned context holds only the media and the overlay button, so
+             the button anchors to the video edge and never to the caption. -->
+        <div class="tour__frame">
+          <!-- Poster paints first; no autoplay attribute in the markup, so a script
+               failure can never autoplay a prefers-reduced-motion visitor. script.js
+               adds autoplay only on the no-preference path, right before play(). -->
+          <video class="tour__media" src="assets/video/lobby-tour.mp4" poster="assets/video/lobby-tour-poster.jpg" muted loop playsinline preload="none" width="1280" height="720">
+            <p class="tour__fallback">Browser kamu belum mendukung video. Lihat lobby kami langsung di lokasi.</p>
+          </video>
+          <button class="tour-toggle" type="button" data-tour-toggle aria-pressed="true">
+            <span class="tour-toggle__icon" aria-hidden="true"></span>
+            <span class="tour-toggle__label">PUTAR</span>
+          </button>
+        </div>
+        <figcaption class="tour-caption">Lobby Super Duper · Yogyakarta</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ============ 10. SOCIAL PROOF ============ -->
   <section class="social-proof" aria-labelledby="sp-title">
     <div class="container sp-container">
       <p class="eyebrow reveal">CERITA MEREKA</p>
@@ -391,7 +416,7 @@
     </div>
   </section>
 
-  <!-- ============ 10. FAQ ============ -->
+  <!-- ============ 11. FAQ ============ -->
   <section class="faq" id="faq">
     <div class="container faq-grid">
       <div class="faq-intro">
@@ -468,7 +493,7 @@
     </div>
   </section>
 
-  <!-- ============ 11. FINAL CTA ============ -->
+  <!-- ============ 12. FINAL CTA ============ -->
   <section class="final-cta" id="daftar">
     <div class="container final-content">
       <p class="eyebrow reveal">MULAI SEKARANG</p>
